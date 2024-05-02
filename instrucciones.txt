@@ -1,0 +1,23 @@
+/*Funcionamiento
+    opcion 1: consultamodelo dsclave tipo entrada salida
+    opcion 2: consultamodelo dsclave tipo entrada salida numeroserie
+    opcion 3: consultamodelo dsclave tipo entrada salida NO certificado password
+
+- argumentos:
+    * dsclave: unicamente sirve como medida de seguridad de ejecucion y debe pasarse siempre ds123456
+    * tipo: se puede utilizar para indicar el proceso a realizar (presentar, validar, o los que puedan usarse en el futuro).
+    * entrada: nombre del fichero que contiene los datos a enviar en txt
+    * salida: nombre del fichero en el que se dejara la respuesta
+    * numeroserie: en el caso de ser necesario utilizar un certificado digital, este sera el numero de serie del certificado que hay que buscar en el almacen de certificados del equipo
+    * certificado: en el caso de pasar un fichero con el certificado, nombre del fichero.pfx que contiene el certificado digital.
+    * password: en el caso de pasar un fichero con el certificado, contraseña del certificado digital
+    
+Notas:
+    1.- Historicamente se ha usado el campo "dsclave" para indicar si se procesa desde el almacen de certificados del equipo (ds123456), se le pasa un fichero con el certificado (ds123457), o si se trata de una validacion de un modelo (ds123458), pero el campo "tipo" no veo que tenga uso por lo que lo utilizo para ese cometido del siguiente modo: 
+            1 = envio modelo con almacen de certificados
+            2 = envio modelo con fichero de certificado
+            3 = validacion de modelo
+	2.- En la opcion 3, se añade despues del fichero de salida un 'NO' para facilitar el control de argumentos ya que ese se corresponderia con el nº de serie que en este caso no se pasa
+	3.- La opcion 1 es necesaria ya que por ejemplo en la validacion no se tiene que pasar ningun certificado
+
+*/
