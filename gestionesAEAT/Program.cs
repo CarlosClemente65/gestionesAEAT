@@ -1,4 +1,4 @@
-﻿using consultaModelos.Metodos;
+﻿using gestionesAEAT.Metodos;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace consultaModelos
+namespace gestionesAEAT
 {
     internal class Program
     {
@@ -17,8 +17,8 @@ namespace consultaModelos
             //Variables para almacenar los argumentos pasados
             string dsclave = string.Empty; //Unicamente servira como medida de seguridad de ejecucion y debe pasarse 'ds123456'
             string tipo = string.Empty;
-            string entrada = string.Empty;
-            string salida = "salida.txt";
+            string ficheroEntrada = string.Empty;
+            string ficheroSalida = "salida.txt";
             string serieCertificado = string.Empty;
             string ficheroCertificado = string.Empty;
             string passwordCertificado = string.Empty;
@@ -28,22 +28,20 @@ namespace consultaModelos
 
 
             string[] argumentos = Environment.GetCommandLineArgs(); //Almacena en un array los argumentos introducidos.
+            Utiles utilidad = new Utiles();
 
-            if (argumentos.Length >= 5) //Se pasa el numero de serie o el certificado con su pass
+            if (argumentos.Length >= 4) //Se pasa el numero de serie o el certificado con su pass
             {
                 dsclave = argumentos[1];
                 if (dsclave != "ds123456") Environment.Exit(0);
                 tipo = argumentos[2];
-                entrada = argumentos[3];
-                salida = argumentos[4];
-                if (File.Exists(salida))
-                {
-                    File.Delete(salida);
-                }
+                ficheroEntrada = argumentos[3];
+                ficheroSalida = argumentos[4];
+
                 //Nota: revisar esta parte porque no me cuadra el nº de argumentos
                 if (argumentos.Length == 6) //Se pasa el numero de serie del certificado
                 {
-                    serieCertificado = argumentos[5];
+                    serieCertificado = argumentos[5].ToUpper();
                 }
 
                 if (argumentos.Length == 8)
@@ -54,8 +52,8 @@ namespace consultaModelos
 
             }
 
-            //Lazar ejemplo de serializacion (el primer parametro lo paso vacio porque en el ejemplo ya hay un xml de prueba
-            gestionXml gestion = new gestionXml(respuestaAeat, salida);
+            //Lanzar ejemplo de serializacion (el primer parametro lo paso vacio porque en el ejemplo ya hay un xml de prueba; quitar esa prueba en la version de produccion.
+            //gestionXml gestion = new gestionXml(respuestaAeat, ficheroSalida);
 
             //Procesado de los datos segun el tipo pasado como argumento
             switch (tipo)
@@ -100,7 +98,8 @@ namespace consultaModelos
                 case "4":
                     //Ratificacion de domicilio
                     ratificarDomicilio ratifica = new ratificarDomicilio();
-                    ratifica.envioPeticion(serieCertificado);
+                    serieCertificado = "726e0db7a17efa04603b7f010ba43fa6".ToUpper();//Certificado de prueba mio
+                    ratifica.envioPeticion(serieCertificado, ficheroEntrada, ficheroSalida);
                     break;
 
             }

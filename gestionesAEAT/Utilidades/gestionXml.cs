@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 
-namespace consultaModelos
+namespace gestionesAEAT
 {
     public class gestionXml
     {

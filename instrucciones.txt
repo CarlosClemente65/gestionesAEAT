@@ -17,7 +17,12 @@ Notas:
             1 = envio modelo con almacen de certificados
             2 = envio modelo con fichero de certificado
             3 = validacion de modelo
+			4 = ratificacion domicilio renta
 	2.- En la opcion 3, se añade despues del fichero de salida un 'NO' para facilitar el control de argumentos ya que ese se corresponderia con el nº de serie que en este caso no se pasa
 	3.- La opcion 1 es necesaria ya que por ejemplo en la validacion no se tiene que pasar ningun certificado
 
 */
+
+Temas pendientes de ir haciendo (to-do):
+	* Controlar con el tipo si se pasa el certificado
+	

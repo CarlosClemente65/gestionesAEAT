@@ -10,16 +10,16 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography;
 using System.Net;
 
-namespace consultaModelos
+namespace gestionesAEAT
 {
     public class envioAeat
     {
         string respuestaAeat = string.Empty;
         X509Certificate2 certificado = null;
-        string estado = string.Empty; //Almacena el resultado del envio a la AEAT
+        Utiles utilidad = new Utiles();
 
 
-        public string envioPost(string url, string datosEnvio, string serieCertificado)
+        public (string, string) envioPost(string url, string datosEnvio, string serieCertificado)
         {
             gestionCertificados gestionCertificado = new gestionCertificados();
             certificado = gestionCertificado.buscarSerieCertificado(serieCertificado);
@@ -37,20 +37,27 @@ namespace consultaModelos
                 solicitudHttp.Method = "POST";
                 solicitudHttp.ContentType = "applicacion/x-www-form-urlencoded";
                 solicitudHttp.ContentLength = datosEnvio.Length;
+                solicitudHttp.ClientCertificates.Add(certificado);
+                //solicitudHttp.Proxy = null;
+                //Las lineas siguientes estan comentadas porque no es necesaria la identificacion del navegador que realiza la solicitud (UserAGent). Habria que poner una de ellas pero pueden cambiar con el tiempo, asi que no se usan
+                //Firefox
+                //solicitudHttp.UserAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0"; 
+                //Chrome
+                //solicitudHttp.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.9999.999 Safari/537.36";
+                //Edge
+                //solicitudHttp.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36 Edg/88.0.705.81";
 
-                if (certificado != null)
-                {
-                    solicitudHttp.ClientCertificates.Add(certificado);
-                }
-
+                //Grabacion de la respuesta a la solicitud
                 using (Stream requestStream = solicitudHttp.GetRequestStream())
                 {
                     requestStream.Write(System.Text.Encoding.UTF8.GetBytes(datosEnvio), 0, datosEnvio.Length);
                 }
 
                 HttpWebResponse respuesta = (HttpWebResponse)solicitudHttp.GetResponse();
-                estado = respuesta.StatusDescription;
+                //Devuelve el estado 'OK' si todo ha ido bien
+                string estado = respuesta.StatusDescription;
 
+                //Grabar el contenido de la respuesta para devolverlo al metodo de llamada
                 using (StreamReader sr = new StreamReader(respuesta.GetResponseStream()))
                 {
                     StringBuilder sb = new StringBuilder();
@@ -61,9 +68,11 @@ namespace consultaModelos
                     contenidoRespuesta = sb.ToString();
                 }
 
-                return contenidoRespuesta; 
+                contenidoRespuesta = utilidad.quitaRaros(contenidoRespuesta);
+                return (estado, contenidoRespuesta);
             }
-            return string.Empty;
+            //Si no se ha cargado el certificado, se devuelve una respuesta vacia.
+            return ("KO", string.Empty);
         }
     }
 }

@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{BB9ADA98-C6A0-4818-B199-B2D3D6928447}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>consultaModelos</RootNamespace>
-    <AssemblyName>consultaModelos</AssemblyName>
+    <RootNamespace>gestionesAEAT</RootNamespace>
+    <AssemblyName>gestionesAEAT</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace consultaModelos
+namespace gestionesAEAT
 {
     [XmlRoot("respuestaCorrecta")]
     public class RespuestaCorrecta
