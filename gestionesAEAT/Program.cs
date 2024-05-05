@@ -1,6 +1,8 @@
-﻿using gestionesAEAT.Metodos;
+﻿using gestionesAEAT.Formularios;
+using gestionesAEAT.Metodos;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -22,6 +24,7 @@ namespace gestionesAEAT
             string serieCertificado = string.Empty;
             string ficheroCertificado = string.Empty;
             string passwordCertificado = string.Empty;
+            bool conCertificado = false;
             string respuestaAeat = string.Empty;
             X509Certificate2 certificado = null; //Certificado que se utilizara para el envio
             string log = string.Empty; //Sirve para grabar un log de los posibles errores que se hayan producido en el proceso.
@@ -29,28 +32,40 @@ namespace gestionesAEAT
 
             string[] argumentos = Environment.GetCommandLineArgs(); //Almacena en un array los argumentos introducidos.
             Utiles utilidad = new Utiles();
+            gestionCertificados proceso = gestionCertificados.ObtenerInstancia();
 
-            if (argumentos.Length >= 4) //Se pasa el numero de serie o el certificado con su pass
+            if (argumentos.Length >= 6) //Tiene que haber por lo menos 5 argumentos (clave, tipo, entrada, salida y certificado)
             {
                 dsclave = argumentos[1];
                 if (dsclave != "ds123456") Environment.Exit(0);
                 tipo = argumentos[2];
                 ficheroEntrada = argumentos[3];
                 ficheroSalida = argumentos[4];
-
-                //Nota: revisar esta parte porque no me cuadra el nº de argumentos
-                if (argumentos.Length == 6) //Se pasa el numero de serie del certificado
+                if (argumentos[5] == "SI") conCertificado = true;
+                if (conCertificado)
                 {
-                    serieCertificado = argumentos[5].ToUpper();
-                }
+                    if (argumentos.Length == 6)
+                    {
+                        //Hace falta certificado pero no se ha pasado ni el numero de serie ni el fichero
+                        //Cargar el formulario de seleccion de certificados.
+                        frmSeleccion frmSeleccion = new frmSeleccion();
+                        frmSeleccion.ShowDialog();
 
-                if (argumentos.Length == 8)
-                {
-                    ficheroCertificado = argumentos[6];
-                    passwordCertificado = argumentos[7];
-                }
 
+                    }
+                    if (argumentos.Length > 7) //Se pasa el fichero del certificado y el pass
+                    {
+                        ficheroCertificado = argumentos[6];
+                        passwordCertificado = argumentos[7];
+                    }
+                    else //Se pasa el numero de serie del certificado
+                    {
+                        serieCertificado = argumentos[6].ToUpper();
+                    }
+                }
             }
+
+            //Si el 
 
             //Lanzar ejemplo de serializacion (el primer parametro lo paso vacio porque en el ejemplo ya hay un xml de prueba; quitar esa prueba en la version de produccion.
             //gestionXml gestion = new gestionXml(respuestaAeat, ficheroSalida);
@@ -60,7 +75,6 @@ namespace gestionesAEAT
             {
                 case "1":
                     //Envio de modelos con el almacen de certificados; es necesario obtener el indice
-                    gestionCertificados proceso = new gestionCertificados();
                     proceso.cargarCertificados();
 
                     certificado = proceso.buscarSerieCertificado(serieCertificado);

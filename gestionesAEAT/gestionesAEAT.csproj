@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{BB9ADA98-C6A0-4818-B199-B2D3D6928447}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>gestionesAEAT</RootNamespace>
     <AssemblyName>gestionesAEAT</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
@@ -32,9 +32,14 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -45,6 +50,12 @@
   <ItemGroup>
     <Compile Include="envioAeat.cs" />
     <Compile Include="descargaXmlModelos.cs" />
+    <Compile Include="Formularios\frmSeleccion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\frmSeleccion.Designer.cs">
+      <DependentUpon>frmSeleccion.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utilidades\gestionCertificados.cs" />
     <Compile Include="Utilidades\gestionXml.cs" />
     <Compile Include="Metodos\descargaDatosFiscales.cs" />
@@ -57,6 +68,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Formularios\frmSeleccion.resx">
+      <DependentUpon>frmSeleccion.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

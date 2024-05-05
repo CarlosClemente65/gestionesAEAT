@@ -21,7 +21,7 @@ namespace gestionesAEAT
 
         public (string, string) envioPost(string url, string datosEnvio, string serieCertificado)
         {
-            gestionCertificados gestionCertificado = new gestionCertificados();
+            gestionCertificados gestionCertificado = gestionCertificados.ObtenerInstancia();
             certificado = gestionCertificado.buscarSerieCertificado(serieCertificado);
 
             if (certificado != null)

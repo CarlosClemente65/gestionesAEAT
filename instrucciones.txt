@@ -1,25 +1,34 @@
 /*Funcionamiento
-    opcion 1: consultamodelo dsclave tipo entrada salida
-    opcion 2: consultamodelo dsclave tipo entrada salida numeroserie
-    opcion 3: consultamodelo dsclave tipo entrada salida NO certificado password
+    opcion 1: gestionAEAT dsclave tipo entrada salida NO
+	opcion 2: gestionAEAT dsclave tipo entrada salida SI
+    opcion 3: gestionAEAT dsclave tipo entrada salida SI numeroserie
+    opcion 4: gestionAEAT dsclave tipo entrada salida SI certificado password
 
 - argumentos:
     * dsclave: unicamente sirve como medida de seguridad de ejecucion y debe pasarse siempre ds123456
     * tipo: se puede utilizar para indicar el proceso a realizar (presentar, validar, o los que puedan usarse en el futuro).
     * entrada: nombre del fichero que contiene los datos a enviar en txt
     * salida: nombre del fichero en el que se dejara la respuesta
-    * numeroserie: en el caso de ser necesario utilizar un certificado digital, este sera el numero de serie del certificado que hay que buscar en el almacen de certificados del equipo
+	* SI/NO: permite indicar si el proceso necesita usar certificado o no
+    * numeroserie: en el caso de ser necesario utilizar un certificado digital, este sera el numero de serie del certificado
+			       que hay que buscar en el almacen de certificados del equipo
     * certificado: en el caso de pasar un fichero con el certificado, nombre del fichero.pfx que contiene el certificado digital.
     * password: en el caso de pasar un fichero con el certificado, contraseña del certificado digital
     
 Notas:
-    1.- Historicamente se ha usado el campo "dsclave" para indicar si se procesa desde el almacen de certificados del equipo (ds123456), se le pasa un fichero con el certificado (ds123457), o si se trata de una validacion de un modelo (ds123458), pero el campo "tipo" no veo que tenga uso por lo que lo utilizo para ese cometido del siguiente modo: 
-            1 = envio modelo con almacen de certificados
+    1.- Historicamente se ha usado el campo "dsclave" para indicar si se procesa desde el almacen de certificados del equipo (ds123456), 
+		se le pasa un fichero con el certificado (ds123457), o si se trata de una validacion de un modelo (ds123458), pero el campo "tipo" 
+		no veo que tenga uso por lo que lo utilizo para ese cometido del siguiente modo: 
+            1 = envio modelo con almacen de certificados (se pide seleccion de certificado)
             2 = envio modelo con fichero de certificado
-            3 = validacion de modelo
+            3 = validacion de modelo (no necesita certificado por lo que el tipo debe ser 1)
 			4 = ratificacion domicilio renta
-	2.- En la opcion 3, se añade despues del fichero de salida un 'NO' para facilitar el control de argumentos ya que ese se corresponderia con el nº de serie que en este caso no se pasa
-	3.- La opcion 1 es necesaria ya que por ejemplo en la validacion no se tiene que pasar ningun certificado
+	2.- La opcion 1 se utilizara para procesos que no necesiten certificado, como la validacion de un modelo.
+	3.- La opcion 2 sirve para mostrar el formulario de seleccion del certificado, ya que hace falta (lleva un SI) pero no se pasa ninguno
+	4.- La opcion 3 la dejo por compatibilidad con el sistema anterior en el que se mostraba un formulario para seleccionar un certificado
+		y se devolvia el numero de serie, que luego se usa en la presentacion. Con el nuevo sistema esto no seria necesario, ya que si viene
+		la opcion SI y no se pasa ningun parametro mas, se pedira la seleccion de un certificado del almacen de windows.
+	5.- La opcion 4 se utilizara basicamente con certbase (se pasan el certiicado y pass)
 
 */
 
