@@ -19,10 +19,9 @@ Notas:
     1.- Historicamente se ha usado el campo "dsclave" para indicar si se procesa desde el almacen de certificados del equipo (ds123456), 
 		se le pasa un fichero con el certificado (ds123457), o si se trata de una validacion de un modelo (ds123458), pero el campo "tipo" 
 		no veo que tenga uso por lo que lo utilizo para ese cometido del siguiente modo: 
-            1 = envio modelo con almacen de certificados (se pide seleccion de certificado)
-            2 = envio modelo con fichero de certificado
-            3 = validacion de modelo (no necesita certificado por lo que el tipo debe ser 1)
-			4 = ratificacion domicilio renta
+            1 = envio modelo
+            2 = validacion de modelo (no necesita certificado por lo que el tipo debe ser 1)
+			1 = ratificacion domicilio renta
 	2.- La opcion 1 se utilizara para procesos que no necesiten certificado, como la validacion de un modelo.
 	3.- La opcion 2 sirve para mostrar el formulario de seleccion del certificado, ya que hace falta (lleva un SI) pero no se pasa ninguno
 	4.- La opcion 3 la dejo por compatibilidad con el sistema anterior en el que se mostraba un formulario para seleccionar un certificado

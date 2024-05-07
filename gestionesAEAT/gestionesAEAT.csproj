@@ -56,6 +56,11 @@
     <Compile Include="Formularios\frmSeleccion.Designer.cs">
       <DependentUpon>frmSeleccion.cs</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Utilidades\gestionCertificados.cs" />
     <Compile Include="Utilidades\gestionXml.cs" />
     <Compile Include="Metodos\descargaDatosFiscales.cs" />
@@ -68,6 +73,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Formularios\frmSeleccion.resx">

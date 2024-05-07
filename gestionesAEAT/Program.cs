@@ -50,10 +50,8 @@ namespace gestionesAEAT
                         //Cargar el formulario de seleccion de certificados.
                         frmSeleccion frmSeleccion = new frmSeleccion();
                         frmSeleccion.ShowDialog();
-
-
                     }
-                    if (argumentos.Length > 7) //Se pasa el fichero del certificado y el pass
+                    else if (argumentos.Length > 7) //Se pasa el fichero del certificado y el pass
                     {
                         ficheroCertificado = argumentos[6];
                         passwordCertificado = argumentos[7];

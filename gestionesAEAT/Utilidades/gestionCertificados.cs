@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
@@ -14,9 +15,9 @@ namespace gestionesAEAT
         public string nifCertificado { get; set; }
         public string titularCertificado { get; set; }
         public DateTime fechaCertificado { get; set; }
-        public string serieCertificado { get; set; }
-        public string representanteCertificado { get; set; }
         public string nifRepresentante { get; set; }
+        public string nombreRepresentante { get; set; }
+        public string serieCertificado { get; set; }
         //public string nombrePF { get; set; }
         //public string apellidoPF { get; set; }
         //public string nifPF { get; set; }
@@ -65,9 +66,9 @@ namespace gestionesAEAT
 
         public List<certificadoInfo> listaCertificados()
         {
-            List<certificadoInfo> certificadosInfo = new List<certificadoInfo>();
+            List<certificadoInfo> certificados = new List<certificadoInfo>();
 
-            foreach (X509Certificate2 cert in certificados)
+            foreach (X509Certificate2 cert in this.certificados)
             {
                 if (cert.Subject.Contains("SERIALNUMBER")) //Deben tener esto para que sean de persona fisica o juridica
                 {
@@ -78,11 +79,93 @@ namespace gestionesAEAT
                         fechaCertificado = cert.NotAfter
                     };
                     obtenerDatosSubject(datosSubject, info);
-                    certificadosInfo.Add(info);
+                    certificados.Add(info);
                 }
             }
 
-            return certificadosInfo;
+            certificados = ordenarCertificados(certificados, "titularCertificado", true);
+            return certificados;
+        }
+
+        public List<certificadoInfo> ordenarCertificados(List<certificadoInfo> certificados, string campoOrdenacion, bool ascendente)
+        {
+            if (certificados == null || certificados.Count == 0)
+            {
+                return certificados;
+            }
+
+            switch (campoOrdenacion)
+            {
+                case "nifCertificado":
+                    if (ascendente)
+                    {
+                        certificados = new List<certificadoInfo>(certificados.OrderBy(certificado => certificado.nifCertificado).ToList());
+                    }
+                    else
+                    {
+                        certificados = new List<certificadoInfo>(certificados.OrderByDescending(certificado => certificado.nifCertificado).ToList());
+                    }
+                    break;
+
+                case "titularCertificado":
+                    if (ascendente)
+                    {
+                        certificados = new List<certificadoInfo>(certificados.OrderBy(certificado => certificado.titularCertificado).ToList());
+                    }
+                    else
+                    {
+                        certificados = new List<certificadoInfo>(certificados.OrderByDescending(certificado => certificado.titularCertificado).ToList());
+                    }
+                    break;
+
+                case "fechaCertificado":
+                    if (ascendente)
+                    {
+                        certificados = new List<certificadoInfo>(certificados.OrderBy(certificado => certificado.fechaCertificado).ToList());
+                    }
+                    else
+                    {
+                        certificados = new List<certificadoInfo>(certificados.OrderByDescending(certificado => certificado.fechaCertificado).ToList());
+                    }
+                    break;
+
+
+                case "nifRepresentante":
+                    if (ascendente)
+                    {
+                        certificados = new List<certificadoInfo>(certificados.OrderBy(certificado => certificado.nifRepresentante).ToList());
+                    }
+                    else
+                    {
+                        certificados = new List<certificadoInfo>(certificados.OrderByDescending(certificado => certificado.nifRepresentante).ToList());
+                    }
+                    break;
+
+                case "nombreRepresentante":
+                    if (ascendente)
+                    {
+                        certificados = new List<certificadoInfo>(certificados.OrderBy(certificado => certificado.nombreRepresentante).ToList());
+                    }
+                    else
+                    {
+                        certificados = new List<certificadoInfo>(certificados.OrderByDescending(certificado => certificado.nombreRepresentante).ToList());
+                    }
+                    break;
+
+                case "serieCertificado":
+                    if (ascendente)
+                    {
+                        certificados = new List<certificadoInfo>(certificados.OrderBy(certificado => certificado.serieCertificado).ToList());
+                    }
+                    else
+                    {
+                        certificados = new List<certificadoInfo>(certificados.OrderByDescending(certificado => certificado.serieCertificado).ToList());
+                    }
+                    break;
+
+            }
+            return certificados;
+
         }
 
         public void obtenerDatosSubject(string subject, certificadoInfo info)
@@ -158,7 +241,7 @@ namespace gestionesAEAT
                 if (juridica)
                 {
                     info.titularCertificado = nombrePJ;
-                    info.representanteCertificado = nombreRepresentante + " " + apellidoRepresentante;
+                    info.nombreRepresentante = nombreRepresentante + " " + apellidoRepresentante;
                 }
                 else
                 {
