@@ -82,5 +82,16 @@ namespace gestionesAEAT.Formularios
         {
             txtBusqueda.Focus();
         }
+
+        private void txtBusqueda_TextChanged(object sender, EventArgs e)
+        {
+            gestionCertificados proceso = gestionCertificados.ObtenerInstancia();
+            List<certificadoInfo> certificados = proceso.listaCertificados();
+            if (certificados != null)
+            {
+                certificados = proceso.filtrarCertificados(txtBusqueda.Text);
+                rellenarDGV(certificados);
+            }
+        }
     }
 }

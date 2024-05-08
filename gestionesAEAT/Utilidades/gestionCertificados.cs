@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
@@ -30,6 +31,7 @@ namespace gestionesAEAT
     public class gestionCertificados
     {
         private List<X509Certificate2> certificados;
+        private List<certificadoInfo> certificadosInfo = new List<certificadoInfo>();
         private static gestionCertificados instancia;
 
         private gestionCertificados()
@@ -57,17 +59,8 @@ namespace gestionesAEAT
                 certificados.Add(cert);
             }
             store.Close();
-        }
 
-        public X509Certificate2 buscarSerieCertificado(string serieCertificado)
-        {
-            return certificados.Find(cert => cert.SerialNumber == serieCertificado);
-        }
-
-        public List<certificadoInfo> listaCertificados()
-        {
-            List<certificadoInfo> certificados = new List<certificadoInfo>();
-
+            // Convertir los certificados a certificadoInfo
             foreach (X509Certificate2 cert in this.certificados)
             {
                 if (cert.Subject.Contains("SERIALNUMBER")) //Deben tener esto para que sean de persona fisica o juridica
@@ -79,12 +72,20 @@ namespace gestionesAEAT
                         fechaCertificado = cert.NotAfter
                     };
                     obtenerDatosSubject(datosSubject, info);
-                    certificados.Add(info);
+                    certificadosInfo.Add(info);
                 }
             }
+            certificadosInfo = ordenarCertificados(certificadosInfo, "titularCertificado", true);
+        }
 
-            certificados = ordenarCertificados(certificados, "titularCertificado", true);
-            return certificados;
+        public X509Certificate2 buscarSerieCertificado(string serieCertificado)
+        {
+            return certificados.Find(cert => cert.SerialNumber == serieCertificado);
+        }
+
+        public List<certificadoInfo> listaCertificados()
+        {
+            return certificadosInfo;
         }
 
         public List<certificadoInfo> ordenarCertificados(List<certificadoInfo> certificados, string campoOrdenacion, bool ascendente)
@@ -166,6 +167,17 @@ namespace gestionesAEAT
             }
             return certificados;
 
+        }
+
+        public List<certificadoInfo> filtrarCertificados(string filtro)
+        {
+            List<certificadoInfo> certificados = this.certificadosInfo;
+            if (!string.IsNullOrEmpty(filtro))
+            {
+                filtro = filtro.ToUpper();
+                certificados = new List<certificadoInfo>(certificados.FindAll(certificado => certificado.titularCertificado.ToUpper().Contains(filtro)));
+            }
+            return certificados;
         }
 
         public void obtenerDatosSubject(string subject, certificadoInfo info)
