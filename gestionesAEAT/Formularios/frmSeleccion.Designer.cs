@@ -50,7 +50,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelCertificados.AutoScroll = true;
-            this.panelCertificados.BackColor = System.Drawing.Color.LightCyan;
+            this.panelCertificados.BackColor = System.Drawing.Color.White;
             this.panelCertificados.Controls.Add(this.dgvCertificados);
             this.panelCertificados.Controls.Add(this.label1);
             this.panelCertificados.Location = new System.Drawing.Point(0, 0);
@@ -69,24 +69,24 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvCertificados.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-            this.dgvCertificados.BackgroundColor = System.Drawing.Color.LightCyan;
+            this.dgvCertificados.BackgroundColor = System.Drawing.Color.White;
             this.dgvCertificados.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dgvCertificados.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
             this.dgvCertificados.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.Disable;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(155)))), ((int)(((byte)(190)))));
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.ActiveCaption;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(155)))), ((int)(((byte)(190)))));
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dgvCertificados.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvCertificados.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.LightCyan;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.White;
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.PowderBlue;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(235)))), ((int)(((byte)(250)))));
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvCertificados.DefaultCellStyle = dataGridViewCellStyle2;
@@ -100,6 +100,7 @@
             this.dgvCertificados.Size = new System.Drawing.Size(754, 261);
             this.dgvCertificados.StandardTab = true;
             this.dgvCertificados.TabIndex = 4;
+            this.dgvCertificados.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgvCertificados_CellFormatting);
             this.dgvCertificados.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvCertificados_ColumnHeaderMouseClick);
             // 
             // label1
@@ -116,23 +117,23 @@
             // 
             this.panelBotones.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelBotones.BackColor = System.Drawing.Color.LightCyan;
+            this.panelBotones.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(235)))), ((int)(((byte)(250)))));
             this.panelBotones.Controls.Add(this.txtBusqueda);
             this.panelBotones.Controls.Add(this.label2);
             this.panelBotones.Controls.Add(this.button2);
             this.panelBotones.Controls.Add(this.button1);
-            this.panelBotones.Location = new System.Drawing.Point(0, 294);
+            this.panelBotones.Location = new System.Drawing.Point(0, 289);
             this.panelBotones.Margin = new System.Windows.Forms.Padding(0);
             this.panelBotones.Name = "panelBotones";
             this.panelBotones.Padding = new System.Windows.Forms.Padding(5);
-            this.panelBotones.Size = new System.Drawing.Size(754, 67);
+            this.panelBotones.Size = new System.Drawing.Size(754, 72);
             this.panelBotones.TabIndex = 1;
             // 
             // txtBusqueda
             // 
             this.txtBusqueda.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtBusqueda.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtBusqueda.Location = new System.Drawing.Point(124, 26);
+            this.txtBusqueda.Location = new System.Drawing.Point(124, 32);
             this.txtBusqueda.Name = "txtBusqueda";
             this.txtBusqueda.Size = new System.Drawing.Size(508, 26);
             this.txtBusqueda.TabIndex = 0;
@@ -142,7 +143,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(124, 5);
+            this.label2.Location = new System.Drawing.Point(124, 11);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(116, 18);
             this.label2.TabIndex = 2;
@@ -152,28 +153,29 @@
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.button2.BackColor = System.Drawing.SystemColors.ButtonFace;
             this.button2.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button2.ForeColor = System.Drawing.Color.Black;
-            this.button2.Location = new System.Drawing.Point(640, 13);
+            this.button2.Location = new System.Drawing.Point(640, 10);
             this.button2.Margin = new System.Windows.Forms.Padding(5);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(100, 40);
+            this.button2.Size = new System.Drawing.Size(100, 48);
             this.button2.TabIndex = 3;
             this.button2.Text = "Cancelar seleccion";
             this.button2.UseVisualStyleBackColor = false;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.button1.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.button1.BackColor = System.Drawing.SystemColors.ButtonFace;
             this.button1.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button1.ForeColor = System.Drawing.Color.Black;
-            this.button1.Location = new System.Drawing.Point(16, 13);
+            this.button1.Location = new System.Drawing.Point(16, 10);
             this.button1.Margin = new System.Windows.Forms.Padding(5);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(100, 40);
+            this.button1.Size = new System.Drawing.Size(100, 48);
             this.button1.TabIndex = 2;
             this.button1.Text = "Seleccionar certificado";
             this.button1.UseVisualStyleBackColor = false;
@@ -186,7 +188,6 @@
             this.ClientSize = new System.Drawing.Size(754, 361);
             this.Controls.Add(this.panelBotones);
             this.Controls.Add(this.panelCertificados);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "frmSeleccion";

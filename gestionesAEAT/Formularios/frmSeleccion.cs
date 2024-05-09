@@ -19,7 +19,7 @@ namespace gestionesAEAT.Formularios
         public frmSeleccion()
         {
             InitializeComponent();
-
+            dgvCertificados.CellFormatting += dgvCertificados_CellFormatting;
             gestionCertificados proceso = gestionCertificados.ObtenerInstancia();
             List<certificadoInfo> certificados = proceso.listaCertificados();
             rellenarDGV(certificados);
@@ -34,12 +34,15 @@ namespace gestionesAEAT.Formularios
             dgvCertificados.DataSource = certificados;
             dgvCertificados.Columns["nifCertificado"].HeaderText = "NIF titular";
             dgvCertificados.Columns["nifCertificado"].Width = 90;
+            dgvCertificados.Columns["nifCertificado"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dgvCertificados.Columns["titularCertificado"].HeaderText = "Titular del certificado";
             dgvCertificados.Columns["titularCertificado"].Width = 250;
             dgvCertificados.Columns["fechaCertificado"].HeaderText = "Fecha validez";
             dgvCertificados.Columns["fechaCertificado"].Width = 120;
+            dgvCertificados.Columns["fechaCertificado"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dgvCertificados.Columns["nifRepresentante"].HeaderText = "NIF representante";
             dgvCertificados.Columns["nifRepresentante"].Width = 100;
+            dgvCertificados.Columns["nifRepresentante"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dgvCertificados.Columns["nombreRepresentante"].HeaderText = "Nombre representante";
             dgvCertificados.Columns["nombreRepresentante"].Width = 250;
             dgvCertificados.Columns["serieCertificado"].HeaderText = "Nº serie certificado";
@@ -92,6 +95,24 @@ namespace gestionesAEAT.Formularios
                 certificados = proceso.filtrarCertificados(txtBusqueda.Text);
                 rellenarDGV(certificados);
             }
+        }
+
+        private void dgvCertificados_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            //if (e.RowIndex >= -1 && e.ColumnIndex >= 0)
+            //{
+            //    //dgvCertificados.Columns[e.ColumnIndex].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            //    //if (dgvCertificados.Columns[e.ColumnIndex].Name == "nifCertificado")
+            //    if (e.ColumnIndex == 0)
+            //    {
+            //        e.CellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            //    }
+            //}
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Environment.Exit(0);
         }
     }
 }
