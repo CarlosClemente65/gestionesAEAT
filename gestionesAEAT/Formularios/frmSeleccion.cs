@@ -1,12 +1,6 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace gestionesAEAT.Formularios
@@ -15,12 +9,13 @@ namespace gestionesAEAT.Formularios
     {
         private int columnaOrdenada = -1;
         private ListSortDirection ordenColumna = ListSortDirection.Ascending;
+        public certificadoInfo certificadoSeleccionado {  get; set; }
 
         public frmSeleccion()
         {
             InitializeComponent();
-            dgvCertificados.CellFormatting += dgvCertificados_CellFormatting;
             gestionCertificados proceso = gestionCertificados.ObtenerInstancia();
+            certificadoSeleccionado = new certificadoInfo();
             List<certificadoInfo> certificados = proceso.listaCertificados();
             rellenarDGV(certificados);
             this.Load += frmSeleccion_Load;
@@ -97,22 +92,29 @@ namespace gestionesAEAT.Formularios
             }
         }
 
-        private void dgvCertificados_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-            //if (e.RowIndex >= -1 && e.ColumnIndex >= 0)
-            //{
-            //    //dgvCertificados.Columns[e.ColumnIndex].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            //    //if (dgvCertificados.Columns[e.ColumnIndex].Name == "nifCertificado")
-            //    if (e.ColumnIndex == 0)
-            //    {
-            //        e.CellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            //    }
-            //}
-        }
 
         private void button2_Click(object sender, EventArgs e)
         {
             Environment.Exit(0);
+        }
+
+        private void btnSeleccion_Click(object sender, EventArgs e)
+        {
+            int indice = dgvCertificados.SelectedRows[0].Index;
+            if (indice >= 0 && indice < dgvCertificados.Rows.Count)
+            {
+                DataGridViewCell celda = dgvCertificados.Rows[indice].Cells["serieCertificado"];
+                if (celda != null)
+                {
+                    certificadoSeleccionado.serieCertificado = celda.Value.ToString();
+                }
+            }
+            this.Close();
+        }
+
+        private void dgvCertificados_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            btnSeleccion.PerformClick();
         }
     }
 }

@@ -33,22 +33,26 @@ namespace gestionesAEAT.Metodos
         Utiles utilidad = new Utiles(); //Instanciacion de las utilidades para poder usarlas
         envioAeat envio = new envioAeat();
 
-        public void envioPeticion(string serieCertificado, string entrada, string salida)
+        public void envioPeticion(string serieCertificado, string entrada, string salida, int paso)
         {
             this.ficheroEntrada = entrada; //Se pasa como parametro el fichero de entrada
             this.ficheroSalida = salida; //Se pasa como parametro el fichero de salida
-            ficheroSalidaConyuge = ficheroSalida + "2";
-            procesoTextoEntrada();
+            ficheroSalidaConyuge = Path.GetFileNameWithoutExtension(ficheroSalida) + "2" + Path.GetExtension(ficheroSalida);
 
             //Borrar los ficheros si existen en la ruta pasada
-            utilidad.borrarFicheros(ficheroSalida);
-            utilidad.borrarFicheros(ficheroSalidaConyuge);
+            if (paso == 1)
+            {
+                procesoTextoEntrada(); //Solo se procesa en el paso 1 ya que se almacena el contenido en una variable de clase
+                utilidad.borrarFicheros(ficheroSalida);
+            }
+            if (paso == 2) utilidad.borrarFicheros(ficheroSalidaConyuge);
 
             try
             {
                 codificacion = utilidad.codificacionFicheroEntrada(textoEntrada); //Busca la codificacion que pueda llevar el fichero de entrada o asigna utf-8
-                cargaDatos();
-                datosEnvio = formateoCabecera();
+                if (paso == 1) cargaDatos();
+                datosEnvio = formateoCabecera(paso); //Genera los datos a enviar (paso1 para el titular y paso 2 para el conyuge)
+
                 (estadoRespuesta, respuestaAEAT) = envio.envioPost(url, datosEnvio, serieCertificado);
 
                 if (estadoRespuesta == "OK")
@@ -77,12 +81,8 @@ namespace gestionesAEAT.Metodos
                 if (ficheroSalida != null)
                 {
                     //Graba el fichero con la respuesta del titular
-                    File.WriteAllText(ficheroSalida, aux, Encoding.Default);
-                    if (nifConyuge)
-                    {
-
-                        File.WriteAllText(ficheroSalidaConyuge, aux, Encoding.Default);
-                    }
+                    if (paso == 1) File.WriteAllText(ficheroSalida, aux, Encoding.Default);
+                    if (paso == 2 && nifConyuge) File.WriteAllText(ficheroSalidaConyuge, aux, Encoding.Default);
                 }
             }
 
@@ -128,8 +128,8 @@ namespace gestionesAEAT.Metodos
 
                 if (primerCaracter != -1) //Si ha encontrado el texto
                 {
-                    inicio = primerCaracter + respuestaAEAT.Length + 1 + 1; //Se posiciona el inicio de la cadena despues de los dos puntos y la comilla
-                    for (int x = inicio; x == respuestaAEAT.Length; x++) //Recorre todos los caracteres para localizar el final del texto con el valor
+                    inicio = primerCaracter + respuesta[i].ToString().Length + 1 + 1; //Se posiciona el inicio de la cadena despues de los dos puntos y la comilla
+                    for (int x = inicio; x < respuestaAEAT.Length; x++) //Recorre todos los caracteres para localizar el final del texto con el valor
                     {
                         car = respuestaAEAT.Substring(x, 1); //Procesa uno a uno los caracteres para encontrar el primer caracter que sera una llave de cierre '}'
                         if (car == "}")
@@ -142,17 +142,32 @@ namespace gestionesAEAT.Metodos
                         }
                     }
                 }
-                cadena = cadena + respuestaAEAT + " = " + valor + "\n";
+                cadena = cadena + respuesta[i] + " = " + valor;
 
             }
             return cadena;
         }
 
-        private string formateoCabecera()
+        private string formateoCabecera(int paso)
         {
+            nifConyuge = false;
             for (int i = 0; i < cabecera.Count; i++)
             {
                 cargaCabecera(cabecera[i]);
+
+                if (paso == 1 && atributo == "NIF2")
+                {
+                    continue;
+                }
+                if (paso == 2)
+                {
+                    if (atributo == "NIF") continue;
+                    if (atributo == "NIF2" && !string.IsNullOrEmpty(valor))
+                    {
+                        nifConyuge = true;
+                        atributo = "NIF"; //Hay que modificar el atributo para pasarlo en el POST
+                    }
+                }
                 if (i == 0)
                 {
                     datosEnvio = atributo + "=" + valor;
@@ -175,13 +190,6 @@ namespace gestionesAEAT.Metodos
                 parte = cadena.ToString().Split('=');
                 atributo = parte[0].ToString().Trim();
                 valor = parte[1].ToString().Trim();
-
-                //Chequeo si se pide el NIF del conyuge
-                if (atributo == "NIF2" && !string.IsNullOrEmpty(valor))
-                {
-                    atributo = "NIF"; //Se modifica para el envio a la AEAT
-                    nifConyuge = true; //Se ha encontrado el NIF del conyuge y hay que grabar un segundo fichero
-                }
             }
 
             catch (Exception ex)

@@ -19,13 +19,6 @@ namespace gestionesAEAT
         public string nifRepresentante { get; set; }
         public string nombreRepresentante { get; set; }
         public string serieCertificado { get; set; }
-        //public string nombrePF { get; set; }
-        //public string apellidoPF { get; set; }
-        //public string nifPF { get; set; }
-        //public string nombrePJ { get; set; }
-        //public string cifPJ { get; set; }
-        //public string nombreRepresentante { get; set; }
-        //public string apellidoRepresentante { get; set; }
     }
 
     public class gestionCertificados
@@ -52,6 +45,7 @@ namespace gestionesAEAT
 
         public void cargarCertificados()
         {
+            //Metodo para cargar los certificados del almacen de windows
             X509Store store = new X509Store(StoreLocation.CurrentUser);
             store.Open(OpenFlags.ReadOnly);
             foreach (X509Certificate2 cert in store.Certificates)
@@ -60,11 +54,12 @@ namespace gestionesAEAT
             }
             store.Close();
 
-            // Convertir los certificados a certificadoInfo
+            // Graba las propiedades de los certificados en la clase certificadosInfo
             foreach (X509Certificate2 cert in this.certificados)
             {
                 if (cert.Subject.Contains("SERIALNUMBER")) //Deben tener esto para que sean de persona fisica o juridica
                 {
+                    //En el Subject estan todos los datos del certificado
                     string datosSubject = cert.Subject;
                     certificadoInfo info = new certificadoInfo
                     {
@@ -75,23 +70,28 @@ namespace gestionesAEAT
                     certificadosInfo.Add(info);
                 }
             }
+            //Una vez obtenidos los datos, se ordena la lista por el nombre del titular del certificado
             certificadosInfo = ordenarCertificados(certificadosInfo, "titularCertificado", true);
         }
 
         public X509Certificate2 buscarSerieCertificado(string serieCertificado)
         {
+            //Devuelve el certificado que tiene la serie pasada
             return certificados.Find(cert => cert.SerialNumber == serieCertificado);
         }
 
         public List<certificadoInfo> listaCertificados()
         {
+            //Devuelve la lista de certificados (para rellenar el dgv)
             return certificadosInfo;
         }
 
         public List<certificadoInfo> ordenarCertificados(List<certificadoInfo> certificados, string campoOrdenacion, bool ascendente)
         {
+            //Devuelve la lista de los certificados ordenados por el campo pasado y en orden ascendente/descedente
             if (certificados == null || certificados.Count == 0)
             {
+                //Evita que se produzca una excepcion si no se pasa una lista de certificados
                 return certificados;
             }
 
@@ -171,6 +171,7 @@ namespace gestionesAEAT
 
         public List<certificadoInfo> filtrarCertificados(string filtro)
         {
+            //Devuelve la lista de certificados filtrada por el filtro pasado
             List<certificadoInfo> certificados = this.certificadosInfo;
             if (!string.IsNullOrEmpty(filtro))
             {
@@ -182,6 +183,7 @@ namespace gestionesAEAT
 
         public void obtenerDatosSubject(string subject, certificadoInfo info)
         {
+            //Carga los datos del certificado en las propiedades de la clase
             bool juridica = false;
             if (subject.Contains("2.5.4.97")) juridica = true;
             string nombrePF = string.Empty; ;
@@ -253,11 +255,11 @@ namespace gestionesAEAT
                 if (juridica)
                 {
                     info.titularCertificado = nombrePJ;
-                    info.nombreRepresentante = nombreRepresentante + " " + apellidoRepresentante;
+                    info.nombreRepresentante = apellidoRepresentante + " " + nombreRepresentante;
                 }
                 else
                 {
-                    info.titularCertificado = nombrePF + " " + apellidoPF;
+                    info.titularCertificado = apellidoPF + " " + nombrePF;
                 }
             }
         }

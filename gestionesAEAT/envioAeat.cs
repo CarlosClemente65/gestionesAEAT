@@ -30,12 +30,12 @@ namespace gestionesAEAT
                 System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
                 //Crear datos para la solicitud HTTP
-                HttpWebRequest solicitudHttp = HttpWebRequest.Create(url) as HttpWebRequest;
+                HttpWebRequest solicitudHttp = (HttpWebRequest)WebRequest.Create(url);
                 string contenidoRespuesta;
 
                 //Configurar la solicitud
                 solicitudHttp.Method = "POST";
-                solicitudHttp.ContentType = "applicacion/x-www-form-urlencoded";
+                solicitudHttp.ContentType = "application/x-www-form-urlencoded";
                 solicitudHttp.ContentLength = datosEnvio.Length;
                 solicitudHttp.ClientCertificates.Add(certificado);
                 //solicitudHttp.Proxy = null;
@@ -48,10 +48,12 @@ namespace gestionesAEAT
                 //solicitudHttp.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36 Edg/88.0.705.81";
 
                 //Grabacion de la respuesta a la solicitud
-                using (Stream requestStream = solicitudHttp.GetRequestStream())
-                {
-                    requestStream.Write(System.Text.Encoding.UTF8.GetBytes(datosEnvio), 0, datosEnvio.Length);
-                }
+                byte[] datosEnvioBytes = Encoding.UTF8.GetBytes(datosEnvio);
+                solicitudHttp.ContentLength = datosEnvioBytes.Length;
+                Stream requestStream = solicitudHttp.GetRequestStream();
+                requestStream.Write(datosEnvioBytes, 0, datosEnvioBytes.Length);
+                requestStream.Close();
+
 
                 HttpWebResponse respuesta = (HttpWebResponse)solicitudHttp.GetResponse();
                 //Devuelve el estado 'OK' si todo ha ido bien

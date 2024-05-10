@@ -38,7 +38,8 @@
             this.txtBusqueda = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnSeleccion = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
             this.panelCertificados.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCertificados)).BeginInit();
             this.panelBotones.SuspendLayout();
@@ -51,6 +52,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelCertificados.AutoScroll = true;
             this.panelCertificados.BackColor = System.Drawing.Color.White;
+            this.panelCertificados.Controls.Add(this.label3);
             this.panelCertificados.Controls.Add(this.dgvCertificados);
             this.panelCertificados.Controls.Add(this.label1);
             this.panelCertificados.Location = new System.Drawing.Point(0, 0);
@@ -91,23 +93,23 @@
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvCertificados.DefaultCellStyle = dataGridViewCellStyle2;
             this.dgvCertificados.GridColor = System.Drawing.Color.SaddleBrown;
-            this.dgvCertificados.Location = new System.Drawing.Point(0, 30);
+            this.dgvCertificados.Location = new System.Drawing.Point(0, 32);
             this.dgvCertificados.MultiSelect = false;
             this.dgvCertificados.Name = "dgvCertificados";
             this.dgvCertificados.ReadOnly = true;
             this.dgvCertificados.RowHeadersVisible = false;
             this.dgvCertificados.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvCertificados.Size = new System.Drawing.Size(754, 261);
+            this.dgvCertificados.Size = new System.Drawing.Size(754, 259);
             this.dgvCertificados.StandardTab = true;
             this.dgvCertificados.TabIndex = 4;
-            this.dgvCertificados.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgvCertificados_CellFormatting);
+            this.dgvCertificados.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCertificados_CellDoubleClick);
             this.dgvCertificados.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvCertificados_ColumnHeaderMouseClick);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(3, 9);
+            this.label1.Location = new System.Drawing.Point(3, 11);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(154, 18);
             this.label1.TabIndex = 0;
@@ -121,7 +123,7 @@
             this.panelBotones.Controls.Add(this.txtBusqueda);
             this.panelBotones.Controls.Add(this.label2);
             this.panelBotones.Controls.Add(this.button2);
-            this.panelBotones.Controls.Add(this.button1);
+            this.panelBotones.Controls.Add(this.btnSeleccion);
             this.panelBotones.Location = new System.Drawing.Point(0, 289);
             this.panelBotones.Margin = new System.Windows.Forms.Padding(0);
             this.panelBotones.Name = "panelBotones";
@@ -165,20 +167,31 @@
             this.button2.UseVisualStyleBackColor = false;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button1
+            // btnSeleccion
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.btnSeleccion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.button1.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.button1.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.ForeColor = System.Drawing.Color.Black;
-            this.button1.Location = new System.Drawing.Point(16, 10);
-            this.button1.Margin = new System.Windows.Forms.Padding(5);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(100, 48);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Seleccionar certificado";
-            this.button1.UseVisualStyleBackColor = false;
+            this.btnSeleccion.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.btnSeleccion.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSeleccion.ForeColor = System.Drawing.Color.Black;
+            this.btnSeleccion.Location = new System.Drawing.Point(16, 10);
+            this.btnSeleccion.Margin = new System.Windows.Forms.Padding(5);
+            this.btnSeleccion.Name = "btnSeleccion";
+            this.btnSeleccion.Size = new System.Drawing.Size(100, 48);
+            this.btnSeleccion.TabIndex = 2;
+            this.btnSeleccion.Text = "Seleccionar certificado";
+            this.btnSeleccion.UseVisualStyleBackColor = false;
+            this.btnSeleccion.Click += new System.EventHandler(this.btnSeleccion_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)), true);
+            this.label3.Location = new System.Drawing.Point(163, 11);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(165, 15);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "(doble clic para seleccionar)";
             // 
             // frmSeleccion
             // 
@@ -209,9 +222,10 @@
         private System.Windows.Forms.Panel panelBotones;
         private System.Windows.Forms.DataGridView dgvCertificados;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnSeleccion;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.TextBox txtBusqueda;
+        private System.Windows.Forms.Label label3;
     }
 }

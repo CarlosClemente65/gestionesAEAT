@@ -33,6 +33,7 @@ namespace gestionesAEAT
             string[] argumentos = Environment.GetCommandLineArgs(); //Almacena en un array los argumentos introducidos.
             Utiles utilidad = new Utiles();
             gestionCertificados proceso = gestionCertificados.ObtenerInstancia();
+            certificadoInfo certificadoInfo = new certificadoInfo();
 
             if (argumentos.Length >= 6) //Tiene que haber por lo menos 5 argumentos (clave, tipo, entrada, salida y certificado)
             {
@@ -50,11 +51,13 @@ namespace gestionesAEAT
                         //Cargar el formulario de seleccion de certificados.
                         frmSeleccion frmSeleccion = new frmSeleccion();
                         frmSeleccion.ShowDialog();
+                        serieCertificado = frmSeleccion.certificadoSeleccionado.serieCertificado;
                     }
                     else if (argumentos.Length > 7) //Se pasa el fichero del certificado y el pass
                     {
                         ficheroCertificado = argumentos[6];
                         passwordCertificado = argumentos[7];
+                        //Falta por obtener el nº de serie del certificado para usarlo en el envio
                     }
                     else //Se pasa el numero de serie del certificado
                     {
@@ -110,8 +113,9 @@ namespace gestionesAEAT
                 case "4":
                     //Ratificacion de domicilio
                     ratificarDomicilio ratifica = new ratificarDomicilio();
-                    serieCertificado = "726e0db7a17efa04603b7f010ba43fa6".ToUpper();//Certificado de prueba mio
-                    ratifica.envioPeticion(serieCertificado, ficheroEntrada, ficheroSalida);
+                    //serieCertificado = "726e0db7a17efa04603b7f010ba43fa6".ToUpper();//Certificado de prueba mio
+                    ratifica.envioPeticion(serieCertificado, ficheroEntrada, ficheroSalida, 1);
+                    ratifica.envioPeticion(serieCertificado, ficheroEntrada, ficheroSalida, 2);
                     break;
 
             }
