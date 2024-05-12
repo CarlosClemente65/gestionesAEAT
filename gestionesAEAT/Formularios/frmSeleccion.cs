@@ -9,14 +9,18 @@ namespace gestionesAEAT.Formularios
     {
         private int columnaOrdenada = -1;
         private ListSortDirection ordenColumna = ListSortDirection.Ascending;
-        public certificadoInfo certificadoSeleccionado {  get; set; }
+        private gestionCertificados instanciaCertificado;
+        public certificadoInfo certificadoSeleccionado { get; set; }
+        //gestionCertificados proceso = gestionCertificados.ObtenerInstancia();
+        private List<certificadoInfo> certificados;
 
-        public frmSeleccion()
+
+        public frmSeleccion(gestionCertificados instanciaCertificado)
         {
             InitializeComponent();
-            gestionCertificados proceso = gestionCertificados.ObtenerInstancia();
+            this.instanciaCertificado = instanciaCertificado;
             certificadoSeleccionado = new certificadoInfo();
-            List<certificadoInfo> certificados = proceso.listaCertificados();
+            certificados = instanciaCertificado.listaCertificados();
             rellenarDGV(certificados);
             this.Load += frmSeleccion_Load;
 
@@ -65,8 +69,8 @@ namespace gestionesAEAT.Formularios
                 }
 
                 // Ordenar la lista
-                gestionCertificados proceso = gestionCertificados.ObtenerInstancia();
-                certificados = proceso.ordenarCertificados(certificados, nombreColumna, direccionOrdenacion == ListSortDirection.Ascending);
+                //gestionCertificados proceso = gestionCertificados.ObtenerInstancia();
+                certificados = instanciaCertificado.ordenarCertificados(certificados, nombreColumna, direccionOrdenacion == ListSortDirection.Ascending);
 
                 // Actualizar el DataGridView con la lista ordenada
                 rellenarDGV(certificados);
@@ -83,11 +87,11 @@ namespace gestionesAEAT.Formularios
 
         private void txtBusqueda_TextChanged(object sender, EventArgs e)
         {
-            gestionCertificados proceso = gestionCertificados.ObtenerInstancia();
-            List<certificadoInfo> certificados = proceso.listaCertificados();
+            //gestionCertificados proceso = gestionCertificados.ObtenerInstancia();
+            List<certificadoInfo> certificados = instanciaCertificado.listaCertificados();
             if (certificados != null)
             {
-                certificados = proceso.filtrarCertificados(txtBusqueda.Text);
+                certificados = instanciaCertificado.filtrarCertificados(txtBusqueda.Text);
                 rellenarDGV(certificados);
             }
         }

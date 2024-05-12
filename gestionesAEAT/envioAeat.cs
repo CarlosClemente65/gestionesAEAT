@@ -19,10 +19,10 @@ namespace gestionesAEAT
         Utiles utilidad = new Utiles();
 
 
-        public (string, string) envioPost(string url, string datosEnvio, string serieCertificado)
+        public (string, string) envioPost(string url, string datosEnvio, string serieCertificado, gestionCertificados instanciaCertificados)
         {
-            gestionCertificados gestionCertificado = gestionCertificados.ObtenerInstancia();
-            certificado = gestionCertificado.buscarSerieCertificado(serieCertificado);
+            //gestionCertificados gestionCertificado = gestionCertificados.ObtenerInstancia();
+            certificado = instanciaCertificados.buscarSerieCertificado(serieCertificado);
 
             if (certificado != null)
             {

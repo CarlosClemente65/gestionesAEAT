@@ -33,7 +33,7 @@ namespace gestionesAEAT.Metodos
         Utiles utilidad = new Utiles(); //Instanciacion de las utilidades para poder usarlas
         envioAeat envio = new envioAeat();
 
-        public void envioPeticion(string serieCertificado, string entrada, string salida, int paso)
+        public void envioPeticion(string serieCertificado, string entrada, string salida, int paso, gestionCertificados instanciaCertificado)
         {
             this.ficheroEntrada = entrada; //Se pasa como parametro el fichero de entrada
             this.ficheroSalida = salida; //Se pasa como parametro el fichero de salida
@@ -53,7 +53,7 @@ namespace gestionesAEAT.Metodos
                 if (paso == 1) cargaDatos();
                 datosEnvio = formateoCabecera(paso); //Genera los datos a enviar (paso1 para el titular y paso 2 para el conyuge)
 
-                (estadoRespuesta, respuestaAEAT) = envio.envioPost(url, datosEnvio, serieCertificado);
+                (estadoRespuesta, respuestaAEAT) = envio.envioPost(url, datosEnvio, serieCertificado, instanciaCertificado);
 
                 if (estadoRespuesta == "OK")
                 {

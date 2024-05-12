@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace gestionesAEAT
 {
@@ -25,22 +19,10 @@ namespace gestionesAEAT
     {
         private List<X509Certificate2> certificados;
         private List<certificadoInfo> certificadosInfo = new List<certificadoInfo>();
-        private static gestionCertificados instancia;
 
-        private gestionCertificados()
+        public gestionCertificados()
         {
             certificados = new List<X509Certificate2>();
-            cargarCertificados();
-        }
-
-        // Método estático para obtener la instancia única de la clase
-        public static gestionCertificados ObtenerInstancia()
-        {
-            if (instancia == null)
-            {
-                instancia = new gestionCertificados();
-            }
-            return instancia;
         }
 
         public void cargarCertificados()
@@ -55,7 +37,7 @@ namespace gestionesAEAT
             store.Close();
 
             // Graba las propiedades de los certificados en la clase certificadosInfo
-            foreach (X509Certificate2 cert in this.certificados)
+            foreach (X509Certificate2 cert in certificados)
             {
                 if (cert.Subject.Contains("SERIALNUMBER")) //Deben tener esto para que sean de persona fisica o juridica
                 {
@@ -77,6 +59,7 @@ namespace gestionesAEAT
         public X509Certificate2 buscarSerieCertificado(string serieCertificado)
         {
             //Devuelve el certificado que tiene la serie pasada
+
             return certificados.Find(cert => cert.SerialNumber == serieCertificado);
         }
 
@@ -172,7 +155,7 @@ namespace gestionesAEAT
         public List<certificadoInfo> filtrarCertificados(string filtro)
         {
             //Devuelve la lista de certificados filtrada por el filtro pasado
-            List<certificadoInfo> certificados = this.certificadosInfo;
+            List<certificadoInfo> certificados = certificadosInfo;
             if (!string.IsNullOrEmpty(filtro))
             {
                 filtro = filtro.ToUpper();
@@ -251,15 +234,40 @@ namespace gestionesAEAT
                         break;
                 }
 
-                info.nifCertificado = nifCertificado;
-                if (juridica)
+                if (string.IsNullOrEmpty(info.nifCertificado)) info.nifCertificado = nifCertificado;
+                if (string.IsNullOrEmpty(info.titularCertificado) || string.IsNullOrEmpty(info.nombreRepresentante))
                 {
-                    info.titularCertificado = nombrePJ;
-                    info.nombreRepresentante = apellidoRepresentante + " " + nombreRepresentante;
+                    if (juridica)
+                    {
+                        info.titularCertificado = nombrePJ;
+                        info.nombreRepresentante = apellidoRepresentante + " " + nombreRepresentante;
+                    }
+                    else
+                    {
+                        info.titularCertificado = apellidoPF + " " + nombrePF;
+                    }
                 }
-                else
+            }
+        }
+
+        public void leerCertificado(string fichero, string password)
+        {
+            X509Certificate2 certificado = new X509Certificate2(fichero, password);
+            certificados.Add(certificado);
+            // Graba las propiedades de los certificados en la clase certificadosInfo
+            foreach (X509Certificate2 cert in certificados)
+            {
+                if (cert.Subject.Contains("SERIALNUMBER")) //Deben tener esto para que sean de persona fisica o juridica
                 {
-                    info.titularCertificado = apellidoPF + " " + nombrePF;
+                    //En el Subject estan todos los datos del certificado
+                    string datosSubject = cert.Subject;
+                    certificadoInfo info = new certificadoInfo
+                    {
+                        serieCertificado = cert.SerialNumber,
+                        fechaCertificado = cert.NotAfter
+                    };
+                    obtenerDatosSubject(datosSubject, info);
+                    certificadosInfo.Add(info);
                 }
             }
         }
