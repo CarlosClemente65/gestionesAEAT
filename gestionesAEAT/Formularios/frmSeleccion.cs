@@ -34,14 +34,21 @@ namespace gestionesAEAT.Formularios
             dgvCertificados.Columns["nifCertificado"].HeaderText = "NIF titular";
             dgvCertificados.Columns["nifCertificado"].Width = 90;
             dgvCertificados.Columns["nifCertificado"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvCertificados.Columns["nifCertificado"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dgvCertificados.Columns["titularCertificado"].HeaderText = "Titular del certificado";
             dgvCertificados.Columns["titularCertificado"].Width = 250;
-            dgvCertificados.Columns["fechaCertificado"].HeaderText = "Fecha validez";
-            dgvCertificados.Columns["fechaCertificado"].Width = 120;
-            dgvCertificados.Columns["fechaCertificado"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvCertificados.Columns["fechaEmision"].HeaderText = "Valido desde";
+            dgvCertificados.Columns["fechaEmision"].Width = 90;
+            dgvCertificados.Columns["fechaEmision"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvCertificados.Columns["fechaEmision"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvCertificados.Columns["fechaValidez"].HeaderText = "Valido hasta";
+            dgvCertificados.Columns["fechaValidez"].Width = 90;
+            dgvCertificados.Columns["fechaValidez"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvCertificados.Columns["fechaValidez"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dgvCertificados.Columns["nifRepresentante"].HeaderText = "NIF representante";
             dgvCertificados.Columns["nifRepresentante"].Width = 100;
             dgvCertificados.Columns["nifRepresentante"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvCertificados.Columns["nifRepresentante"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dgvCertificados.Columns["nombreRepresentante"].HeaderText = "Nombre representante";
             dgvCertificados.Columns["nombreRepresentante"].Width = 250;
             dgvCertificados.Columns["serieCertificado"].HeaderText = "Nº serie certificado";
@@ -119,6 +126,11 @@ namespace gestionesAEAT.Formularios
         private void dgvCertificados_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             btnSeleccion.PerformClick();
+        }
+
+        private void btnBorrar_Click(object sender, EventArgs e)
+        {
+            txtBusqueda.Text = string.Empty;
         }
     }
 }

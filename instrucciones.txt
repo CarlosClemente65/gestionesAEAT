@@ -3,6 +3,7 @@
 	opcion 2: gestionAEAT dsclave tipo entrada salida SI
     opcion 3: gestionAEAT dsclave tipo entrada salida SI numeroserie
     opcion 4: gestionAEAT dsclave tipo entrada salida SI certificado password
+	opcion 5: gestionAEAT dsclave tipo salida
 
 - argumentos:
     * dsclave: unicamente sirve como medida de seguridad de ejecucion y debe pasarse siempre ds123456
@@ -19,18 +20,17 @@ Notas:
     1.- Historicamente se ha usado el campo "dsclave" para indicar si se procesa desde el almacen de certificados del equipo (ds123456), 
 		se le pasa un fichero con el certificado (ds123457), o si se trata de una validacion de un modelo (ds123458), pero el campo "tipo" 
 		no veo que tenga uso por lo que lo utilizo para ese cometido del siguiente modo: 
-            1 = envio modelo
-            2 = validacion de modelo (no necesita certificado por lo que el tipo debe ser 1)
-			1 = ratificacion domicilio renta
+            1 = envio modelos
+			2 = obtener relacion de certificados y sus datos.
+            3 = validacion de modelos (no necesita certificado)
+			4 = ratificacion domicilio renta
 	2.- La opcion 1 se utilizara para procesos que no necesiten certificado, como la validacion de un modelo.
 	3.- La opcion 2 sirve para mostrar el formulario de seleccion del certificado, ya que hace falta (lleva un SI) pero no se pasa ninguno
-	4.- La opcion 3 la dejo por compatibilidad con el sistema anterior en el que se mostraba un formulario para seleccionar un certificado
-		y se devolvia el numero de serie, que luego se usa en la presentacion. Con el nuevo sistema esto no seria necesario, ya que si viene
+	4.- La opcion 3 la dejo por compatibilidad con el sistema anterior en el que estaba grabado el nº de serie del certificado y se pasaba
+		como parametro para lanzar la presentacion del modelo. Con el nuevo sistema esto no seria necesario, ya que si viene
 		la opcion SI y no se pasa ningun parametro mas, se pedira la seleccion de un certificado del almacen de windows.
 	5.- La opcion 4 se utilizara basicamente con certbase (se pasan el certiicado y pass)
+	6.- La opcion 5 se utilizara unicamente para obtener un json con la relacion de certificados y sus datos
 
 */
-
-Temas pendientes de ir haciendo (to-do):
-	* Controlar con el tipo si se pasa el certificado
 	

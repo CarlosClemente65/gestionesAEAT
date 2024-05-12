@@ -32,42 +32,66 @@ namespace gestionesAEAT
 
             string[] argumentos = Environment.GetCommandLineArgs(); //Almacena en un array los argumentos introducidos.
 
-            //Control para que si la clave no es correcta no se ejecute el programa
-            dsclave = argumentos[1];
-            if (dsclave != "ds123456") Environment.Exit(0);
-
-            if (argumentos.Length >= 6) //Tiene que haber por lo menos 5 argumentos (clave, tipo, entrada, salida y certificado)
+            if (argumentos.Length >= 4)
             {
+                //Control para que si la clave no es correcta no se ejecute el programa
+                dsclave = argumentos[1];
+                if (dsclave != "ds123456") Environment.Exit(0);
                 tipo = argumentos[2];
-                ficheroEntrada = argumentos[3];
-                ficheroSalida = argumentos[4];
-                if (argumentos[5] == "SI") conCertificado = true;
-                if (conCertificado)
+                if (argumentos.Length == 4)
                 {
-                    if (argumentos.Length == 6)
+                    if (tipo != "2")
                     {
-                        //No se ha pasado ni el numero de serie ni el fichero, por lo que hay que cargar el formulario de seleccion de certificados.
-                        serieCertificado = seleccionCertificados();
+                        log += "Parametros incorrectos. Con 4 parametros el tipo debe ser 2.";
+                        salirAplicacion();
                     }
-                    else if (argumentos.Length > 7)
+                    ficheroSalida = argumentos[3];
+                }
+                else
+                {
+                    if (argumentos.Length >= 6) //Tiene que haber por lo menos 5 argumentos (clave, tipo, entrada, salida y certificado)
                     {
-                        //Se pasa el fichero del certificado y el pass
-                        ficheroCertificado = argumentos[6];
-                        if (!File.Exists(ficheroCertificado))
+                        ficheroEntrada = argumentos[3];
+                        if (!File.Exists(ficheroEntrada))
                         {
-                            log += $"El fichero del certificado {ficheroCertificado} no existe";
+                            log += $"El fichero de entrada {ficheroEntrada} no existe";
                             salirAplicacion();
                         }
-                        passwordCertificado = argumentos[7];
-                        instanciaCertificado.leerCertificado(ficheroCertificado, passwordCertificado);
-                        var certificadosInfo = instanciaCertificado.listaCertificados();
-                        serieCertificado = certificadosInfo.LastOrDefault()?.serieCertificado;
-                    }
-                    else //Se pasa el numero de serie del certificado
-                    {
-                        serieCertificado = argumentos[6].ToUpper();
+                        ficheroSalida = argumentos[4];
+                        if (argumentos[5].ToUpper() == "SI") conCertificado = true;
+                        if (conCertificado)
+                        {
+                            if (argumentos.Length == 6)
+                            {
+                                //No se ha pasado ni el numero de serie ni el fichero, por lo que hay que cargar el formulario de seleccion de certificados.
+                                serieCertificado = seleccionCertificados();
+                            }
+                            else if (argumentos.Length > 7)
+                            {
+                                //Se pasa el fichero del certificado y el pass
+                                ficheroCertificado = argumentos[6];
+                                if (!File.Exists(ficheroCertificado))
+                                {
+                                    log += $"El fichero del certificado {ficheroCertificado} no existe";
+                                    salirAplicacion();
+                                }
+                                passwordCertificado = argumentos[7];
+                                instanciaCertificado.leerCertificado(ficheroCertificado, passwordCertificado);
+                                var certificadosInfo = instanciaCertificado.listaCertificados();
+                                serieCertificado = certificadosInfo.LastOrDefault()?.serieCertificado;
+                            }
+                            else //Se pasa el numero de serie del certificado
+                            {
+                                serieCertificado = argumentos[6].ToUpper();
+                            }
+                        }
                     }
                 }
+            }
+            else
+            {
+                log += "Numero de parametros incorrectos";
+                salirAplicacion();
             }
 
             //Procesado de los datos segun el tipo pasado como argumento
@@ -94,7 +118,6 @@ namespace gestionesAEAT
                         {
                             //Desarrollar la parte del envio del modelo, en el que habra que pasar el guion y el certificado (ver como se ha hecho en ratificarDomicilio)
                         }
-
                     }
                     else
                     {
@@ -104,7 +127,8 @@ namespace gestionesAEAT
                     break;
 
                 case "2":
-                    //No desarrollado
+                    //Obtener datos certificados instalados
+                    instanciaCertificado.exportarDatosCertificados(ficheroSalida);
                     break;
 
                 case "3":
@@ -117,6 +141,14 @@ namespace gestionesAEAT
                     //serieCertificado = "726e0db7a17efa04603b7f010ba43fa6".ToUpper();//Certificado de prueba mio
                     ratifica.envioPeticion(serieCertificado, ficheroEntrada, ficheroSalida, 1, instanciaCertificado);
                     ratifica.envioPeticion(serieCertificado, ficheroEntrada, ficheroSalida, 2, instanciaCertificado);
+                    break;
+
+                case "5":
+                    //Consulta de modelos presentados. Hay que formar el html y mandarlo como POST y la respuesta sera un XML con la relacion de modelos presentados con sus metadatos. Crear un metodo para montar la peticion, con la respuesta pasarla al metodo 'descargaModelos.obtenerModelos' que devolvera un string que es el que hay que grabar en un fichero.
+                    descargaModelos proceso = new descargaModelos();
+                    
+                    proceso.obtenerModelos(ficheroEntrada, ficheroSalida, serieCertificado, instanciaCertificado);
+                    
                     break;
             }
         }

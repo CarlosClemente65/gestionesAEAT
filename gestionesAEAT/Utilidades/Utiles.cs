@@ -78,5 +78,23 @@ namespace gestionesAEAT
         {
             if (File.Exists(fichero)) File.Delete(fichero);
         }
+
+        public string procesarGuionJson(string guion)
+        {
+            string textoJson = string.Empty;
+            //Desarrollar este metodo para montar el texto que debe pasarse a Hacienda en formato JSON
+
+            return textoJson;
+        }
+
+        public string procesarGuionHtml(string guion)
+        {
+            string textoHtml = string.Empty;
+            //Desarrollar este metodo para montar el texto que debe pasarse a Hacienda en formato Html
+
+            return textoHtml;
+        }
+
+
     }
 }

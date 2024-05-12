@@ -32,14 +32,15 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSeleccion));
             this.panelCertificados = new System.Windows.Forms.Panel();
+            this.label3 = new System.Windows.Forms.Label();
             this.dgvCertificados = new System.Windows.Forms.DataGridView();
             this.label1 = new System.Windows.Forms.Label();
             this.panelBotones = new System.Windows.Forms.Panel();
+            this.btnBorrar = new System.Windows.Forms.Button();
             this.txtBusqueda = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.btnSeleccion = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
             this.panelCertificados.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCertificados)).BeginInit();
             this.panelBotones.SuspendLayout();
@@ -58,19 +59,29 @@
             this.panelCertificados.Location = new System.Drawing.Point(0, 0);
             this.panelCertificados.Margin = new System.Windows.Forms.Padding(0);
             this.panelCertificados.Name = "panelCertificados";
-            this.panelCertificados.Size = new System.Drawing.Size(757, 294);
+            this.panelCertificados.Size = new System.Drawing.Size(897, 344);
             this.panelCertificados.TabIndex = 0;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)), true);
+            this.label3.Location = new System.Drawing.Point(163, 11);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(165, 15);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "(doble clic para seleccionar)";
             // 
             // dgvCertificados
             // 
             this.dgvCertificados.AllowUserToAddRows = false;
             this.dgvCertificados.AllowUserToDeleteRows = false;
             this.dgvCertificados.AllowUserToOrderColumns = true;
+            this.dgvCertificados.AllowUserToResizeColumns = false;
             this.dgvCertificados.AllowUserToResizeRows = false;
             this.dgvCertificados.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dgvCertificados.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dgvCertificados.BackgroundColor = System.Drawing.Color.White;
             this.dgvCertificados.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dgvCertificados.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
@@ -99,7 +110,7 @@
             this.dgvCertificados.ReadOnly = true;
             this.dgvCertificados.RowHeadersVisible = false;
             this.dgvCertificados.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvCertificados.Size = new System.Drawing.Size(754, 259);
+            this.dgvCertificados.Size = new System.Drawing.Size(894, 309);
             this.dgvCertificados.StandardTab = true;
             this.dgvCertificados.TabIndex = 4;
             this.dgvCertificados.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCertificados_CellDoubleClick);
@@ -120,16 +131,34 @@
             this.panelBotones.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelBotones.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(235)))), ((int)(((byte)(250)))));
+            this.panelBotones.Controls.Add(this.btnBorrar);
             this.panelBotones.Controls.Add(this.txtBusqueda);
             this.panelBotones.Controls.Add(this.label2);
             this.panelBotones.Controls.Add(this.button2);
             this.panelBotones.Controls.Add(this.btnSeleccion);
-            this.panelBotones.Location = new System.Drawing.Point(0, 289);
+            this.panelBotones.Location = new System.Drawing.Point(0, 339);
             this.panelBotones.Margin = new System.Windows.Forms.Padding(0);
             this.panelBotones.Name = "panelBotones";
             this.panelBotones.Padding = new System.Windows.Forms.Padding(5);
-            this.panelBotones.Size = new System.Drawing.Size(754, 72);
+            this.panelBotones.Size = new System.Drawing.Size(894, 72);
             this.panelBotones.TabIndex = 1;
+            // 
+            // btnBorrar
+            // 
+            this.btnBorrar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBorrar.BackColor = System.Drawing.Color.White;
+            this.btnBorrar.BackgroundImage = global::gestionesAEAT.Properties.Resources.cancelar;
+            this.btnBorrar.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnBorrar.FlatAppearance.BorderColor = System.Drawing.Color.White;
+            this.btnBorrar.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ControlLight;
+            this.btnBorrar.FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.Control;
+            this.btnBorrar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnBorrar.Location = new System.Drawing.Point(747, 34);
+            this.btnBorrar.Name = "btnBorrar";
+            this.btnBorrar.Size = new System.Drawing.Size(22, 22);
+            this.btnBorrar.TabIndex = 4;
+            this.btnBorrar.UseVisualStyleBackColor = false;
+            this.btnBorrar.Click += new System.EventHandler(this.btnBorrar_Click);
             // 
             // txtBusqueda
             // 
@@ -137,7 +166,7 @@
             this.txtBusqueda.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtBusqueda.Location = new System.Drawing.Point(124, 32);
             this.txtBusqueda.Name = "txtBusqueda";
-            this.txtBusqueda.Size = new System.Drawing.Size(508, 26);
+            this.txtBusqueda.Size = new System.Drawing.Size(648, 26);
             this.txtBusqueda.TabIndex = 0;
             this.txtBusqueda.TextChanged += new System.EventHandler(this.txtBusqueda_TextChanged);
             // 
@@ -158,7 +187,7 @@
             this.button2.BackColor = System.Drawing.SystemColors.ButtonFace;
             this.button2.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button2.ForeColor = System.Drawing.Color.Black;
-            this.button2.Location = new System.Drawing.Point(640, 10);
+            this.button2.Location = new System.Drawing.Point(780, 10);
             this.button2.Margin = new System.Windows.Forms.Padding(5);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(100, 48);
@@ -183,22 +212,12 @@
             this.btnSeleccion.UseVisualStyleBackColor = false;
             this.btnSeleccion.Click += new System.EventHandler(this.btnSeleccion_Click);
             // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)), true);
-            this.label3.Location = new System.Drawing.Point(163, 11);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(165, 15);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "(doble clic para seleccionar)";
-            // 
             // frmSeleccion
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.LightBlue;
-            this.ClientSize = new System.Drawing.Size(754, 361);
+            this.ClientSize = new System.Drawing.Size(894, 411);
             this.Controls.Add(this.panelBotones);
             this.Controls.Add(this.panelCertificados);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -227,5 +246,6 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.TextBox txtBusqueda;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button btnBorrar;
     }
 }
