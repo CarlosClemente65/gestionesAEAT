@@ -17,6 +17,9 @@ namespace gestionesAEAT.Metodos
     {
         [XmlElement("respuestaCorrecta")]
         public List<RespuestaCorrecta> Respuestas { get; set; }
+
+        [XmlElement("error")]
+        public List<RespuestaError> Errores { get; set; }
     }
 
     public class RespuestaCorrecta
@@ -29,6 +32,12 @@ namespace gestionesAEAT.Metodos
         public string expediente { get; set; }
         public string justificante { get; set; }
         public DateTime fechaYHoraPresentacion { get; set; }
+        public string ficheroSalida { get; set; }
+    }
+
+    public class RespuestaError
+    {
+        public string descripcionError { get; set; }
     }
 
     public class descargaModelos
@@ -36,6 +45,7 @@ namespace gestionesAEAT.Metodos
         public string estadoRespuestaAEAT { get; set; }
         public string respuestaEnvioAEAT { get; set; }
         public List<RespuestaCorrecta> respuestasCorrectas = new List<RespuestaCorrecta>();
+        public List<RespuestaError> respuestasError = new List<RespuestaError>();
         envioAeat envio = new envioAeat();
         Utiles utilidad = new Utiles();
 
@@ -51,7 +61,7 @@ namespace gestionesAEAT.Metodos
 
             //Falta implementar un metodo que formatee el guion.txt que tendra los datos a enviar, para que se adapte al formato que pide Hacienda, y luego hacer el envio por POST como formulario, almacenando la respuesta en una variable que luego se pasa al metodo que la formatea para poder grabarla despues en el main.
 
-            
+
             datosEnvio = utilidad.procesarGuionHtml(guion);
             envio.envioPost(utilidad.url, datosEnvio, serieCertificado, instanciaCertificado);
 
@@ -73,14 +83,13 @@ namespace gestionesAEAT.Metodos
             //envioAeat envio = new envioAeat();
             string url = @"https://www2.agenciatributaria.gob.es/wlpl/inwinvoc/es.aeat.dit.adu.eeca.catalogo.vis.VisualizaSc";
             string datosEnvio = string.Empty;
-            foreach(var elemento in respuestasCorrectas)
+            foreach (var elemento in respuestasCorrectas)
             {
                 datosEnvio = $"COMPLETA=SI&ORIGEN=E&NIF={elemento.nif}&CSV={elemento.csv}";
                 envio.envioPostSinCertificado(url, datosEnvio);
                 if (envio.estadoRespuestaAEAT == "OK")
                 {
-                    byte[] respuestaPDF = Encoding.UTF8.GetBytes(envio.respuestaEnvioAEAT);
-                    File.WriteAllBytes("fichero.pdf", respuestaPDF);
+                    File.WriteAllBytes(elemento.ficheroSalida, envio.respuestaEnvioAEATBytes);
                 }
 
             }
@@ -91,26 +100,41 @@ namespace gestionesAEAT.Metodos
 
             // Deserializar el XML en objetos
             RespuestaWebService servicio = DeserializeFromXml<RespuestaWebService>(datos);
-            //RespuestaWebService servicio2 = DeserializeFromXml<RespuestaWebService>(datos);
-            respuestasCorrectas.AddRange(servicio.Respuestas);
-
-            // Acceder a los valores de las respuestas correctas
             StringBuilder textoSalida = new StringBuilder();
             int elemento = 1;
-            //foreach (var respuesta in servicio.RespuestasCorrectas)
-            foreach (var respuesta in servicio.Respuestas)
 
+            if (servicio.Errores.Count > 0)
             {
-                textoSalida.AppendLine($"Resultado {elemento}");
-                textoSalida.AppendLine($"NIF: {respuesta.nif}");
-                textoSalida.AppendLine($"Modelo: {respuesta.modelo}");
-                textoSalida.AppendLine($"Ejercicio: {respuesta.ejercicio}");
-                textoSalida.AppendLine($"Periodo: {respuesta.periodo}");
-                textoSalida.AppendLine($"CSV: {respuesta.csv}");
-                textoSalida.AppendLine($"Justificante: {respuesta.justificante}");
-                textoSalida.AppendLine($"Expediente: {respuesta.expediente}");
-                textoSalida.AppendLine($"Fecha presentacion: {respuesta.fechaYHoraPresentacion}");
-                elemento++;
+                respuestasError.AddRange(servicio.Errores);
+                foreach (var respuesta in servicio.Errores)
+                {
+                    textoSalida.AppendLine($"Error {elemento}: {respuesta.descripcionError}");
+                    elemento++;
+                }
+            }
+            else
+            {
+                respuestasCorrectas.AddRange(servicio.Respuestas);
+
+                // Acceder a los valores de las respuestas correctas
+                //foreach (var respuesta in servicio.RespuestasCorrectas)
+                foreach (var respuesta in servicio.Respuestas)
+
+                {
+                    respuesta.ficheroSalida = $"{respuesta.nif}_{respuesta.modelo}_{respuesta.ejercicio}_{respuesta.periodo}_{respuesta.justificante}.pdf";
+                    textoSalida.AppendLine($"Resultado {elemento}");
+                    textoSalida.AppendLine($"NIF: {respuesta.nif}");
+                    textoSalida.AppendLine($"Modelo: {respuesta.modelo}");
+                    textoSalida.AppendLine($"Ejercicio: {respuesta.ejercicio}");
+                    textoSalida.AppendLine($"Periodo: {respuesta.periodo}");
+                    textoSalida.AppendLine($"CSV: {respuesta.csv}");
+                    textoSalida.AppendLine($"Justificante: {respuesta.justificante}");
+                    textoSalida.AppendLine($"Expediente: {respuesta.expediente}");
+                    textoSalida.AppendLine($"Fecha presentacion: {respuesta.fechaYHoraPresentacion}");
+                    textoSalida.AppendLine($"Fichero PDF: {respuesta.ficheroSalida}");
+                    textoSalida.AppendLine();
+                    elemento++;
+                }
             }
 
             return textoSalida.ToString();

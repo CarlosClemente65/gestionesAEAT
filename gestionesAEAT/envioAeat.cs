@@ -15,6 +15,7 @@ namespace gestionesAEAT
     public class envioAeat
     {
         public string respuestaEnvioAEAT { get; set; }
+        public byte[] respuestaEnvioAEATBytes { get; set; }
         public string estadoRespuestaAEAT { get; set; }
         X509Certificate2 certificado = null;
         Utiles utilidad = new Utiles();
@@ -86,7 +87,6 @@ namespace gestionesAEAT
 
             //Crear datos para la solicitud HTTP
             HttpWebRequest solicitudHttp = (HttpWebRequest)WebRequest.Create(url);
-            string contenidoRespuesta;
 
             //Configurar la solicitud
             solicitudHttp.Method = "POST";
@@ -105,17 +105,23 @@ namespace gestionesAEAT
             estadoRespuestaAEAT = respuesta.StatusDescription;
 
             //Grabar el contenido de la respuesta para devolverlo al metodo de llamada
-            using (StreamReader sr = new StreamReader(respuesta.GetResponseStream()))
+            using (MemoryStream ms = new MemoryStream())
             {
-                StringBuilder sb = new StringBuilder();
-                while (!sr.EndOfStream)
-                {
-                    sb.Append(sr.ReadLine());
-                }
-                contenidoRespuesta = sb.ToString();
+                respuesta.GetResponseStream().CopyTo(ms);
+                respuestaEnvioAEAT = Encoding.Default.GetString(ms.ToArray());
+                ms.Seek(0, SeekOrigin.Begin);
+                respuestaEnvioAEATBytes = ms.ToArray();
             }
-            //respuestaEnvioAEAT = utilidad.quitaRaros(contenidoRespuesta);
-            respuestaEnvioAEAT = contenidoRespuesta;
+
+            //StringBuilder sb = new StringBuilder();
+            //while (!sr.EndOfStream)
+            //{
+            //    sb.Append(sr.ReadLine());
+            //}
+            //contenidoRespuesta = sb.ToString();
+
+
+
         }
     }
 }
