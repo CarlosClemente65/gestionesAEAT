@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
 namespace gestionesAEAT
 {
@@ -97,44 +91,20 @@ namespace gestionesAEAT
 
         public string procesarGuionHtml(string guion)
         {
-            ArrayList textoEntrada = new ArrayList();
-            //string atributo = string.Empty;
-            //string valor = string.Empty;
+            List<string> textoEntrada = new List<string>();
             string textoAEAT = string.Empty;
-            //StringBuilder baseHtml = new StringBuilder();
-            //baseHtml.AppendLine(@"<!DOCTYPE HTML PUBLIC ""-//W3C//DTD HTML 4.01 Transitional//EN"" ""http://www.w3.org/TR/html4/loose.dtd"">");
-            //baseHtml.AppendLine("<html>");
-            //baseHtml.AppendLine("   <head>");
-            //baseHtml.AppendLine(@"		<title>Documento sin t&iacute;tulo</title>");
-            //baseHtml.AppendLine(@"		<meta http-equiv=""Content-Type"" content=""text/html; charset=iso-8859-1"">");
-            //baseHtml.AppendLine(@"	</head>");
-            //baseHtml.AppendLine(@"	<script language=""javascript"">");
-            //baseHtml.AppendLine(@"		function carga()");
-            //baseHtml.AppendLine(@"		{");
-            //baseHtml.AppendLine(@"			document.form1.submit();");
-            //baseHtml.AppendLine(@"		}");
-            //baseHtml.AppendLine(@"	</script>");
-            //baseHtml.AppendLine(@"	<body onload=""javascript:carga();"">");
-
-
 
             //Monta un array con el fichero de entrada para procesarlo
             using (StreamReader sr = new StreamReader(guion))
             {
-                string linea = string.Empty;
-                do
+                string linea;
+                while ((linea = sr.ReadLine()) != null)
                 {
-                    linea = sr.ReadLine();
-                    if (linea != null)
-                    {
-                        textoEntrada.Add(linea);
-                    }
+                    textoEntrada.Add(linea);
                 }
-                while (linea != null);
             }
 
             cargaDatosGuion(textoEntrada);
-            //baseHtml.AppendLine($@"<form method=""POST"" action=""{url}"" name=""form1"" id=""form1"">");
 
             for (int linea = 0; linea < cabecera.Count; linea++)
             {
@@ -147,32 +117,12 @@ namespace gestionesAEAT
                     textoAEAT += "&" + cabecera[linea].ToString();
                 }
             }
-            //string[] parte;
-            //try
-            //{
-            //    parte = cabecera[linea].ToString().Split('=');
-            //    atributo = parte[0].ToString().Trim();
-            //    valor = parte[1].ToString().Trim();
-            //    baseHtml.AppendLine($@"<input type=""hidden"" name=""{atributo}"" value=""{valor}"" />");
-            //}
-
-            //catch (Exception ex)
-            //{
-            //    //Falta el control de la posible excepcion
-            //}
-            //}
-
-            //baseHtml.AppendLine(@"</form>");
-            //    baseHtml.AppendLine(@"</body>");
-            //    baseHtml.AppendLine(@"</html>");
-
-            //return baseHtml.ToString();
             return textoAEAT;
         }
 
-        private void cargaDatosGuion(ArrayList textoEntrada)
+        private void cargaDatosGuion(List<string> textoEntrada)
         {
-            //Lee el fichero de entrada y monta un array con todas las lineas segun si son de la cabecera, body o respuesta
+            //Lee el fichero de entrada y monta una lista con todas las lineas segun si son de la cabecera, body o respuesta
             string cadena;
             int bloque = 0; //Controla el tipo de dato a grabar en el fichero
 

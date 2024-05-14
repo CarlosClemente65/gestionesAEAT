@@ -51,8 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="envioAeat.cs" />
-    <Compile Include="descargaXmlModelos.cs" />
+    <Compile Include="Metodos\envioAeat.cs" />
     <Compile Include="Formularios\frmSeleccion.cs">
       <SubType>Form</SubType>
     </Compile>

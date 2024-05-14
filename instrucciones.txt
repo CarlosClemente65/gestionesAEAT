@@ -24,6 +24,7 @@ Notas:
 			2 = obtener relacion de certificados y sus datos.
             3 = validacion de modelos (no necesita certificado)
 			4 = ratificacion domicilio renta
+			5 = consulta de modelos presentados
 	2.- La opcion 1 se utilizara para procesos que no necesiten certificado, como la validacion de un modelo.
 	3.- La opcion 2 sirve para mostrar el formulario de seleccion del certificado, ya que hace falta (lleva un SI) pero no se pasa ninguno
 	4.- La opcion 3 la dejo por compatibilidad con el sistema anterior en el que estaba grabado el nº de serie del certificado y se pasaba

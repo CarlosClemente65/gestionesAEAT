@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 
@@ -22,11 +23,12 @@ namespace gestionesAEAT
 
     public class gestionCertificados
     {
-        private List<X509Certificate2> certificados;
-        private List<certificadoInfo> certificadosInfo = new List<certificadoInfo>();
+        private List<X509Certificate2> certificados; //Lista que contiene los certificados
+        private List<certificadoInfo> certificadosInfo = new List<certificadoInfo>(); //Lista que contiene las propiedades de los certificados
 
         public gestionCertificados()
         {
+            //Al instanciar esta clase, se crea una nueva lista de certificados y se cargan los que estan instalados en la maquina.
             certificados = new List<X509Certificate2>();
             cargarCertificados();
         }
@@ -70,7 +72,6 @@ namespace gestionesAEAT
         public X509Certificate2 buscarSerieCertificado(string serieCertificado)
         {
             //Devuelve el certificado que tiene la serie pasada
-
             return certificados.Find(cert => cert.SerialNumber == serieCertificado);
         }
 
@@ -210,7 +211,6 @@ namespace gestionesAEAT
                     valor = elementos[1];
                 }
 
-
                 switch (elemento)
                 {
                     case "G": //Nombre del titular del certificado o del representante si es juridica
@@ -273,6 +273,7 @@ namespace gestionesAEAT
 
         public void leerCertificado(string fichero, string password)
         {
+            //Permite leer los datos de un certificado que se pase como fichero
             X509Certificate2 certificado = new X509Certificate2(fichero, password);
             certificados.Add(certificado);
             // Graba las propiedades de los certificados en la clase certificadosInfo
@@ -295,7 +296,7 @@ namespace gestionesAEAT
 
         public void exportarDatosCertificados(string ruta)
         {
-
+            //Permite grabar un fichero con los datos de los certificados
             try
             {
                 // Serializar la lista de ficheros a JSON
@@ -310,13 +311,21 @@ namespace gestionesAEAT
                 MessageBox.Show("No se ha podido actualizar el fichero de configuracion", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
             }
-            //string datosCertificados = string.Empty;
+
+            ////Graba en un fichero los datos de los certificados (lo dejo por si el procesado es mas como asi)
+            //StringBuilder sb = new StringBuilder();
             //foreach (certificadoInfo info in certificadosInfo)
             //{
             //    int numero = 1;
-            //    datosCertificados += $"Certificado nº {numero}\n";
-            //    datosCertificados += $"Titular certificado: {info.titularCertificado}\n";
-
+            //    sb.AppendLine($"Certificado nº {numero}");
+            //    sb.AppendLine($"Titular certificado: {info.titularCertificado}");
+            //    sb.AppendLine($"NIF certificado: {info.nifCertificado}");
+            //    sb.AppendLine($"Fecha emision: {info.fechaEmision}");
+            //    sb.AppendLine($"Fecha validez: {info.fechaValidez}");
+            //    sb.AppendLine($"NIF representante: {info.nifRepresentante}");
+            //    sb.AppendLine($"Nombre representante: {info.nombreRepresentante}");
+            //    sb.AppendLine($"Serie certificado: {info.serieCertificado}");
+            //    File.WriteAllText (ruta, sb.ToString());
             //}
         }
     }

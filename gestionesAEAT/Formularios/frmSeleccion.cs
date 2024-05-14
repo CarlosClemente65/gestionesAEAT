@@ -11,7 +11,6 @@ namespace gestionesAEAT.Formularios
         private ListSortDirection ordenColumna = ListSortDirection.Ascending;
         private gestionCertificados instanciaCertificado;
         public certificadoInfo certificadoSeleccionado { get; set; }
-        //gestionCertificados proceso = gestionCertificados.ObtenerInstancia();
         private List<certificadoInfo> certificados;
 
 
@@ -23,7 +22,6 @@ namespace gestionesAEAT.Formularios
             certificados = instanciaCertificado.listaCertificados();
             rellenarDGV(certificados);
             this.Load += frmSeleccion_Load;
-
         }
 
         private void rellenarDGV(List<certificadoInfo> certificados)
@@ -76,7 +74,6 @@ namespace gestionesAEAT.Formularios
                 }
 
                 // Ordenar la lista
-                //gestionCertificados proceso = gestionCertificados.ObtenerInstancia();
                 certificados = instanciaCertificado.ordenarCertificados(certificados, nombreColumna, direccionOrdenacion == ListSortDirection.Ascending);
 
                 // Actualizar el DataGridView con la lista ordenada
@@ -131,6 +128,11 @@ namespace gestionesAEAT.Formularios
         private void btnBorrar_Click(object sender, EventArgs e)
         {
             txtBusqueda.Text = string.Empty;
+        }
+
+        private void dgvCertificados_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            btnSeleccion.PerformClick();
         }
     }
 }

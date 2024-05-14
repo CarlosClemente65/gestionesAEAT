@@ -113,8 +113,8 @@
             this.dgvCertificados.Size = new System.Drawing.Size(894, 309);
             this.dgvCertificados.StandardTab = true;
             this.dgvCertificados.TabIndex = 4;
-            this.dgvCertificados.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCertificados_CellDoubleClick);
             this.dgvCertificados.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvCertificados_ColumnHeaderMouseClick);
+            this.dgvCertificados.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.dgvCertificados_KeyPress);
             // 
             // label1
             // 
