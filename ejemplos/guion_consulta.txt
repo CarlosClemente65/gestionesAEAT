@@ -1,0 +1,12 @@
+[url]
+https://www1.agenciatributaria.gob.es/wlpl/SCEJ-MANT/ConsultaExt
+[cabecera]
+NIF=05165277Y
+ANR=CLEMENTE RODRIGUEZ ANA
+MOD=303
+EJERCICIO=2023
+PER=
+FED=
+FEH=
+HOD=
+HOH=

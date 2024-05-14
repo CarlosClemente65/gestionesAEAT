@@ -14,14 +14,14 @@ namespace gestionesAEAT
 {
     public class envioAeat
     {
-        string respuestaAeat = string.Empty;
+        public string respuestaEnvioAEAT { get; set; }
+        public string estadoRespuestaAEAT { get; set; }
         X509Certificate2 certificado = null;
         Utiles utilidad = new Utiles();
 
 
-        public (string, string) envioPost(string url, string datosEnvio, string serieCertificado, gestionCertificados instanciaCertificados)
+        public void envioPost(string url, string datosEnvio, string serieCertificado, gestionCertificados instanciaCertificados)
         {
-            //gestionCertificados gestionCertificado = gestionCertificados.ObtenerInstancia();
             certificado = instanciaCertificados.buscarSerieCertificado(serieCertificado);
 
             if (certificado != null)
@@ -54,10 +54,9 @@ namespace gestionesAEAT
                 requestStream.Write(datosEnvioBytes, 0, datosEnvioBytes.Length);
                 requestStream.Close();
 
-
                 HttpWebResponse respuesta = (HttpWebResponse)solicitudHttp.GetResponse();
                 //Devuelve el estado 'OK' si todo ha ido bien
-                string estado = respuesta.StatusDescription;
+                estadoRespuestaAEAT = respuesta.StatusDescription;
 
                 //Grabar el contenido de la respuesta para devolverlo al metodo de llamada
                 using (StreamReader sr = new StreamReader(respuesta.GetResponseStream()))
@@ -70,11 +69,53 @@ namespace gestionesAEAT
                     contenidoRespuesta = sb.ToString();
                 }
 
-                contenidoRespuesta = utilidad.quitaRaros(contenidoRespuesta);
-                return (estado, contenidoRespuesta);
+                respuestaEnvioAEAT = utilidad.quitaRaros(contenidoRespuesta);
             }
-            //Si no se ha cargado el certificado, se devuelve una respuesta vacia.
-            return ("KO", string.Empty);
+            else
+            {
+                //Si no se ha cargado el certificado, se devuelve una respuesta vacia.
+                respuestaEnvioAEAT = string.Empty;
+                estadoRespuestaAEAT = "KO";
+            }
+        }
+
+        public void envioPostSinCertificado(string url, string datosEnvio)
+        {
+            //Protocolo de seguridad
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+            //Crear datos para la solicitud HTTP
+            HttpWebRequest solicitudHttp = (HttpWebRequest)WebRequest.Create(url);
+            string contenidoRespuesta;
+
+            //Configurar la solicitud
+            solicitudHttp.Method = "POST";
+            solicitudHttp.ContentType = "application/x-www-form-urlencoded";
+            solicitudHttp.ContentLength = datosEnvio.Length;
+
+            //Grabacion de la respuesta a la solicitud
+            byte[] datosEnvioBytes = Encoding.UTF8.GetBytes(datosEnvio);
+            solicitudHttp.ContentLength = datosEnvioBytes.Length;
+            Stream requestStream = solicitudHttp.GetRequestStream();
+            requestStream.Write(datosEnvioBytes, 0, datosEnvioBytes.Length);
+            requestStream.Close();
+
+            HttpWebResponse respuesta = (HttpWebResponse)solicitudHttp.GetResponse();
+            //Devuelve el estado 'OK' si todo ha ido bien
+            estadoRespuestaAEAT = respuesta.StatusDescription;
+
+            //Grabar el contenido de la respuesta para devolverlo al metodo de llamada
+            using (StreamReader sr = new StreamReader(respuesta.GetResponseStream()))
+            {
+                StringBuilder sb = new StringBuilder();
+                while (!sr.EndOfStream)
+                {
+                    sb.Append(sr.ReadLine());
+                }
+                contenidoRespuesta = sb.ToString();
+            }
+            //respuestaEnvioAEAT = utilidad.quitaRaros(contenidoRespuesta);
+            respuestaEnvioAEAT = contenidoRespuesta;
         }
     }
 }

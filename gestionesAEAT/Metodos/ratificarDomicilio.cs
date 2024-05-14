@@ -51,11 +51,12 @@ namespace gestionesAEAT.Metodos
             {
                 codificacion = utilidad.codificacionFicheroEntrada(textoEntrada); //Busca la codificacion que pueda llevar el fichero de entrada o asigna utf-8
                 if (paso == 1) cargaDatos();
-                datosEnvio = formateoCabecera(paso); //Genera los datos a enviar (paso1 para el titular y paso 2 para el conyuge)
+                datosEnvio = formateoCabecera(paso); //Genera los datos a enviar (paso 1 para el titular y paso 2 para el conyuge)
 
-                (estadoRespuesta, respuestaAEAT) = envio.envioPost(url, datosEnvio, serieCertificado, instanciaCertificado);
+                envio.envioPost(url, datosEnvio, serieCertificado, instanciaCertificado);
+                respuestaAEAT = envio.respuestaEnvioAEAT;
 
-                if (estadoRespuesta == "OK")
+                if (envio.estadoRespuestaAEAT == "OK")
                 {
                     aux = formateaRespuesta();
                 }
