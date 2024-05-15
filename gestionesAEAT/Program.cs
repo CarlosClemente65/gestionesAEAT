@@ -3,7 +3,9 @@ using gestionesAEAT.Metodos;
 using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
 namespace gestionesAEAT
 {
@@ -13,6 +15,12 @@ namespace gestionesAEAT
         static Utiles utilidad = new Utiles();
         static gestionCertificados instanciaCertificado = new gestionCertificados();
         static string log = string.Empty; //Sirve para grabar un log de los posibles errores que se hayan producido en el proceso.
+
+        //Permite controlar si la aplicacion se ejecuta por consola
+        [DllImport("kernel32.dll")]
+        private static extern bool AttachConsole(int dwProcessId);
+
+        private const int ATTACH_PARENT_PROCESS = -1;
 
 
         static void Main(string[] args)
@@ -146,9 +154,9 @@ namespace gestionesAEAT
                 case "5":
                     //Consulta de modelos presentados. Hay que formar el html y mandarlo como POST y la respuesta sera un XML con la relacion de modelos presentados con sus metadatos. Crear un metodo para montar la peticion, con la respuesta pasarla al metodo 'descargaModelos.obtenerModelos' que devolvera un string que es el que hay que grabar en un fichero.
                     descargaModelos proceso = new descargaModelos();
-                    
+
                     proceso.obtenerModelos(ficheroEntrada, ficheroSalida, serieCertificado, instanciaCertificado);
-                    
+
                     break;
             }
         }
@@ -166,8 +174,51 @@ namespace gestionesAEAT
 
         private static void salirAplicacion()
         {
-            File.WriteAllText("errores.log", log);
-            Environment.Exit(0);
+            if (Environment.UserInteractive)
+            {
+                AttachConsole(ATTACH_PARENT_PROCESS);
+                mostrarAyuda();
+            }
+            //File.WriteAllText("errores.log", log);
+            //Environment.Exit(0);
+        }
+
+        public static void mostrarAyuda()
+        {
+            StringBuilder mensaje = new StringBuilder();
+            mensaje.AppendLine("");
+            mensaje.AppendLine("Uso de la aplicacion");
+            mensaje.AppendLine("\tgestionesAEAT dsclave tipo entrada salida (SI | NO) (numeroserie | certificado) password");
+            mensaje.AppendLine("Parametros:");
+            mensaje.AppendLine("\tdsclave\t\tclave de ejecucion del programa");
+            mensaje.AppendLine("\ttipo\t\t1 = Envio de modelos");
+            mensaje.AppendLine("\t    \t\t2 = Obtener datos de certificados en el equipo");
+            mensaje.AppendLine("\t    \t\t3 = Validacion de modelos (no necesita certificado)");
+            mensaje.AppendLine("\t    \t\t4 = Ratificacion domicilio renta");
+            mensaje.AppendLine("\t    \t\t5 = Consulta y descarga PDF de modelos presentados");
+            mensaje.AppendLine("\tentrada\t\tNombre del fichero con los datos a enviar (guion)");
+            mensaje.AppendLine("\tsalida\t\tNombre del fichero donde se grabara la salida");
+            mensaje.AppendLine("\t(SI | NO)\tIndica si el proceso necesita certificado o no");
+            mensaje.AppendLine("\tnumeroserie\tNumero de serie del certificado a utilizar de los que hay en el almacen de certificados");
+            mensaje.AppendLine("\tcertificado\tNombre del fichero.pfx que contiene el certificado digital");
+            mensaje.AppendLine("\t           \tSi no se pasa numero de serie se debe pasar el fichero con el certificado");
+            mensaje.AppendLine("\tpassword\tContraseña del certificado si se ha pasado en un fichero");
+            mensaje.AppendLine("");
+            mensaje.AppendLine("Notas:");
+            mensaje.AppendLine("  - Si el quinto parametro es SI y no se pasa numero de serie o certificado, se mostrara el formulario de seleccion");
+            mensaje.AppendLine("    de certificados");
+            mensaje.AppendLine("  - Con el tipo 3 (validacion de modelos) el parametro 5 debe ser un NO");
+            mensaje.AppendLine("    ejemplo:\tgestionesAEAT dsclave 3 entrada.txt salida.txt NO");
+            mensaje.AppendLine("  - Con el tipo 5, el tercer parametro siempre sera el fichero de salida (solo se pasan 3 parametros");
+            mensaje.AppendLine("    ejemplo:\tgestionesAEAT dsclave 5 fichero.txt");
+            mensaje.AppendLine("");
+            mensaje.AppendLine("Pulse una tecla para continuar");
+
+            Console.WriteLine(mensaje.ToString());
+            Console.Read();
+
+
+
         }
     }
 }
