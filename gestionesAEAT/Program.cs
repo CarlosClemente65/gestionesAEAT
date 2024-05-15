@@ -37,7 +37,6 @@ namespace gestionesAEAT
             string respuestaAeat = string.Empty;
             X509Certificate2 certificado = null; //Certificado que se utilizara para el envio
 
-
             string[] argumentos = Environment.GetCommandLineArgs(); //Almacena en un array los argumentos introducidos.
 
             if (argumentos.Length >= 4)
@@ -96,6 +95,10 @@ namespace gestionesAEAT
                     }
                 }
             }
+            else if (argumentos.Length > 1 && (argumentos[1] == "-h" || argumentos[1] == "?"))
+            {
+                salirAplicacion();
+            }
             else
             {
                 log += "Numero de parametros incorrectos";
@@ -107,7 +110,6 @@ namespace gestionesAEAT
             {
                 case "1":
                     //Envio de modelos; necesita certificado (parametro 5 = SI) por lo que debe venir el nº de serie para leerlo del almacen de certificados o con fichero y pass
-
                     if (string.IsNullOrEmpty(serieCertificado))
                     {
                         //Si no se ha grabado la serie del certificado, se vuelve a mostrar la pantalla de seleccion de certificados
@@ -174,13 +176,19 @@ namespace gestionesAEAT
 
         private static void salirAplicacion()
         {
+            //Controla si se esta ejecutando la aplicacion desde la consola para poder mostrar un mensaje de uso
             if (Environment.UserInteractive)
             {
                 AttachConsole(ATTACH_PARENT_PROCESS);
                 mostrarAyuda();
             }
-            //File.WriteAllText("errores.log", log);
-            //Environment.Exit(0);
+
+            //Si hay algun texto de error en el log, lo graba en un fichero
+            if (string.IsNullOrEmpty(log))
+            {
+                File.WriteAllText("errores.log", log);
+            }
+            Environment.Exit(0);
         }
 
         public static void mostrarAyuda()
@@ -215,10 +223,7 @@ namespace gestionesAEAT
             mensaje.AppendLine("Pulse una tecla para continuar");
 
             Console.WriteLine(mensaje.ToString());
-            Console.Read();
-
-
-
+            Console.ReadLine();
         }
     }
 }

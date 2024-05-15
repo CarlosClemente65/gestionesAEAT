@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace gestionesAEAT
 {
@@ -8,9 +10,9 @@ namespace gestionesAEAT
     {
         public string url { get; set; } //Variable que almacena la url a la que enviar los datos a la AEAT
 
-        ArrayList cabecera = new ArrayList(); //Lista con las lineas que vienen en el guion como cabecera
-        ArrayList body = new ArrayList(); //Bloque de datos identificados como body en la entrada
-        ArrayList respuesta = new ArrayList(); //Bloque de datos identificados como respuesta en la entrada
+        List<string> cabecera = new List<string>(); //Lista con las lineas que vienen en el guion como cabecera
+        List<string> body = new List<string>(); //Bloque de datos identificados como body en la entrada
+        List<string> respuesta = new List<string>(); //Bloque de datos identificados como respuesta en la entrada
 
         public string quitaRaros(string cadena)
         {
@@ -40,17 +42,27 @@ namespace gestionesAEAT
 
         }
 
-        public string codificacionFicheroEntrada(ArrayList ficheroEntrada)
+        public string codificacionFicheroEntrada(string guion)
         {
             //Permite obtener la codificacion UTF-8 o ISO8859-1 (ascii extendido 256 bits o ansi)
+            List<string>textoGuion = new List<string>();
+            using (StreamReader sr = new StreamReader(guion))
+            {
+                string linea;
+                while ((linea = sr.ReadLine()) != null)
+                {
+                    textoGuion.Add(linea);
+                }
+            }
+
             string cadena, valor;
             int bloque = 0;
 
             valor = "";
 
-            for (int x = 0; x < ficheroEntrada.Count; x++)
+            for (int x = 0; x < textoGuion.Count; x++)
             {
-                cadena = ficheroEntrada[x].ToString().Trim();
+                cadena = textoGuion[x].ToString().Trim();
                 if (cadena != "")
                 {
                     switch (cadena)
@@ -72,7 +84,7 @@ namespace gestionesAEAT
                 }
             }
 
-            if (valor == "") valor = "utf-8";
+            if (valor == "") valor = "UTF-8";
             return valor.ToUpper();
         }
 
@@ -91,18 +103,9 @@ namespace gestionesAEAT
 
         public string procesarGuionHtml(string guion)
         {
-            List<string> textoEntrada = new List<string>();
+            //Procesa el guion para pasarlo a una lista
+            List<string> textoEntrada = prepararGuion(guion);
             string textoAEAT = string.Empty;
-
-            //Monta un array con el fichero de entrada para procesarlo
-            using (StreamReader sr = new StreamReader(guion))
-            {
-                string linea;
-                while ((linea = sr.ReadLine()) != null)
-                {
-                    textoEntrada.Add(linea);
-                }
-            }
 
             cargaDatosGuion(textoEntrada);
 
@@ -120,7 +123,7 @@ namespace gestionesAEAT
             return textoAEAT;
         }
 
-        private void cargaDatosGuion(List<string> textoEntrada)
+        public void cargaDatosGuion(List<string> textoEntrada)
         {
             //Lee el fichero de entrada y monta una lista con todas las lineas segun si son de la cabecera, body o respuesta
             string cadena;
@@ -173,6 +176,23 @@ namespace gestionesAEAT
             }
         }
 
+        public List<string> prepararGuion(string ficheroEntrada)
+        {
+            //Recibe un string y devuelve una lista
+            //Obtiene la codificacion del texto para procesarlo
+            Encoding codificacion = Encoding.GetEncoding(codificacionFicheroEntrada(ficheroEntrada));
+            //Monta una lista con el fichero de entrada para procesarlo
+            List<string> textoEntrada = new List<string>();
+            using (StreamReader sr = new StreamReader(ficheroEntrada,codificacion))
+            {
+                string linea;
+                while ((linea = sr.ReadLine()) != null)
+                {
+                    textoEntrada.Add(linea);
+                }
+            }
+            return textoEntrada;
+        }
 
     }
 }

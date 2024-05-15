@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -22,7 +23,7 @@ namespace gestionesAEAT.Metodos
         string estadoRespuesta; //Devuelve OK si la respuesta es correcta
         bool valido = false; //Control si el domicilio esta ratificado
         bool nifConyuge = false; //Si hay que pasar tambien el NIF del conyuge
-        ArrayList textoEntrada = new ArrayList();
+        List<string> textoEntrada = new List<string>();
         string textoSalida = string.Empty; //Texto que se grabara en el fichero de salida
 
         string aux; //Variable auxiliar para la grabacion de la respuesta
@@ -39,15 +40,15 @@ namespace gestionesAEAT.Metodos
             //Borrar los ficheros si existen en la ruta pasada
             if (paso == 1)
             {
-                procesoTextoEntrada(); //Solo se procesa en el paso 1 ya que se almacena el contenido en una variable de clase
+                textoEntrada = utilidad.prepararGuion(ficheroEntrada); //Solo se procesa en el paso 1 ya que se almacena el contenido en una variable de clase
                 utilidad.borrarFicheros(ficheroSalida);
             }
+
             if (paso == 2) utilidad.borrarFicheros(ficheroSalidaConyuge);
 
             try
             {
-                codificacion = utilidad.codificacionFicheroEntrada(textoEntrada); //Busca la codificacion que pueda llevar el fichero de entrada o asigna utf-8
-                if (paso == 1) cargaDatos();
+                if (paso == 1) utilidad.cargaDatosGuion(textoEntrada);
                 datosEnvio = formateoCabecera(paso); //Genera los datos a enviar (paso 1 para el titular y paso 2 para el conyuge)
 
                 envio.envioPost(url, datosEnvio, serieCertificado, instanciaCertificado);
@@ -90,24 +91,6 @@ namespace gestionesAEAT.Metodos
             }
         }
 
-        private void procesoTextoEntrada()
-        {
-            //Monta un array con el fichero de entrada para procesarlo
-            using (StreamReader sr = new StreamReader(ficheroEntrada))
-            {
-                string line = string.Empty;
-                do
-                {
-                    line = sr.ReadLine();
-                    if (line != null)
-                    {
-                        textoEntrada.Add(line);
-                    }
-                }
-                while (line != null);
-            }
-        }
-
         private string formateaRespuesta()
         {
             //Ejemplo de respuesta valida
@@ -119,7 +102,6 @@ namespace gestionesAEAT.Metodos
             string cadena = string.Empty;
             for (int i = 0; i < respuesta.Count; i++)
             {
-
                 //Busca la posicion de la palabra que se pasa en el bloque 'respuesta' del fichero de entrada
                 primerCaracter = respuestaAEAT.IndexOf(respuesta[i].ToString());
                 valor = ""; //Almacena el resultado de respuesta recibida
@@ -181,7 +163,6 @@ namespace gestionesAEAT.Metodos
 
         private void cargaCabecera(object cadena)
         {
-
             string[] parte;
             try
             {
@@ -193,60 +174,6 @@ namespace gestionesAEAT.Metodos
             catch (Exception ex)
             {
                 //Falta el control de la posible excepcion
-            }
-
-        }
-
-        private void cargaDatos()
-        {
-            //Lee el fichero de entrada y monta un array con todas las lineas segun si son de la cabecera, body o respuesta
-            string cadena;
-            int bloque = 0; //Controla el tipo de dato a grabar en el fichero
-
-            for (int x = 0; x < textoEntrada.Count; x++)
-            {
-                cadena = textoEntrada[x].ToString().Trim();
-                if (cadena != "")
-                {
-                    //Control para saber que parte del fichero se va a procesar
-                    switch (cadena)
-                    {
-                        case "[url]":
-                            bloque = 1;
-                            continue;
-
-                        case "[cabecera]":
-                            bloque = 2;
-                            continue;
-
-                        case "[body]":
-                            bloque = 3;
-                            continue;
-
-                        case "[respuesta]":
-                            bloque = 4;
-                            continue;
-                    }
-                    switch (bloque)
-                    {
-                        //Las lineas que van despues de cada parte se asignan a cada una de ellas
-                        case 1:
-                            url = cadena;
-                            break;
-
-                        case 2:
-                            cabecera.Add(cadena);
-                            break;
-
-                        case 3:
-                            body.Add(cadena);
-                            break;
-
-                        case 4:
-                            respuesta.Add(cadena);
-                            break;
-                    }
-                }
             }
         }
     }

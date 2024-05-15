@@ -64,17 +64,6 @@ namespace gestionesAEAT
                         respuestaEnvioAEATBytes = ms.ToArray();
                     }
 
-                    ////Grabar el contenido de la respuesta para devolverlo al metodo de llamada
-                    //using (StreamReader sr = new StreamReader(respuesta.GetResponseStream()))
-                    //{
-                    //    StringBuilder sb = new StringBuilder();
-                    //    while (!sr.EndOfStream)
-                    //    {
-                    //        sb.Append(sr.ReadLine());
-                    //    }
-                    //    contenidoRespuesta = sb.ToString();
-                    //}
-
                     respuestaEnvioAEAT = utilidad.quitaRaros(contenidoRespuesta); //Solo se quitan los caracteres raros en el string, ya que en byte no procede
                 }
                 else
@@ -94,7 +83,7 @@ namespace gestionesAEAT
 
         public void envioPostSinCertificado(string url, string datosEnvio)
         {
-            //Mismo metodo que el anterior pero cuando no se necesita certificado
+            //Mismo metodo que el anterior pero cuando no se necesita certificado (ver si se puede unificar)
             try
             {
                 //Protocolo de seguridad
