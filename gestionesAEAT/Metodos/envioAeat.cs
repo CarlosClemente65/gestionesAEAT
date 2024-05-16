@@ -81,7 +81,7 @@ namespace gestionesAEAT
             }
         }
 
-        public void envioPostSinCertificado(string url, string datosEnvio)
+        public void envioPostSinCertificado(string url, string datosEnvio, string tipoEnvio)
         {
             //Mismo metodo que el anterior pero cuando no se necesita certificado (ver si se puede unificar)
             try
@@ -94,7 +94,17 @@ namespace gestionesAEAT
 
                 //Configurar la solicitud
                 solicitudHttp.Method = "POST";
-                solicitudHttp.ContentType = "application/x-www-form-urlencoded";
+
+                //configura el contenido en funcion de si el envio se hace por un formulario o un json
+                if (tipoEnvio == "form")
+                {
+                    solicitudHttp.ContentType = "application/x-www-form-urlencoded";
+                }
+                else if (tipoEnvio == "json")
+                {
+                    solicitudHttp.ContentType= "application/json";
+                }
+
                 solicitudHttp.ContentLength = datosEnvio.Length;
 
                 //Grabacion de los datos a enviar al servidor
@@ -112,7 +122,7 @@ namespace gestionesAEAT
                 using (MemoryStream ms = new MemoryStream())
                 {
                     respuesta.GetResponseStream().CopyTo(ms);
-                    respuestaEnvioAEAT = Encoding.Default.GetString(ms.ToArray());
+                    respuestaEnvioAEAT = Encoding.UTF8.GetString(ms.ToArray());
                     ms.Seek(0, SeekOrigin.Begin);
                     respuestaEnvioAEATBytes = ms.ToArray();
                 }

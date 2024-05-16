@@ -36,6 +36,7 @@ namespace gestionesAEAT
             bool conCertificado = false;
             string respuestaAeat = string.Empty;
             X509Certificate2 certificado = null; //Certificado que se utilizara para el envio
+            string pathFicheros = @"C:\Programacion\c#\gestionesAEAT\pruebas"; //Path por defecto para almacenar los ficheros (dejar en blanco para la version de produccion)
 
             string[] argumentos = Environment.GetCommandLineArgs(); //Almacena en un array los argumentos introducidos.
 
@@ -58,13 +59,13 @@ namespace gestionesAEAT
                 {
                     if (argumentos.Length >= 6) //Tiene que haber por lo menos 5 argumentos (clave, tipo, entrada, salida y certificado)
                     {
-                        ficheroEntrada = argumentos[3];
+                        ficheroEntrada = Path.Combine(pathFicheros,argumentos[3]);
                         if (!File.Exists(ficheroEntrada))
                         {
                             log += $"El fichero de entrada {ficheroEntrada} no existe";
                             salirAplicacion();
                         }
-                        ficheroSalida = argumentos[4];
+                        ficheroSalida = Path.Combine(pathFicheros,argumentos[4]);
                         if (argumentos[5].ToUpper() == "SI") conCertificado = true;
                         if (conCertificado)
                         {
@@ -76,7 +77,7 @@ namespace gestionesAEAT
                             else if (argumentos.Length > 7)
                             {
                                 //Se pasa el fichero del certificado y el pass
-                                ficheroCertificado = argumentos[6];
+                                ficheroCertificado = Path.Combine(pathFicheros, argumentos[6]);
                                 if (!File.Exists(ficheroCertificado))
                                 {
                                     log += $"El fichero del certificado {ficheroCertificado} no existe";
@@ -143,6 +144,8 @@ namespace gestionesAEAT
 
                 case "3":
                     //Validacion de modelos. No necesita certificado
+                    validarModelos valida = new validarModelos();
+                    valida.envioPeticion(ficheroEntrada, ficheroSalida);
                     break;
 
                 case "4":

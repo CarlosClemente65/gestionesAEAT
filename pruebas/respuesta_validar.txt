@@ -1,0 +1,7 @@
+{
+  "errores": [
+    "100S388 - [Declarante] -Para presentar una segunda (o posterior) declaración que modifique una declaración presentada previamente, debe indicar si se trata de una declaración complementaria o una solicitud de rectificación marcando la casilla correspondiente"
+  ],
+  "PDF": null,
+  "avisos": null
+}

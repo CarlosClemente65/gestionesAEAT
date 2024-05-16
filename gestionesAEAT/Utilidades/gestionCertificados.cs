@@ -21,6 +21,7 @@ namespace gestionesAEAT
         public string serieCertificado { get; set; }
     }
 
+
     public class gestionCertificados
     {
         private List<X509Certificate2> certificados; //Lista que contiene los certificados
@@ -300,10 +301,10 @@ namespace gestionesAEAT
             try
             {
                 // Serializar la lista de ficheros a JSON
-                string json = JsonConvert.SerializeObject(certificadosInfo, Formatting.Indented);
+                string jsonEnvio = JsonConvert.SerializeObject(certificadosInfo, Formatting.Indented);
 
                 //Guardar el json
-                File.WriteAllText(ruta, json);
+                File.WriteAllText(ruta, jsonEnvio);
             }
 
             catch (Exception e)

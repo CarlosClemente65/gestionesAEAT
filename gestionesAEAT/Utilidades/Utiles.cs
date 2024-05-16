@@ -10,9 +10,9 @@ namespace gestionesAEAT
     {
         public string url { get; set; } //Variable que almacena la url a la que enviar los datos a la AEAT
 
-        List<string> cabecera = new List<string>(); //Lista con las lineas que vienen en el guion como cabecera
-        List<string> body = new List<string>(); //Bloque de datos identificados como body en la entrada
-        List<string> respuesta = new List<string>(); //Bloque de datos identificados como respuesta en la entrada
+        public List<string> cabecera = new List<string>(); //Lista con las lineas que vienen en el guion como cabecera
+        public List<string> body = new List<string>(); //Bloque de datos identificados como body en la entrada
+        public List<string> respuesta = new List<string>(); //Bloque de datos identificados como respuesta en la entrada
 
         public string quitaRaros(string cadena)
         {
@@ -91,14 +91,6 @@ namespace gestionesAEAT
         public void borrarFicheros(string fichero)
         {
             if (File.Exists(fichero)) File.Delete(fichero);
-        }
-
-        public string procesarGuionJson(string guion)
-        {
-            string textoJson = string.Empty;
-            //Desarrollar este metodo para montar el texto que debe pasarse a Hacienda en formato JSON
-
-            return textoJson;
         }
 
         public string procesarGuionHtml(string guion)

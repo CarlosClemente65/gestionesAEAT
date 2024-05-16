@@ -83,7 +83,7 @@ namespace gestionesAEAT.Metodos
             foreach (var elemento in respuestasCorrectas)
             {
                 datosEnvio = $"COMPLETA=SI&ORIGEN=E&NIF={elemento.nif}&CSV={elemento.csv}";
-                envio.envioPostSinCertificado(url, datosEnvio);
+                envio.envioPostSinCertificado(url, datosEnvio,"form");
                 if (envio.estadoRespuestaAEAT == "OK")
                 {
                     File.WriteAllBytes(elemento.ficheroSalida, envio.respuestaEnvioAEATBytes);
