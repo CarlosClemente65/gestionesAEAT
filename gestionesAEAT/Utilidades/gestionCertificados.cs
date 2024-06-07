@@ -14,7 +14,7 @@ namespace gestionesAEAT
     {
         public string nifCertificado { get; set; }
         public string titularCertificado { get; set; }
-        public string fechaEmision {  get; set; }
+        public string fechaEmision { get; set; }
         public string fechaValidez { get; set; }
         public string nifRepresentante { get; set; }
         public string nombreRepresentante { get; set; }
@@ -272,26 +272,43 @@ namespace gestionesAEAT
             }
         }
 
-        public void leerCertificado(string fichero, string password)
+        public string leerCertificado(string fichero, string password)
         {
-            //Permite leer los datos de un certificado que se pase como fichero
-            X509Certificate2 certificado = new X509Certificate2(fichero, password);
-            certificados.Add(certificado);
-            // Graba las propiedades de los certificados en la clase certificadosInfo
-            foreach (X509Certificate2 cert in certificados)
+            //Como se pasa el certificado como fichero, se borran los certificados que hay en la lista para que solo este el que se ha pasado
+            if (certificados.Count > 0)
             {
-                if (cert.Subject.Contains("SERIALNUMBER")) //Deben tener esto para que sean de persona fisica o juridica
+                certificados.Clear();
+                certificadosInfo.Clear();
+            }
+
+            //Permite leer los datos de un certificado que se pase como fichero
+            try
+            {
+                X509Certificate2 certificado = new X509Certificate2(fichero, password);
+                certificados.Add(certificado);
+                // Graba las propiedades de los certificados en la clase certificadosInfo
+                foreach (X509Certificate2 cert in certificados)
                 {
-                    //En el Subject estan todos los datos del certificado
-                    string datosSubject = cert.Subject;
-                    certificadoInfo info = new certificadoInfo
+                    if (cert.Subject.Contains("SERIALNUMBER")) //Deben tener esto para que sean de persona fisica o juridica
                     {
-                        serieCertificado = cert.SerialNumber,
-                        fechaValidez = cert.NotAfter.ToString("d")
-                    };
-                    obtenerDatosSubject(datosSubject, info);
-                    certificadosInfo.Add(info);
+                        //En el Subject estan todos los datos del certificado
+                        string datosSubject = cert.Subject;
+                        certificadoInfo info = new certificadoInfo
+                        {
+                            serieCertificado = cert.SerialNumber,
+                            fechaValidez = cert.NotAfter.ToString("d")
+                        };
+                        obtenerDatosSubject(datosSubject, info);
+                        certificadosInfo.Add(info);
+                    }
                 }
+                return string.Empty;
+            }
+
+            catch (Exception ex)
+            {
+             
+                return ex.Message;
             }
         }
 

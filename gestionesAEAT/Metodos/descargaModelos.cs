@@ -70,11 +70,12 @@ namespace gestionesAEAT.Metodos
             }
             if (respuestasCorrectas.Count > 0)
             {
-                descargaPDF();
+                string pathSalida = Path.GetDirectoryName(ficheroSalida);
+                descargaPDF(pathSalida);
             }
         }
 
-        private void descargaPDF()
+        private void descargaPDF(string pathSalida)
         {
             //Permite descargar el PDF de los modelos presentados a traves del CSV
             string url = @"https://www2.agenciatributaria.gob.es/wlpl/inwinvoc/es.aeat.dit.adu.eeca.catalogo.vis.VisualizaSc";
@@ -86,7 +87,8 @@ namespace gestionesAEAT.Metodos
                 envio.envioPostSinCertificado(url, datosEnvio,"form");
                 if (envio.estadoRespuestaAEAT == "OK")
                 {
-                    File.WriteAllBytes(elemento.ficheroSalida, envio.respuestaEnvioAEATBytes);
+                    string ficheroPDF = Path.Combine(pathSalida, elemento.ficheroSalida);
+                    File.WriteAllBytes(ficheroPDF, envio.respuestaEnvioAEATBytes);
                 }
             }
         }

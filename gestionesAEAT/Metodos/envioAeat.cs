@@ -102,7 +102,7 @@ namespace gestionesAEAT
                 }
                 else if (tipoEnvio == "json")
                 {
-                    solicitudHttp.ContentType= "application/json";
+                    solicitudHttp.ContentType= "application/json;charset=UTF-8";
                 }
 
                 solicitudHttp.ContentLength = datosEnvio.Length;

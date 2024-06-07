@@ -1,0 +1,14 @@
+Temas pendientes:
+	- Desarrollar la parte del envio de modelos
+	- Esta modificado el metodo ratificarDomicilio para poner las variables url, cabecera, body 
+	  y respuesta como This. pero ver si no es necesario. Revisar si en la respuesta tambien lo he puesto.
+	- Falta desarrollar en el metodo de validar la parte para generar el PDF si es valido (se graba el pdf pero mal
+	- Falta modificar en el metodo validarModelos el tratar las advertencias y errores (linea 130)
+	
+	
+Temas terminados:
+	- Obtener datos de certificados instalados
+	- Ratificar domicilio (ver el punto pendiente).
+	- Consulta modelos presentados.
+	- Validar modelos hasta la generacion del html de errores
+	

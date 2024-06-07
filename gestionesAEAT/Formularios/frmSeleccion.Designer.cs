@@ -60,7 +60,7 @@
             this.panelCertificados.Margin = new System.Windows.Forms.Padding(0);
             this.panelCertificados.Name = "panelCertificados";
             this.panelCertificados.Size = new System.Drawing.Size(897, 344);
-            this.panelCertificados.TabIndex = 0;
+            this.panelCertificados.TabIndex = 10;
             // 
             // label3
             // 
@@ -87,10 +87,10 @@
             this.dgvCertificados.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
             this.dgvCertificados.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.Disable;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(155)))), ((int)(((byte)(190)))));
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(153)))), ((int)(((byte)(188)))));
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(155)))), ((int)(((byte)(190)))));
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(153)))), ((int)(((byte)(188)))));
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dgvCertificados.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
@@ -112,8 +112,8 @@
             this.dgvCertificados.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvCertificados.Size = new System.Drawing.Size(894, 309);
             this.dgvCertificados.StandardTab = true;
-            this.dgvCertificados.TabIndex = 4;
-            this.dgvCertificados.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvCertificados_ColumnHeaderMouseClick);
+            this.dgvCertificados.TabIndex = 5;
+            this.dgvCertificados.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCertificados_CellContentDoubleClick);
             this.dgvCertificados.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.dgvCertificados_KeyPress);
             // 
             // label1
@@ -156,7 +156,7 @@
             this.btnBorrar.Location = new System.Drawing.Point(747, 34);
             this.btnBorrar.Name = "btnBorrar";
             this.btnBorrar.Size = new System.Drawing.Size(22, 22);
-            this.btnBorrar.TabIndex = 4;
+            this.btnBorrar.TabIndex = 2;
             this.btnBorrar.UseVisualStyleBackColor = false;
             this.btnBorrar.Click += new System.EventHandler(this.btnBorrar_Click);
             // 
@@ -167,7 +167,7 @@
             this.txtBusqueda.Location = new System.Drawing.Point(124, 32);
             this.txtBusqueda.Name = "txtBusqueda";
             this.txtBusqueda.Size = new System.Drawing.Size(648, 26);
-            this.txtBusqueda.TabIndex = 0;
+            this.txtBusqueda.TabIndex = 1;
             this.txtBusqueda.TextChanged += new System.EventHandler(this.txtBusqueda_TextChanged);
             // 
             // label2
@@ -191,7 +191,7 @@
             this.button2.Margin = new System.Windows.Forms.Padding(5);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(100, 48);
-            this.button2.TabIndex = 3;
+            this.button2.TabIndex = 4;
             this.button2.Text = "Cancelar seleccion";
             this.button2.UseVisualStyleBackColor = false;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -207,7 +207,7 @@
             this.btnSeleccion.Margin = new System.Windows.Forms.Padding(5);
             this.btnSeleccion.Name = "btnSeleccion";
             this.btnSeleccion.Size = new System.Drawing.Size(100, 48);
-            this.btnSeleccion.TabIndex = 2;
+            this.btnSeleccion.TabIndex = 3;
             this.btnSeleccion.Text = "Seleccionar certificado";
             this.btnSeleccion.UseVisualStyleBackColor = false;
             this.btnSeleccion.Click += new System.EventHandler(this.btnSeleccion_Click);

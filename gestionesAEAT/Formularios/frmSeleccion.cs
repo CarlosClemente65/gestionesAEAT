@@ -56,32 +56,7 @@ namespace gestionesAEAT.Formularios
 
         private void dgvCertificados_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            DataGridViewColumn columna = dgvCertificados.Columns[e.ColumnIndex];
-            string nombreColumna = columna.DataPropertyName;
 
-            // Obtener los datos del DataGridView
-            List<certificadoInfo> certificados = dgvCertificados.DataSource as List<certificadoInfo>;
-            if (certificados != null)
-            {
-                // Determinar la dirección de la ordenación
-                ListSortDirection direccionOrdenacion = ListSortDirection.Ascending;
-                if (columnaOrdenada == e.ColumnIndex)
-                {
-                    if (ordenColumna == ListSortDirection.Ascending)
-                    {
-                        direccionOrdenacion = ListSortDirection.Descending;
-                    }
-                }
-
-                // Ordenar la lista
-                certificados = instanciaCertificado.ordenarCertificados(certificados, nombreColumna, direccionOrdenacion == ListSortDirection.Ascending);
-
-                // Actualizar el DataGridView con la lista ordenada
-                rellenarDGV(certificados);
-
-                columnaOrdenada = e.ColumnIndex;
-                ordenColumna = direccionOrdenacion;
-            }
         }
 
         private void frmSeleccion_Load(object sender, EventArgs e)
@@ -120,17 +95,17 @@ namespace gestionesAEAT.Formularios
             this.Close();
         }
 
-        private void dgvCertificados_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            btnSeleccion.PerformClick();
-        }
-
         private void btnBorrar_Click(object sender, EventArgs e)
         {
             txtBusqueda.Text = string.Empty;
         }
 
         private void dgvCertificados_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            btnSeleccion.PerformClick();
+        }
+
+        private void dgvCertificados_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             btnSeleccion.PerformClick();
         }

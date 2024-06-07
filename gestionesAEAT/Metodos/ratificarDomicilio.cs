@@ -12,9 +12,9 @@ namespace gestionesAEAT.Metodos
         string ficheroSalida = string.Empty;
         string ficheroSalidaConyuge = string.Empty;
         string url; //Url a la que se envian los datos
-        ArrayList cabecera = new ArrayList(); //Bloque de datos identificados como cabecera en la entrada
-        ArrayList body = new ArrayList(); //Bloque de datos identificados como body en la entrada
-        ArrayList respuesta = new ArrayList(); //Bloque de datos identificados como respuesta en la entrada
+        List<string> cabecera = new List<string>(); //Bloque de datos identificados como cabecera en la entrada
+        List<string> body = new List<string>(); //Bloque de datos identificados como body en la entrada
+        List<string> respuesta = new List<string>(); //Bloque de datos identificados como respuesta en la entrada
         string atributo = string.Empty; //Cada una de las variables que se pasan a la AEAT
         string valor = string.Empty; //Valor del atributo que se pasa a la AEAT
         string codificacion; //Codificacion del texto que se pasa a la url
@@ -49,6 +49,12 @@ namespace gestionesAEAT.Metodos
             try
             {
                 if (paso == 1) utilidad.cargaDatosGuion(textoEntrada);
+
+                //Se cargan las variables del metodo con la lectura del metodo de utilidades
+                this.url = utilidad.url;
+                this.cabecera = utilidad.cabecera;
+                this.body = utilidad.body;
+
                 datosEnvio = formateoCabecera(paso); //Genera los datos a enviar (paso 1 para el titular y paso 2 para el conyuge)
 
                 envio.envioPost(url, datosEnvio, serieCertificado, instanciaCertificado);
@@ -100,6 +106,7 @@ namespace gestionesAEAT.Metodos
             string car;
             string valor;
             string cadena = string.Empty;
+            this.respuesta = utilidad.respuesta;
             for (int i = 0; i < respuesta.Count; i++)
             {
                 //Busca la posicion de la palabra que se pasa en el bloque 'respuesta' del fichero de entrada

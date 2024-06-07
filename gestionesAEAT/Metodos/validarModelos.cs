@@ -28,11 +28,11 @@ namespace gestionesAEAT.Metodos
     {
         public List<string> errores { get; set; }
 
-        public string PDF { get; set; }
-        
+        public List<string> pdf { get; set; }
+
         public List<string> avisos { get; set; }
 
-
+        public List<string> advertencias { get; set; }
     }
 
     public class validarModelos
@@ -105,63 +105,52 @@ namespace gestionesAEAT.Metodos
                     }
                     //datos.Add(dato);
                 }
-
-
+#if DEBUG
+                string salidaJson = Path.ChangeExtension(ficheroSalida, "json");
                 string jsonEnvio = JsonConvert.SerializeObject(dato, new JsonSerializerSettings
                 {
-                    NullValueHandling = NullValueHandling.Ignore
+                    NullValueHandling = NullValueHandling.Ignore,
+                    Formatting = Formatting.Indented
+
                 });
 
-                File.WriteAllText(ficheroSalida, jsonEnvio);
+                File.WriteAllText(salidaJson, jsonEnvio);
+#endif
 
                 envio.envioPostSinCertificado(utilidad.url, jsonEnvio, "json");
                 respuestaAEAT = envio.respuestaEnvioAEAT;
+                File.WriteAllText("erroresJson.json", respuestaAEAT);
 
                 if (envio.estadoRespuestaAEAT == "OK")
                 {
                     RespuestaJson respuestaJson = new RespuestaJson();
                     respuestaJson = JsonConvert.DeserializeObject<RespuestaJson>(respuestaAEAT);
+
+                    //Revisar esta parte porque ya se controla en el metodo generarRespuestaHtml si hay datos que procesar.
                     if (respuestaJson.respuesta.errores != null && respuestaJson.respuesta.errores.Count > 0)
                     {
-                        
-                        File.WriteAllText(ficheroSalida, JsonConvert.SerializeObject(respuestaJson.respuesta, Formatting.Indented));
+                        textoSalida = utilidad.generarRespuesta(respuestaJson, ficheroSalida);
                         //Grabar un fichero con los errores
+                        if (!string.IsNullOrEmpty(textoSalida))
+                        {
+                            string rutaHtml = Path.ChangeExtension(ficheroSalida, "html");
+                            File.WriteAllText(rutaHtml, textoSalida);
+                        }
                     }
-                    else if (respuestaJson.respuesta.PDF != null)
+                    else if (respuestaJson.respuesta.pdf != null)
                     {
                         //Grabar el PDF en la ruta
+                        string ficheroPdf = Path.ChangeExtension(ficheroSalida, "pdf");
+                        byte[] textoPdf = envio.respuestaEnvioAEATBytes;
+                        File.WriteAllBytes(ficheroPdf, textoPdf);
                     }
-
                 }
-
-                //if (!valido)
-                //{
-                //    //Si no se ha ratificado el domicilio
-                //    string ruta = Path.GetDirectoryName(this.ficheroSalida);
-                //    if (ruta == "") ruta = AppDomain.CurrentDomain.BaseDirectory;
-                //    ruta = ruta + @"errores.html";
-                //    File.WriteAllText(ruta, respuestaAEAT, Encoding.Default);
-                //}
             }
 
             catch (Exception ex)
             {
                 //Si se ha producido algun error en el envio
                 aux = $"MENSAJE = Proceso cancelado o error en el envio. {ex.Message}";
-            }
-
-            try
-            {
-                if (ficheroSalida != null)
-                {
-                    //Graba el fichero con la respuesta del titular
-                    File.WriteAllText(ficheroSalida, aux, Encoding.Default);
-                }
-            }
-
-            catch (Exception ex)
-            {
-
             }
         }
 

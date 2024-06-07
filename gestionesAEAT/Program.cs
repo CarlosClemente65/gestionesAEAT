@@ -22,6 +22,7 @@ namespace gestionesAEAT
 
         private const int ATTACH_PARENT_PROCESS = -1;
 
+        static string pathFicheros = string.Empty;
 
         static void Main(string[] args)
         {
@@ -34,9 +35,17 @@ namespace gestionesAEAT
             string ficheroCertificado = string.Empty;
             string passwordCertificado = string.Empty;
             bool conCertificado = false;
+
             string respuestaAeat = string.Empty;
             X509Certificate2 certificado = null; //Certificado que se utilizara para el envio
-            string pathFicheros = @"C:\Programacion\c#\gestionesAEAT\pruebas"; //Path por defecto para almacenar los ficheros (dejar en blanco para la version de produccion)
+
+            //Se usa el path en varias partes del programa, y si se esta en modo de pruebas se cambia
+            
+#if DEBUG
+            {
+                pathFicheros = @"C:\Programacion\c#\gestionesAEAT\pruebas"; //Path por defecto para almacenar los ficheros (dejar en blanco para la version de produccion)
+            }
+#endif
 
             string[] argumentos = Environment.GetCommandLineArgs(); //Almacena en un array los argumentos introducidos.
 
@@ -44,7 +53,11 @@ namespace gestionesAEAT
             {
                 //Control para que si la clave no es correcta no se ejecute el programa
                 dsclave = argumentos[1];
-                if (dsclave != "ds123456") Environment.Exit(0);
+                if (dsclave != "ds123456")
+                {
+                    log += "Clave de ejecucion incorrecta";
+                    salirAplicacion();
+                }
                 tipo = argumentos[2];
                 if (argumentos.Length == 4)
                 {
@@ -59,13 +72,13 @@ namespace gestionesAEAT
                 {
                     if (argumentos.Length >= 6) //Tiene que haber por lo menos 5 argumentos (clave, tipo, entrada, salida y certificado)
                     {
-                        ficheroEntrada = Path.Combine(pathFicheros,argumentos[3]);
+                        ficheroEntrada = Path.Combine(pathFicheros, argumentos[3]);
                         if (!File.Exists(ficheroEntrada))
                         {
                             log += $"El fichero de entrada {ficheroEntrada} no existe";
                             salirAplicacion();
                         }
-                        ficheroSalida = Path.Combine(pathFicheros,argumentos[4]);
+                        ficheroSalida = Path.Combine(pathFicheros, argumentos[4]);
                         if (argumentos[5].ToUpper() == "SI") conCertificado = true;
                         if (conCertificado)
                         {
@@ -84,7 +97,13 @@ namespace gestionesAEAT
                                     salirAplicacion();
                                 }
                                 passwordCertificado = argumentos[7];
-                                instanciaCertificado.leerCertificado(ficheroCertificado, passwordCertificado);
+
+                                string resultadoLectura = instanciaCertificado.leerCertificado(ficheroCertificado, passwordCertificado);
+                                if (!string.IsNullOrEmpty(resultadoLectura))
+                                {
+                                    log += $"Error al leer el certificado. {resultadoLectura}";
+                                    salirAplicacion();
+                                }
                                 var certificadosInfo = instanciaCertificado.listaCertificados();
                                 serieCertificado = certificadosInfo.LastOrDefault()?.serieCertificado;
                             }
@@ -187,9 +206,10 @@ namespace gestionesAEAT
             }
 
             //Si hay algun texto de error en el log, lo graba en un fichero
-            if (string.IsNullOrEmpty(log))
+            if (!string.IsNullOrEmpty(log))
             {
-                File.WriteAllText("errores.log", log);
+                string salida = Path.Combine(pathFicheros, "errores.log");
+                File.WriteAllText(salida, log);
             }
             Environment.Exit(0);
         }
