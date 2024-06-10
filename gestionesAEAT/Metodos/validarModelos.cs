@@ -65,7 +65,6 @@ namespace gestionesAEAT.Metodos
                 utilidad.cargaDatosGuion(textoEnvio); //Monta en la clase Utiles las listas "cabecera", "body" y "respuesta" para luego acceder a esos datos a montar el envio
 
                 //Instanciacion de la clase para almacenar los valores de la cabecera
-                //List<servaliDos> datos = new List<servaliDos>();
                 servaliDos dato = new servaliDos();
 
                 //Formatear datos de la cabecera
@@ -103,10 +102,8 @@ namespace gestionesAEAT.Metodos
                         default:
                             break;
                     }
-                    //datos.Add(dato);
                 }
-#if DEBUG
-                string salidaJson = Path.ChangeExtension(ficheroSalida, "json");
+
                 string jsonEnvio = JsonConvert.SerializeObject(dato, new JsonSerializerSettings
                 {
                     NullValueHandling = NullValueHandling.Ignore,
@@ -114,35 +111,29 @@ namespace gestionesAEAT.Metodos
 
                 });
 
-                File.WriteAllText(salidaJson, jsonEnvio);
-#endif
-
                 envio.envioPostSinCertificado(utilidad.url, jsonEnvio, "json");
                 respuestaAEAT = envio.respuestaEnvioAEAT;
-                File.WriteAllText("erroresJson.json", respuestaAEAT);
 
                 if (envio.estadoRespuestaAEAT == "OK")
                 {
                     RespuestaJson respuestaJson = new RespuestaJson();
                     respuestaJson = JsonConvert.DeserializeObject<RespuestaJson>(respuestaAEAT);
 
-                    //Revisar esta parte porque ya se controla en el metodo generarRespuestaHtml si hay datos que procesar.
-                    if (respuestaJson.respuesta.errores != null && respuestaJson.respuesta.errores.Count > 0)
+                    textoSalida = utilidad.generarRespuesta(respuestaJson, ficheroSalida);
+                    //Grabar un fichero con los errores
+                    if (!string.IsNullOrEmpty(textoSalida))
                     {
-                        textoSalida = utilidad.generarRespuesta(respuestaJson, ficheroSalida);
-                        //Grabar un fichero con los errores
-                        if (!string.IsNullOrEmpty(textoSalida))
-                        {
-                            string rutaHtml = Path.ChangeExtension(ficheroSalida, "html");
-                            File.WriteAllText(rutaHtml, textoSalida);
-                        }
+                        string rutaHtml = Path.ChangeExtension(ficheroSalida, "html");
+                        File.WriteAllText(rutaHtml, textoSalida);
                     }
-                    else if (respuestaJson.respuesta.pdf != null)
+
+                    if (respuestaJson.respuesta.pdf != null)
                     {
                         //Grabar el PDF en la ruta
                         string ficheroPdf = Path.ChangeExtension(ficheroSalida, "pdf");
-                        byte[] textoPdf = envio.respuestaEnvioAEATBytes;
-                        File.WriteAllBytes(ficheroPdf, textoPdf);
+                        string respuestaPDF = respuestaJson.respuesta.pdf[0];
+                        byte[] contenidoPDF = Convert.FromBase64String(respuestaPDF);
+                        File.WriteAllBytes(ficheroPdf, contenidoPDF);
                     }
                 }
             }

@@ -32,6 +32,10 @@ Notas:
 		la opcion SI y no se pasa ningun parametro mas, se pedira la seleccion de un certificado del almacen de windows.
 	5.- La opcion 4 se utilizara basicamente con certbase (se pasan el certiicado y pass)
 	6.- La opcion 5 se utilizara unicamente para obtener un json con la relacion de certificados y sus datos
+	7.- El fichero de salida debe tener siempre el codigo de cliente y el texto "_salida" para poder mostrarlo en el html
+		ejemplos: 70038_CONJUNTA_salida.txt; 70038_salida.txt
+		Nota: en modelos se genera como "resp70038.txt" y en renta del modo anterior, por lo que hay que unificarlos
+		Nota2: tambien seria factible que en el guion se ponga el numero del cliente, pero habria que modificar el codigo actual
 
 */
 	

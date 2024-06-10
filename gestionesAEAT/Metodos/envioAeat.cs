@@ -60,6 +60,8 @@ namespace gestionesAEAT
                     {
                         respuesta.GetResponseStream().CopyTo(ms);
                         contenidoRespuesta = Encoding.UTF8.GetString(ms.ToArray()); //Se pasa a una variable temporal para poder pasar el quita raros.
+
+                        //Grabacion de la respuesta en formato bytes (si es una consulta si se usa directamente, en el resto de metodos no esta claro si tiene uso, pero lo dejo por compatibilidad)
                         ms.Seek(0, SeekOrigin.Begin);
                         respuestaEnvioAEATBytes = ms.ToArray();
                     }
@@ -83,7 +85,7 @@ namespace gestionesAEAT
 
         public void envioPostSinCertificado(string url, string datosEnvio, string tipoEnvio)
         {
-            //Mismo metodo que el anterior pero cuando no se necesita certificado (ver si se puede unificar)
+            //Mismo metodo que el anterior pero cuando no se necesita certificado 
             try
             {
                 //Protocolo de seguridad
@@ -123,6 +125,8 @@ namespace gestionesAEAT
                 {
                     respuesta.GetResponseStream().CopyTo(ms);
                     respuestaEnvioAEAT = Encoding.UTF8.GetString(ms.ToArray());
+
+                    //Grabacion de la respuesta en formato bytes para el metodo de consulta de modelos que la respuesta siempre sera un PDF en base64 (se lee directamente desde el metodo esta variable)
                     ms.Seek(0, SeekOrigin.Begin);
                     respuestaEnvioAEATBytes = ms.ToArray();
                 }

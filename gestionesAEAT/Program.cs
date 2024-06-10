@@ -130,6 +130,17 @@ namespace gestionesAEAT
             {
                 case "1":
                     //Envio de modelos; necesita certificado (parametro 5 = SI) por lo que debe venir el nº de serie para leerlo del almacen de certificados o con fichero y pass
+
+                    //Ejemplo de ejecucion (se solicita el certificado en pantalla)
+                    //gestionesAEAT.exe ds123456 1 empresa_guion.txt empresa_salida.txt SI
+
+                    //Ejemplo de ejecucion (se pasa el numero de serie del certificado del almacen)
+                    //gestionesAEAT.exe ds123456 1 empresa_guion.txt empresa_salida.txt SI numeroserie
+
+                    //Ejemplo de ejecucion (se pasa fichero y password del certificado)
+                    //gestionesAEAT.exe ds123456 1 empresa_guion.txt empresa_salida.txt SI certificado.pdf password
+
+
                     if (string.IsNullOrEmpty(serieCertificado))
                     {
                         //Si no se ha grabado la serie del certificado, se vuelve a mostrar la pantalla de seleccion de certificados
@@ -158,17 +169,35 @@ namespace gestionesAEAT
 
                 case "2":
                     //Obtener datos certificados instalados
+                    
+                    //Ejemplo de ejecucion
+                    //gestionesAEAT.exe ds123456 2 certificados_salida.txt
+                    
                     instanciaCertificado.exportarDatosCertificados(ficheroSalida);
                     break;
 
                 case "3":
                     //Validacion de modelos. No necesita certificado
+
+                    //Ejemplo de ejecucion
+                    //gestionesAEAT.exe ds123456 3 empresa_guion.txt empresa_salida.txt NO
+
                     validarModelos valida = new validarModelos();
                     valida.envioPeticion(ficheroEntrada, ficheroSalida);
                     break;
 
                 case "4":
                     //Ratificacion de domicilio. Necesita certificado
+
+                    //Ejemplo de ejecucion (se solicita el certificado en pantalla)
+                    //gestionesAEAT.exe ds123456 4 empresa_guion.txt empresa_salida.txt SI
+
+                    //Ejemplo de ejecucion (se pasa el numero de serie del certificado del almacen)
+                    //gestionesAEAT.exe ds123456 4 empresa_guion.txt empresa_salida.txt SI numeroserie
+
+                    //Ejemplo de ejecucion (se pasa fichero y password del certificado)
+                    //gestionesAEAT.exe ds123456 4 empresa_guion.txt empresa_salida.txt SI certificado.pdf password
+
                     ratificarDomicilio ratifica = new ratificarDomicilio();
                     //serieCertificado = "726e0db7a17efa04603b7f010ba43fa6".ToUpper();//Certificado de prueba mio
                     ratifica.envioPeticion(serieCertificado, ficheroEntrada, ficheroSalida, 1, instanciaCertificado);
@@ -176,7 +205,17 @@ namespace gestionesAEAT
                     break;
 
                 case "5":
-                    //Consulta de modelos presentados. Hay que formar el html y mandarlo como POST y la respuesta sera un XML con la relacion de modelos presentados con sus metadatos. Crear un metodo para montar la peticion, con la respuesta pasarla al metodo 'descargaModelos.obtenerModelos' que devolvera un string que es el que hay que grabar en un fichero.
+                    //Consulta de modelos presentados.
+
+                    //Ejemplo de ejecucion (solicita certificado en pantalla)
+                    //gestionesAEAT.exe ds123456 5 empresa_guion.txt empresa_salida.txt SI
+
+                    //Ejemplo de ejecucion (se pasa el numero de serie del certificado del almacen)
+                    //gestionesAEAT.exe ds123456 5 empresa_guion.txt empresa_salida.txt SI numeroserie
+
+                    //Ejemplo de ejecucion (se pasa fichero y password del certificado)
+                    //gestionesAEAT.exe ds123456 5 empresa_guion.txt empresa_salida.txt SI certificado.pdf password
+
                     descargaModelos proceso = new descargaModelos();
 
                     proceso.obtenerModelos(ficheroEntrada, ficheroSalida, serieCertificado, instanciaCertificado);
@@ -190,8 +229,10 @@ namespace gestionesAEAT
             //Muestra el formulario de seleccion de certificados
             string serieCertificado;
             instanciaCertificado.cargarCertificados();
+
             frmSeleccion frmSeleccion = new frmSeleccion(instanciaCertificado);
             frmSeleccion.ShowDialog();
+            
             serieCertificado = frmSeleccion.certificadoSeleccionado.serieCertificado;
             return serieCertificado;
         }
@@ -219,7 +260,7 @@ namespace gestionesAEAT
             StringBuilder mensaje = new StringBuilder();
             mensaje.AppendLine("");
             mensaje.AppendLine("Uso de la aplicacion");
-            mensaje.AppendLine("\tgestionesAEAT dsclave tipo entrada salida (SI | NO) (numeroserie | certificado) password");
+            mensaje.AppendLine("\tgestionesAEAT dsclave tipo entrada salida (SI | NO) (numeroserie | (certificado password");
             mensaje.AppendLine("Parametros:");
             mensaje.AppendLine("\tdsclave\t\tclave de ejecucion del programa");
             mensaje.AppendLine("\ttipo\t\t1 = Envio de modelos");
@@ -241,7 +282,7 @@ namespace gestionesAEAT
             mensaje.AppendLine("  - Con el tipo 3 (validacion de modelos) el parametro 5 debe ser un NO");
             mensaje.AppendLine("    ejemplo:\tgestionesAEAT dsclave 3 entrada.txt salida.txt NO");
             mensaje.AppendLine("  - Con el tipo 5, el tercer parametro siempre sera el fichero de salida (solo se pasan 3 parametros");
-            mensaje.AppendLine("    ejemplo:\tgestionesAEAT dsclave 5 fichero.txt");
+            mensaje.AppendLine("    ejemplo:\tgestionesAEAT dsclave 5 fichero_salida.txt");
             mensaje.AppendLine("");
             mensaje.AppendLine("Pulse una tecla para continuar");
 

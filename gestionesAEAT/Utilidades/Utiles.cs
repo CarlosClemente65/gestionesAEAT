@@ -20,10 +20,16 @@ namespace gestionesAEAT
         public List<string> body = new List<string>(); //Bloque de datos identificados como body en la entrada
         public List<string> respuesta = new List<string>(); //Bloque de datos identificados como respuesta en la entrada
 
-        private RespuestaJson respuestaJson;
+        //Variables para almacenar las respuestas del envio
+        private List<string> erroresArray = new List<string>();
+        private List<string> avisosArray = new List<string>();
+        private List<string> advertenciasArray = new List<string>();
+
+        private RespuestaJson respuestaJson; //Varible que almacena la respuesta completa de la AEAT
 
         public string quitaRaros(string cadena)
         {
+            //Metodo para eliminar caracteres raros
             List<(string, string)> caracteresReemplazo = new List<(string, string)>
             {
                 ("á", "a"),
@@ -103,7 +109,7 @@ namespace gestionesAEAT
 
         public string procesarGuionHtml(string guion)
         {
-            //Procesa el guion para pasarlo a una lista
+            //Procesa el guion para poder hacer el envio a la AEAT
             List<string> textoEntrada = prepararGuion(guion);
             string textoAEAT = string.Empty;
 
@@ -179,8 +185,10 @@ namespace gestionesAEAT
         public List<string> prepararGuion(string ficheroEntrada)
         {
             //Recibe un string y devuelve una lista
+            
             //Obtiene la codificacion del texto para procesarlo
             Encoding codificacion = Encoding.GetEncoding(codificacionFicheroEntrada(ficheroEntrada));
+
             //Monta una lista con el fichero de entrada para procesarlo
             List<string> textoEntrada = new List<string>();
             using (StreamReader sr = new StreamReader(ficheroEntrada, codificacion))
@@ -264,7 +272,7 @@ namespace gestionesAEAT
                     posicion = codCliente.IndexOf("_salida");
                     if (posicion != -1)
                     {
-                        cliente = cliente.Substring(0, posicion);
+                        cliente = codCliente.Substring(0, posicion);
 
                     }
                 }
@@ -282,13 +290,14 @@ namespace gestionesAEAT
         private string generarHtml(string modelo, string ejercicio, string periodo, string cliente)
         {
             StringBuilder respuestaHtml = new StringBuilder();
-            string errores = string.Empty;
-            string avisos = string.Empty;
-            string advertencias = string.Empty;
 
-            errores = obtenerElementosJson("errores");
-            avisos = obtenerElementosJson("avisos");
-            advertencias = obtenerElementosJson("advertencias");
+            //Almacena las respuestas en las listas para procesarlas despues
+            if (respuestaJson != null && respuestaJson.respuesta != null)
+            {
+                erroresArray = respuestaJson.respuesta.errores;
+                avisosArray = respuestaJson.respuesta.avisos;
+                advertenciasArray = respuestaJson.respuesta.advertencias;
+            }
 
             //Construye el html
             StringBuilder contenidoHtml = new StringBuilder();
@@ -305,34 +314,34 @@ namespace gestionesAEAT
             contenidoHtml.AppendLine("<body  style='margin: 40px; font-family: Calibri; font-size: 1.2em;'>");
             contenidoHtml.AppendLine("<title>Resultado de la validaci&oacute;n</title>");
             contenidoHtml.AppendLine("<p style='font-family:Calibri; font-size: 1.5em; text-align:center'>Resultado de la validaci&oacute;n</p>");
-            contenidoHtml.AppendLine($"<p style='font-family:Calibri; font-size: 0.9em; text-align: center'>Cliente: {cliente}&nbsp;&nbsp;&nbsp;--&nbsp;&nbsp;&nbsp;Modelo: {modelo}&nbsp;&nbsp;&nbsp;--&nbsp;&nbsp;&nbsp;Ejercicio: {ejercicio}&nbsp;&nbsp;&nbsp;--&nbsp;&nbsp;&nbsp;Periodo: {periodo}</p>");
+            contenidoHtml.AppendLine($"<p style='font-family:Calibri; font-size: 0.9em; text-align: center'>Cliente: {cliente}&nbsp;&nbsp;&nbsp;--&nbsp;&nbsp;&nbsp;Modelo: {modelo}&nbsp;&nbsp;&nbsp;--&nbsp;&nbsp;&nbsp;Ejercicio: {ejercicio}&nbsp;&nbsp;&nbsp;--&nbsp;&nbsp;&nbsp;Periodo: {periodo}&nbsp;&nbsp;&nbsp;--&nbsp;&nbsp;&nbsp;Fecha generacion: {DateTime.Now}</p>");
 
             //Contenido del html si hay errores
-            if (!string.IsNullOrEmpty(errores))
+            if (erroresArray != null && erroresArray.Count > 0)
             {
                 //Generar tabla de errores
                 contenidoHtml.AppendLine("<table style='margin: 10px; width: 100%; border-collapse: collapse; font-size: 1em;'>");
-                contenidoHtml.AppendLine("<tr style='background-color: #FFBFBF'><th><span style='color: red;font-size: 1em;margin-right: 5px;'>&#128711;</span>Errores detectados</th></tr>");
+                contenidoHtml.AppendLine("<tr style='background-color: #FFBFBF'><th><span style='color: red;font-size: 1em;margin-right: 5px;'>&#128711;</span>Errores. No es posible presentar la declaracion</th></tr>");
                 contenidoHtml.AppendLine(generarFilasHtml("errores"));
                 contenidoHtml.AppendLine("</table>");
             }
 
             //Contenido del html si hay avisos
-            if (!string.IsNullOrEmpty(avisos))
+            if (avisosArray != null && avisosArray.Count > 0)
             {
                 //Generar tabla de avisos
                 contenidoHtml.AppendLine("<table style='margin: 10px; width: 100%; border-collapse: collapse; font-size: 1em;'>");
-                contenidoHtml.AppendLine("<tr style='background-color: #F9E79F'><th><span style='color: red;font-size: 1em;margin-right: 5px;'>&#9888;</span>Avisos que deben revisarse</th></tr>");
+                contenidoHtml.AppendLine("<tr style='background-color: #F9E79F'><th><span style='color: red;font-size: 1em;margin-right: 5px;'>&#9888;</span>Avisos que deben revisarse. Permiten presentar la declaracion</th></tr>");
                 contenidoHtml.AppendLine(generarFilasHtml("avisos"));
                 contenidoHtml.AppendLine("</table>");
             }
 
             //Contenido del html si hay advertencias
-            if (!string.IsNullOrEmpty(advertencias))
+            if (advertenciasArray != null && advertenciasArray.Count > 0)
             {
                 //Generar tabla de avisos
                 contenidoHtml.AppendLine("<table style='margin: 10px; width: 100%; border-collapse: collapse; font-size: 1em;'>");
-                contenidoHtml.AppendLine("<tr style='background-color: #AED6F1'><th><span style='color: red;font-size: 1em;margin-right: 5px;'>&#128712;</span>Advertencias a tener en cuenta</th></tr>");
+                contenidoHtml.AppendLine("<tr style='background-color: #AED6F1'><th><span style='color: red;font-size: 1em;margin-right: 5px;'>&#128712;</span>Advertencias. Pueden provocar un requerimiento de la AEAT</th></tr>");
                 contenidoHtml.AppendLine(generarFilasHtml("avisos"));
                 contenidoHtml.AppendLine("</table>");
             }
@@ -344,34 +353,6 @@ namespace gestionesAEAT
             return contenidoHtml.ToString();
         }
 
-        private string obtenerElementosJson(string clave)
-        {
-            string elementos = string.Empty;
-            List<string> elementosArray = null;
-
-            switch (clave)
-            {
-                case "errores":
-                    elementosArray = respuestaJson.respuesta.errores;
-                    break;
-
-                case "avisos":
-                    elementosArray = respuestaJson.respuesta.avisos;
-                    break;
-
-                case "advertencias":
-                    elementosArray = respuestaJson.respuesta.advertencias;
-                    break;
-
-            }
-            if (elementosArray != null && elementosArray.Count > 0)
-            {
-                elementos = string.Join(",", elementosArray);
-            }
-
-            return elementos;
-        }
-
         private string generarFilasHtml(string clave)
         {
             string elementos = string.Empty;
@@ -379,50 +360,34 @@ namespace gestionesAEAT
             string color_aviso = "#FCF3CF";
             string color_advertencia = "#EBF5FB";
 
-            if (respuestaJson != null && respuestaJson.respuesta != null)
+            switch (clave)
             {
-                List<string> elementosArray = null;
-
-                switch (clave)
-                {
-                    case "errores":
-                        elementosArray = respuestaJson.respuesta.errores;
-                        break;
-
-                    case "avisos":
-                        elementosArray = respuestaJson.respuesta.avisos;
-                        break;
-
-                    case "advertencias":
-                        elementosArray = respuestaJson.respuesta.advertencias;
-                        break;
-
-                    default:
-                        break;
-
-                }
-
-                if (elementosArray != null)
-                {
-                    foreach (var elemento in elementosArray)
+                case "errores":
+                    foreach (var elemento in erroresArray)
                     {
-                        switch (clave)
-                        {
-                            case "errores":
-                                elementos += $"<tr style='background-color: {color_error}'><tr><td>{elemento}</td></tr>";
-                                break;
-
-                            case "avisos":
-                                elementos += $"<tr style='background-color: {color_aviso}'><tr><td>{elemento}</td></tr>";
-                                break;
-
-                            case "advertencias":
-                                elementos += $"<tr style='background-color: {color_advertencia}'><tr><td>{elemento}</td></tr>";
-                                break;
-                        }
+                        elementos += $"<tr style='background-color: {color_error}'><tr><td>{elemento}</td></tr>";
                     }
-                }
+                    break;
+
+                case "avisos":
+                    foreach (var elemento in avisosArray)
+                    {
+                        elementos += $"<tr style='background-color: {color_aviso}'><tr><td>{elemento}</td></tr>";
+                    }
+                    break;
+
+                case "advertencias":
+                    foreach (var elemento in advertenciasArray)
+                    {
+                        elementos += $"<tr style='background-color: {color_advertencia}'><tr><td>{elemento}</td></tr>";
+                    }
+                    break;
+
+                default:
+                    break;
+
             }
+
             return elementos;
         }
     }

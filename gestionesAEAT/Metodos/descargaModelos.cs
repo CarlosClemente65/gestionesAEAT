@@ -113,7 +113,7 @@ namespace gestionesAEAT.Metodos
             {
                 respuestasCorrectas.AddRange(servicio.Respuestas);
 
-                // Procesa cada respuesta para grabar el fichero de salida
+                // Procesa cada respuesta para grabar el fichero PDF obtenido
                 foreach (var respuesta in servicio.Respuestas)
                 {
                     //Forma el nombre del fichero PDF que se grabara para ponerlo en el fichero de respuestas.
