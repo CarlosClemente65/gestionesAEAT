@@ -302,6 +302,7 @@ namespace gestionesAEAT
             //Construye el html
             StringBuilder contenidoHtml = new StringBuilder();
 
+
             //Cabecera del html y datos informativos del cliente, modelo, ejercicio y periodo
             contenidoHtml.AppendLine("<!DOCTYPE html>");
             contenidoHtml.AppendLine(@"<html");
@@ -309,7 +310,7 @@ namespace gestionesAEAT
             contenidoHtml.AppendLine(@"  <meta charset='utf-8'>");
             contenidoHtml.AppendLine(@"  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css'>");
             contenidoHtml.AppendLine(@"  <style>");
-            contenidoHtml.AppendLine(@"    th, td{border: 1px solid red;padding: 5px 5px 5px 15px;text-align: justify; font-size:1em}");
+            contenidoHtml.AppendLine(@"    th, td{padding: 5px 5px 5px 15px;text-align: justify; font-size:1em}");
             contenidoHtml.AppendLine(@"    td{font-size:0.9em;padding: 5px 20px 5px 40px}");
             contenidoHtml.AppendLine(@"  </style>");
             contenidoHtml.AppendLine(@"</head>");
@@ -318,17 +319,45 @@ namespace gestionesAEAT
             contenidoHtml.AppendLine(@"  <p style='font-family:Calibri; font-size: 1.5em; text-align:center'>Resultado de la validaci&oacute;n</p>");
             contenidoHtml.AppendLine($@"  <p style='font-family:Calibri; font-size: 0.9em; text-align: center'>Cliente: {cliente}&nbsp;&nbsp;&nbsp;--&nbsp;&nbsp;&nbsp;Modelo: {modelo}&nbsp;&nbsp;&nbsp;--&nbsp;&nbsp;&nbsp;Ejercicio: {ejercicio}&nbsp;&nbsp;&nbsp;--&nbsp;&nbsp;&nbsp;Periodo: {periodo}&nbsp;&nbsp;&nbsp;--&nbsp;&nbsp;&nbsp;Fecha generacion: {DateTime.Now}</p>");
 
+            //Colores para la tabla html de avisos y errores
+            string fondo1 = string.Empty; //Cabecera de la tabla
+            string fondo2 = string.Empty; //Lineas de la tabla
+            string borde = string.Empty; // Borde e icono
+
             //Contenido del html si hay errores
             if (erroresArray != null && erroresArray.Count > 0)
             {
+                fondo1 = "#FFBFBF"; //Cabecera tabla
+                fondo2 = "#FFEBEE"; // Lineas tabla
+                borde = "#ED1C24"; // Borde e icono
+
                 //Generar tabla de errores
-                contenidoHtml.AppendLine(@"  <table style='margin: 10px; width: 100%; border-collapse: collapse; font-size: 1em;'>");
-                contenidoHtml.AppendLine(@"    <tr style='background-color: #FFBFBF'>");
+                contenidoHtml.AppendLine($@"  <table style='margin: 10px; width: 100%; border-collapse: collapse; font-size: 1em; border: 1px solid {borde}'>");
+                contenidoHtml.AppendLine($@"    <tr style='background-color: {fondo1}'>");
                 contenidoHtml.AppendLine(@"      <th>");
-                contenidoHtml.AppendLine(@"        <i class='fa-solid fa-rectangle-xmark' style='color: #ED1C24;font-size: 1.2em;margin-right: 5px;'></i>&nbsp;&nbsp;&nbsp;Errores. No es posible presentar la declaracion");
+                contenidoHtml.AppendLine($@"        <i class='fa-solid fa-rectangle-xmark' style='color: {borde};font-size: 1.2em;margin-right: 5px;'></i>&nbsp;&nbsp;&nbsp;Errores. No es posible presentar la declaracion");
                 contenidoHtml.AppendLine(@"      </th>");
                 contenidoHtml.AppendLine(@"    </tr>");
-                contenidoHtml.AppendLine(generarFilasHtml("errores"));
+                contenidoHtml.AppendLine(generarFilasHtml("errores", fondo2, borde));
+                contenidoHtml.AppendLine(@"  </table>");
+            }
+
+            //Contenido del html si hay advertencias
+            if (advertenciasArray != null && advertenciasArray.Count > 0)
+            {
+                fondo1 = "#F9E79F"; // Cabecera tabla
+                fondo2 = "#FCF3CF"; // Lineas tabla
+                borde = "#FFA500"; // Borde e icono
+
+                //Generar tabla de advertencias
+                contenidoHtml.AppendLine($@"  <table style='margin: 10px; width: 100%; border-collapse: collapse; font-size: 1em; border: 1px solid {borde}'>");
+                contenidoHtml.AppendLine($@"    <tr style='background-color: {fondo1}'>");
+                contenidoHtml.AppendLine(@"      <th>");
+                contenidoHtml.AppendLine($@"        <i class='fa-solid fa-triangle-exclamation' style='color: {borde};font-size: 1.2em;margin-right: 5px;'></i>&nbsp;&nbsp;&nbsp;Advertencias. Pueden provocar un requerimiento de la AEAT");
+                contenidoHtml.AppendLine(@"      </th>");
+                contenidoHtml.AppendLine(@"    </tr>");
+
+                contenidoHtml.AppendLine(generarFilasHtml("advertencias", fondo2, borde));
                 contenidoHtml.AppendLine(@"  </table>");
             }
 
@@ -336,28 +365,17 @@ namespace gestionesAEAT
             if (avisosArray != null && avisosArray.Count > 0)
             {
                 //Generar tabla de avisos
-                contenidoHtml.AppendLine(@"  <table style='margin: 10px; width: 100%; border-collapse: collapse; font-size: 1em;'>");
-                contenidoHtml.AppendLine(@"    <tr style='background-color: #AED6F1'>");
+                fondo1 = "#AED6F1"; // Cabecera tabla
+                fondo2 = "#EBF5FB"; // Lineas tabla
+                borde = "#6A5ACD"; // Borde e icono
+
+                contenidoHtml.AppendLine($@"  <table style='margin: 10px; width: 100%; border-collapse: collapse; font-size: 1em; border: 1px solid {borde}'>");
+                contenidoHtml.AppendLine($@"    <tr style='background-color: {fondo1}'>");
                 contenidoHtml.AppendLine(@"      <th>");
-                contenidoHtml.AppendLine(@"        <i class='fa-solid fa-circle-info' style='color: #6A5ACD;font-size: 1.2em;margin-right: 5px;'></i>&nbsp;&nbsp;&nbsp;Avisos que deben revisarse. Permiten presentar la declaracion");
+                contenidoHtml.AppendLine($@"        <i class='fa-solid fa-circle-info' style='color: {fondo1};font-size: 1.2em;margin-right: 5px;'></i>&nbsp;&nbsp;&nbsp;Avisos que deben revisarse. Permiten presentar la declaracion");
                 contenidoHtml.AppendLine(@"      </th>");
                 contenidoHtml.AppendLine(@"    </tr>");
-                contenidoHtml.AppendLine(generarFilasHtml("avisos"));
-                contenidoHtml.AppendLine(@"  </table>");
-            }
-
-            //Contenido del html si hay advertencias
-            if (advertenciasArray != null && advertenciasArray.Count > 0)
-            {
-                //Generar tabla de avisos
-                contenidoHtml.AppendLine(@"  <table style='margin: 10px; width: 100%; border-collapse: collapse; font-size: 1em;'>");
-                contenidoHtml.AppendLine(@"    <tr style='background-color: #F9E79F'>");
-                contenidoHtml.AppendLine(@"      <th>");
-                contenidoHtml.AppendLine(@"        <i class='fa-solid fa-triangle-exclamation' style='color: #FFA500;font-size: 1.2em;margin-right: 5px;'></i>&nbsp;&nbsp;&nbsp;Advertencias. Pueden provocar un requerimiento de la AEAT");
-                contenidoHtml.AppendLine(@"      </th>");
-                contenidoHtml.AppendLine(@"    </tr>");
-
-                contenidoHtml.AppendLine(generarFilasHtml("advertencias"));
+                contenidoHtml.AppendLine(generarFilasHtml("avisos", fondo2, borde));
                 contenidoHtml.AppendLine(@"  </table>");
             }
 
@@ -368,39 +386,33 @@ namespace gestionesAEAT
             return contenidoHtml.ToString();
         }
 
-        private string generarFilasHtml(string clave)
+        private string generarFilasHtml(string clave, string fondo, string borde)
         {
             StringBuilder elementos = new StringBuilder();
-            string color_error = "#FFEBEE";
-            string color_aviso = "#EBF5FB";
-            string color_advertencia = "#FCF3CF";
+            List<string> listaElementos = null;
 
             switch (clave)
             {
                 case "errores":
-                    foreach (var elemento in erroresArray)
-                    {
-                        elementos.AppendLine($@"          <tr style='background-color: {color_error}'><td>{elemento}</td></tr>");
-                    }
+                    listaElementos = erroresArray;
                     break;
 
                 case "avisos":
-                    foreach (var elemento in avisosArray)
-                    {
-                        elementos.AppendLine($@"          <tr style='background-color: {color_aviso}'><td>{elemento}</td></tr>");
-                    }
+                    listaElementos = avisosArray;
                     break;
 
                 case "advertencias":
-                    foreach (var elemento in advertenciasArray)
-                    {
-                        elementos.AppendLine($@"          <tr style='background-color: {color_advertencia}'><td>{elemento}</td></tr>");
-                    }
+                    listaElementos = advertenciasArray;
                     break;
 
                 default:
+                    return string.Empty;
                     break;
+            }
 
+            foreach (var elemento in listaElementos)
+            {
+                elementos.AppendLine($@"          <tr style='background-color: {fondo} ; border: 1px solid  {borde}'><td>{elemento}</td></tr>");
             }
 
             return elementos.ToString();
