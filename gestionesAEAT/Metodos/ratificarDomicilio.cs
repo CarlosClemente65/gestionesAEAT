@@ -70,7 +70,7 @@ namespace gestionesAEAT.Metodos
                     //Si no se ha ratificado el domicilio
                     string ruta = Path.GetDirectoryName(ficheroSalida);
                     if (ruta == "") ruta = AppDomain.CurrentDomain.BaseDirectory;
-                    ruta = ruta + @"errores.html";
+                    ruta = Path.Combine(ruta, "errores.html");
                     File.WriteAllText(ruta, respuestaAEAT, Encoding.Default);
                 }
             }

@@ -23,6 +23,7 @@ namespace gestionesAEAT
         private const int ATTACH_PARENT_PROCESS = -1;
 
         static string pathFicheros = string.Empty;
+        static string ficheroErrores = string.Empty;
 
         static void Main(string[] args)
         {
@@ -37,10 +38,9 @@ namespace gestionesAEAT
             bool conCertificado = false;
 
             string respuestaAeat = string.Empty;
-            X509Certificate2 certificado = null; //Certificado que se utilizara para el envio
-
-            //Se usa el path en varias partes del programa, y si se esta en modo de pruebas se cambia
             
+            //Se usa el path en varias partes del programa, y si se esta en modo de pruebas se cambia
+
 #if DEBUG
             {
                 pathFicheros = @"C:\Programacion\c#\gestionesAEAT\pruebas"; //Path por defecto para almacenar los ficheros (dejar en blanco para la version de produccion)
@@ -66,7 +66,7 @@ namespace gestionesAEAT
                         log += "Parametros incorrectos. Con 4 parametros el tipo debe ser 2.";
                         salirAplicacion();
                     }
-                    ficheroSalida = argumentos[3];
+                    ficheroSalida = Path.Combine(pathFicheros, argumentos[3]);
                 }
                 else
                 {
@@ -78,6 +78,10 @@ namespace gestionesAEAT
                             log += $"El fichero de entrada {ficheroEntrada} no existe";
                             salirAplicacion();
                         }
+
+                        ficheroErrores = Path.Combine(Path.GetDirectoryName(ficheroEntrada), "errores.txt");
+                        if (File.Exists(ficheroErrores)) File.Delete(ficheroErrores);
+
                         ficheroSalida = Path.Combine(pathFicheros, argumentos[4]);
                         if (argumentos[5].ToUpper() == "SI") conCertificado = true;
                         if (conCertificado)
@@ -140,39 +144,19 @@ namespace gestionesAEAT
                     //Ejemplo de ejecucion (se pasa fichero y password del certificado)
                     //gestionesAEAT.exe ds123456 1 empresa_guion.txt empresa_salida.txt SI certificado.pdf password
 
+                    //Como es necesario el certificado, se controla si se ha pasado como parametro
+                    controlCertificado(ref serieCertificado);
 
-                    if (string.IsNullOrEmpty(serieCertificado))
-                    {
-                        //Si no se ha grabado la serie del certificado, se vuelve a mostrar la pantalla de seleccion de certificados
-                        serieCertificado = seleccionCertificados();
-                    }
-                    certificado = instanciaCertificado.buscarSerieCertificado(serieCertificado);
-                    if (certificado != null)
-                    {
-                        DateTime caducidad = Convert.ToDateTime(certificado.GetExpirationDateString());
-                        if (caducidad < DateTime.Now)
-                        {
-                            log += $"El certificado de {certificado.SubjectName.Name} esta caducado. Fecha de caducidad: {certificado.GetExpirationDateString()}";
-                            salirAplicacion();
-                        }
-                        else
-                        {
-                            //Desarrollar la parte del envio del modelo, en el que habra que pasar el guion y el certificado (ver como se ha hecho en ratificarDomicilio)
-                        }
-                    }
-                    else
-                    {
-                        log += "Certificado no encontrado en el almacen";
-                        salirAplicacion();
-                    }
+                    //Desarrollar la parte del envio del modelo, en el que habra que pasar el guion y el certificado (ver como se ha hecho en ratificarDomicilio)
+
                     break;
 
                 case "2":
-                    //Obtener datos certificados instalados
-                    
+                    //Obtener datos certificados instalados. No necesita certificado
+
                     //Ejemplo de ejecucion
                     //gestionesAEAT.exe ds123456 2 certificados_salida.txt
-                    
+
                     instanciaCertificado.exportarDatosCertificados(ficheroSalida);
                     break;
 
@@ -199,13 +183,17 @@ namespace gestionesAEAT
                     //gestionesAEAT.exe ds123456 4 empresa_guion.txt empresa_salida.txt SI certificado.pdf password
 
                     ratificarDomicilio ratifica = new ratificarDomicilio();
+
+                    //Como es necesario el certificado, se controla si se ha pasado como parametro
+                    controlCertificado(ref serieCertificado);
                     //serieCertificado = "726e0db7a17efa04603b7f010ba43fa6".ToUpper();//Certificado de prueba mio
+
                     ratifica.envioPeticion(serieCertificado, ficheroEntrada, ficheroSalida, 1, instanciaCertificado);
                     ratifica.envioPeticion(serieCertificado, ficheroEntrada, ficheroSalida, 2, instanciaCertificado);
                     break;
 
                 case "5":
-                    //Consulta de modelos presentados.
+                    //Consulta de modelos presentados. Necesita certificado
 
                     //Ejemplo de ejecucion (solicita certificado en pantalla)
                     //gestionesAEAT.exe ds123456 5 empresa_guion.txt empresa_salida.txt SI
@@ -217,6 +205,9 @@ namespace gestionesAEAT
                     //gestionesAEAT.exe ds123456 5 empresa_guion.txt empresa_salida.txt SI certificado.pdf password
 
                     descargaModelos proceso = new descargaModelos();
+
+                    //Como es necesario el certificado, se controla si se ha pasado como parametro
+                    controlCertificado(ref serieCertificado);
 
                     proceso.obtenerModelos(ficheroEntrada, ficheroSalida, serieCertificado, instanciaCertificado);
 
@@ -232,9 +223,35 @@ namespace gestionesAEAT
 
             frmSeleccion frmSeleccion = new frmSeleccion(instanciaCertificado);
             frmSeleccion.ShowDialog();
-            
+
             serieCertificado = frmSeleccion.certificadoSeleccionado.serieCertificado;
             return serieCertificado;
+        }
+
+        private static void controlCertificado(ref string serieCertificado)
+        {
+            //Metodo para controlar si no se ha seleccionado un certificado y solicitarlo por pantalla
+            X509Certificate2 certificado;
+            if (string.IsNullOrEmpty(serieCertificado))
+            {
+                //Si no se ha grabado la serie del certificado, se vuelve a mostrar la pantalla de seleccion de certificados
+                serieCertificado = seleccionCertificados();
+            }
+            certificado = instanciaCertificado.buscarSerieCertificado(serieCertificado);
+            if (certificado != null)
+            {
+                DateTime caducidad = Convert.ToDateTime(certificado.GetExpirationDateString());
+                if (caducidad < DateTime.Now)
+                {
+                    log += $"El certificado de {certificado.SubjectName.Name} esta caducado. Fecha de caducidad: {certificado.GetExpirationDateString()}";
+                    salirAplicacion();
+                }
+            }
+            else
+            {
+                log += "Certificado no encontrado en el almacen";
+                salirAplicacion();
+            }
         }
 
         private static void salirAplicacion()
@@ -249,7 +266,7 @@ namespace gestionesAEAT
             //Si hay algun texto de error en el log, lo graba en un fichero
             if (!string.IsNullOrEmpty(log))
             {
-                string salida = Path.Combine(pathFicheros, "errores.log");
+                string salida = Path.Combine(pathFicheros, ficheroErrores);
                 File.WriteAllText(salida, log);
             }
             Environment.Exit(0);

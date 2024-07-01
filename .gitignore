@@ -11,6 +11,7 @@
 *.sln.docstates
 conversionVB/
 temas_pendientes.txt
+pruebas/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

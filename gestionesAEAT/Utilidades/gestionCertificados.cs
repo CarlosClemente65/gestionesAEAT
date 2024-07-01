@@ -19,6 +19,18 @@ namespace gestionesAEAT
         public string nifRepresentante { get; set; }
         public string nombreRepresentante { get; set; }
         public string serieCertificado { get; set; }
+
+        
+        public certificadoInfo()
+        {
+            nifCertificado = string.Empty;
+            titularCertificado = string.Empty;
+            fechaEmision = string.Empty; 
+            fechaValidez = string.Empty;
+            nifRepresentante = string.Empty;
+            nombreRepresentante = string.Empty;
+            serieCertificado = string.Empty;
+        }
     }
 
 
@@ -262,7 +274,10 @@ namespace gestionesAEAT
                     if (juridica)
                     {
                         info.titularCertificado = nombrePJ;
-                        info.nombreRepresentante = apellidoRepresentante + " " + nombreRepresentante;
+                        if (!string.IsNullOrEmpty(nombreRepresentante))
+                        {
+                            info.nombreRepresentante = apellidoRepresentante + " " + nombreRepresentante;
+                        }
                     }
                     else
                     {
@@ -307,7 +322,7 @@ namespace gestionesAEAT
 
             catch (Exception ex)
             {
-             
+
                 return ex.Message;
             }
         }
