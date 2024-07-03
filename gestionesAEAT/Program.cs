@@ -148,6 +148,8 @@ namespace gestionesAEAT
                     controlCertificado(ref serieCertificado);
 
                     //Desarrollar la parte del envio del modelo, en el que habra que pasar el guion y el certificado (ver como se ha hecho en ratificarDomicilio)
+                    enviarModelos envio = new enviarModelos();
+                    envio.envioPeticion(ficheroEntrada, ficheroSalida, serieCertificado, instanciaCertificado);
 
                     break;
 

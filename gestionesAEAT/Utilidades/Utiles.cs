@@ -25,35 +25,34 @@ namespace gestionesAEAT
         private List<string> avisosArray = new List<string>();
         private List<string> advertenciasArray = new List<string>();
 
-        private RespuestaJson respuestaJson; //Varible que almacena la respuesta completa de la AEAT
+        public RespuestaValidarModelos respuestaValidarModelos; //Varible que almacena la respuesta completa de la AEAT en la validacion de modelos
+        public RespuestaPresBasicaDos respuestaEnvioModelos; //Variable que almacena la respuesta completa de la AEAT en la presentacion directa
 
         public string quitaRaros(string cadena)
         {
             //Metodo para eliminar caracteres raros
-            List<(string, string)> caracteresReemplazo = new List<(string, string)>
+            Dictionary<char, char> caracteresReemplazo = new Dictionary<char, char>
             {
-                ("á", "a"),
-                ("é", "e"),
-                ("í", "i"),
-                ("ó", "o"),
-                ("ú", "u"),
-                ("º", "."),
-                ("ª", "."),
-                ("ñ", "¤"),
-                ("Á", "A"),
-                ("É", "E"),
-                ("Í", "I"),
-                ("Ó", "O"),
-                ("Ú", "U"),
-                ("Ñ", "¤")
+                {'á', 'a'}, {'é', 'e'}, {'í', 'i'}, {'ó', 'o'}, {'ú', 'u'},
+                {'Á', 'A'}, {'É', 'E'}, {'Í', 'I'}, {'Ó', 'O'}, {'Ú', 'U'}
+                //{'\u00AA', '.'}, {'ª', '.'}, {'\u00BA', '.'}, {'°', '.' }
             };
+            //Nota: los caracteres ª y º estan con la forma unicode y en caracter para contemplar ambas opcioens, pero los comento porque no esta mal que salgan (si dan pegas ya se arreglara)
 
-            foreach (var tupla in caracteresReemplazo)
+            StringBuilder resultado = new StringBuilder(cadena.Length);
+            foreach (char c in cadena)
             {
-                cadena = cadena.Replace(tupla.Item1, tupla.Item2);
+                if (caracteresReemplazo.TryGetValue(c, out char reemplazo))
+                {
+                    resultado.Append(reemplazo);
+                }
+                else
+                {
+                    resultado.Append(c);
+                }
             }
-            return cadena;
 
+            return resultado.ToString();
         }
 
         public string codificacionFicheroEntrada(string guion)
@@ -185,7 +184,7 @@ namespace gestionesAEAT
         public List<string> prepararGuion(string ficheroEntrada)
         {
             //Recibe un string y devuelve una lista
-            
+
             //Obtiene la codificacion del texto para procesarlo
             Encoding codificacion = Encoding.GetEncoding(codificacionFicheroEntrada(ficheroEntrada));
 
@@ -202,56 +201,70 @@ namespace gestionesAEAT
             return textoEntrada;
         }
 
-        public string generarRespuesta(RespuestaJson respuesta, string ficheroRespuesta, int control = 0)
+        public string generarRespuesta(string ficheroRespuesta, string tipo)
         {
-            this.respuestaJson = respuesta;
-            string[] elementos = { "errores", "avisos", "advertencias" };
             string modelo = string.Empty;
             string ejercicio = string.Empty;
             string periodo = string.Empty;
             string cliente = string.Empty;
             string respuestaHtml = string.Empty;
+            int control = 0;
 
-            //Detecta si en la respuesta hay alguno de los elementos para ver si hay errores, avisos o advertencias
-            if (respuestaJson != null && respuestaJson.respuesta != null)
+            switch (tipo)
             {
-                foreach (string elemento in elementos)
-                {
-                    switch (elemento)
+                case "validar":
+                    var respuestaValidar = respuestaValidarModelos.respuesta;
+                    if (respuestaValidar.errores != null && respuestaValidar.errores.Count > 0)
                     {
-                        case "errores":
-                            if (respuestaJson.respuesta.errores != null && respuestaJson.respuesta.errores.Count > 0)
-                            {
-                                control++;
-                            }
-                            break;
-
-                        case "avisos":
-                            if (respuestaJson.respuesta.avisos != null && respuestaJson.respuesta.avisos.Count > 0)
-                            {
-                                control++;
-                            }
-                            break;
-
-                        case "advertencias":
-                            if (respuestaJson.respuesta.advertencias != null && respuestaJson.respuesta.advertencias.Count > 0)
-                            {
-                                control++;
-                            }
-                            break;
-
-                        default:
-                            break;
-
+                        erroresArray = respuestaValidar.errores;
+                        control++;
                     }
-                }
+
+                    if (respuestaValidar.avisos != null && respuestaValidar.avisos.Count > 0)
+                    {
+                        avisosArray = respuestaValidar.avisos;
+                        control++;
+                    }
+
+                    if (respuestaValidar.advertencias != null && respuestaValidar.advertencias.Count > 0)
+                    {
+                        advertenciasArray = respuestaValidar.advertencias;
+                        control++;
+                    }
+
+                    break;
+
+                case "enviar":
+                    var respuestaEnvio = respuestaEnvioModelos.respuesta;
+                    if (respuestaEnvio.correcta != null)
+                    {
+                        //Si viene la respuesta correcta mirar si hay avisos o advertencias
+                        if (respuestaEnvio.correcta.avisos != null)
+                        {
+                            avisosArray = respuestaEnvio.correcta.avisos;
+                            control++;
+                        }
+
+                        if (respuestaEnvio.correcta.advertencias != null)
+                        {
+                            advertenciasArray = respuestaEnvio.correcta.advertencias;
+                            control++;
+                        }
+                    }
+
+                    if (respuestaEnvio.errores != null)
+                    {
+                        erroresArray = respuestaEnvio.errores;
+                        control++;
+                    }
+
+                    break;
             }
 
             //Si se ha encontrado algun error, aviso o advertencia, hace el html
             if (control > 0)
             {
                 int indice;
-                int posicion;
 
                 //Asigna las variables modelo, ejercicio y periodo segun los valores de la cabecera
                 foreach (string linea in cabecera)
@@ -262,24 +275,28 @@ namespace gestionesAEAT
                         if (linea.StartsWith("MODELO")) modelo = linea.Substring(indice + 1);
                         if (linea.StartsWith("EJERCICIO")) ejercicio = linea.Substring(indice + 1);
                         if (linea.StartsWith("PERIODO")) periodo = linea.Substring(indice + 1);
+
+                        //Cuando se ponga en la cabecera el cliente habilitar esta parte
+                        if (linea.StartsWith("CLIENTE")) cliente = linea.Substring(indice + 1);
                     }
                 }
 
-                //Intenta asignar el numero de cliente tomandolo del nombre del fichero de respuesta
-                try
-                {
-                    string codCliente = Path.GetFileNameWithoutExtension(ficheroRespuesta);
-                    posicion = codCliente.IndexOf("_salida");
-                    if (posicion != -1)
-                    {
-                        cliente = codCliente.Substring(0, posicion);
+                //int posicion;
+                ////Intenta asignar el numero de cliente tomandolo del nombre del fichero de respuesta
+                //try
+                //{
+                //    string codCliente = Path.GetFileNameWithoutExtension(ficheroRespuesta);
+                //    posicion = codCliente.IndexOf("_salida");
+                //    if (posicion != -1)
+                //    {
+                //        cliente = codCliente.Substring(0, posicion);
 
-                    }
-                }
-                catch (Exception ex)
-                {
-                    //Si no se encuentra el cliente se devuelve vacio
-                }
+                //    }
+                //}
+                //catch (Exception ex)
+                //{
+                //    //Si no se encuentra el cliente se devuelve vacio
+                //}
 
                 respuestaHtml = generarHtml(modelo, ejercicio, periodo, cliente);
             }
@@ -291,17 +308,8 @@ namespace gestionesAEAT
         {
             StringBuilder respuestaHtml = new StringBuilder();
 
-            //Almacena las respuestas en las listas para procesarlas despues
-            if (respuestaJson != null && respuestaJson.respuesta != null)
-            {
-                erroresArray = respuestaJson.respuesta.errores;
-                avisosArray = respuestaJson.respuesta.avisos;
-                advertenciasArray = respuestaJson.respuesta.advertencias;
-            }
-
             //Construye el html
             StringBuilder contenidoHtml = new StringBuilder();
-
 
             //Cabecera del html y datos informativos del cliente, modelo, ejercicio y periodo
             contenidoHtml.AppendLine("<!DOCTYPE html>");
@@ -372,7 +380,7 @@ namespace gestionesAEAT
                 contenidoHtml.AppendLine($@"  <table style='margin: 10px; width: 100%; border-collapse: collapse; font-size: 1em; border: 1px solid {borde}'>");
                 contenidoHtml.AppendLine($@"    <tr style='background-color: {fondo1}'>");
                 contenidoHtml.AppendLine(@"      <th>");
-                contenidoHtml.AppendLine($@"        <i class='fa-solid fa-circle-info' style='color: {fondo1};font-size: 1.2em;margin-right: 5px;'></i>&nbsp;&nbsp;&nbsp;Avisos que deben revisarse. Permiten presentar la declaracion");
+                contenidoHtml.AppendLine($@"        <i class='fa-solid fa-circle-info' style='color: {borde};font-size: 1.2em;margin-right: 5px;'></i>&nbsp;&nbsp;&nbsp;Avisos que deben revisarse. Permiten presentar la declaracion");
                 contenidoHtml.AppendLine(@"      </th>");
                 contenidoHtml.AppendLine(@"    </tr>");
                 contenidoHtml.AppendLine(generarFilasHtml("avisos", fondo2, borde));

@@ -20,7 +20,7 @@ namespace gestionesAEAT.Metodos
         public string SINVL { get; set; }
     }
 
-    public class RespuestaJson
+    public class RespuestaValidarModelos
     {
         public elementosRespuesta respuesta { get; set; }
     }
@@ -116,10 +116,9 @@ namespace gestionesAEAT.Metodos
 
                 if (envio.estadoRespuestaAEAT == "OK")
                 {
-                    RespuestaJson respuestaJson = new RespuestaJson();
-                    respuestaJson = JsonConvert.DeserializeObject<RespuestaJson>(respuestaAEAT);
+                    utilidad.respuestaValidarModelos = JsonConvert.DeserializeObject<RespuestaValidarModelos>(respuestaAEAT);
+                    textoSalida = utilidad.generarRespuesta(ficheroSalida, "validar");
 
-                    textoSalida = utilidad.generarRespuesta(respuestaJson, ficheroSalida);
                     //Grabar un fichero con los errores
                     if (!string.IsNullOrEmpty(textoSalida))
                     {
@@ -127,11 +126,11 @@ namespace gestionesAEAT.Metodos
                         File.WriteAllText(rutaHtml, textoSalida);
                     }
 
-                    if (respuestaJson.respuesta.pdf != null)
+                    if (utilidad.respuestaValidarModelos.respuesta.pdf != null)
                     {
                         //Grabar el PDF en la ruta
                         string ficheroPdf = Path.ChangeExtension(ficheroSalida, "pdf");
-                        string respuestaPDF = respuestaJson.respuesta.pdf[0];
+                        string respuestaPDF = utilidad.respuestaValidarModelos.respuesta.pdf[0];
                         byte[] contenidoPDF = Convert.FromBase64String(respuestaPDF);
                         File.WriteAllBytes(ficheroPdf, contenidoPDF);
                     }

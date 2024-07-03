@@ -1,6 +1,9 @@
 Temas pendientes:
-	- Cambiar la ruta de salida de los datos de certificados (tipo 2 exportarCertificados)
 	- Desarrollar la parte del envio de modelos
+	- Desarrollar la funcionalidad para que en guion venga el cliente para luego no tener que asignarlo desde el 
+	  nombre del fichero en el metodo 'Utiles.generarRespuestaValidar' y 'Utiles.generarRespuestaEnvioModelos'; en
+	  el metodo 'validarModelos.envioPeticion' esta el switch-case para asignar los datos de la cabecera, por lo que
+	  se puede crear una variable 'cliente' que luego se pueda pasar al otro metodo para que se incluya en el html 
 	
 	
 Temas terminados:

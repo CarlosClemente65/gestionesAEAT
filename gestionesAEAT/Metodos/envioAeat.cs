@@ -16,7 +16,7 @@ namespace gestionesAEAT
         Utiles utilidad = new Utiles();
 
 
-        public void envioPost(string url, string datosEnvio, string serieCertificado, gestionCertificados instanciaCertificados)
+        public void envioPost(string url, string datosEnvio, string serieCertificado, gestionCertificados instanciaCertificados, string tipoEnvio = "form") //Se pone el tipo de envio opcional como formulario y si es de tipo json se debe pasar en la llamada al metodo
         {
             try
             {
@@ -32,7 +32,18 @@ namespace gestionesAEAT
 
                     //Configurar la solicitud
                     solicitudHttp.Method = "POST";
-                    solicitudHttp.ContentType = "application/x-www-form-urlencoded";
+                    
+                    //configura el contenido en funcion de si el envio se hace por un formulario o un json
+                    if (tipoEnvio == "form")
+                    {
+                        solicitudHttp.ContentType = "application/x-www-form-urlencoded";
+                    }
+                    else if (tipoEnvio == "json")
+                    {
+                        solicitudHttp.ContentType = "application/json;charset=UTF-8";
+                    }
+
+                    //solicitudHttp.ContentType = "application/x-www-form-urlencoded";
                     solicitudHttp.ContentLength = datosEnvio.Length;
                     solicitudHttp.ClientCertificates.Add(certificado);
                     //solicitudHttp.Proxy = null;

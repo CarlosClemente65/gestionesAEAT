@@ -14,13 +14,13 @@ namespace gestionesAEAT.Metodos
     public class RespuestaWebService
     {
         [XmlElement("respuestaCorrecta")]
-        public List<RespuestaCorrecta> Respuestas { get; set; }
+        public List<RespuestaCorrectaDescarga> Respuestas { get; set; }
 
         [XmlElement("error")]
-        public List<RespuestaError> Errores { get; set; }
+        public List<RespuestaErrorDescarga> Errores { get; set; }
     }
 
-    public class RespuestaCorrecta
+    public class RespuestaCorrectaDescarga
     {
         public string ejercicio { get; set; }
         public string modelo { get; set; }
@@ -33,7 +33,7 @@ namespace gestionesAEAT.Metodos
         public string ficheroSalida { get; set; } //Esta propiedad la incluyo para que al grabar el fichero de salida se incluya el nombre del fichero generado
     }
 
-    public class RespuestaError
+    public class RespuestaErrorDescarga
     {
         public string descripcionError { get; set; }
     }
@@ -42,8 +42,8 @@ namespace gestionesAEAT.Metodos
     {
         public string estadoRespuestaAEAT { get; set; }
         public string respuestaEnvioAEAT { get; set; }
-        public List<RespuestaCorrecta> respuestasCorrectas = new List<RespuestaCorrecta>();
-        public List<RespuestaError> respuestasError = new List<RespuestaError>();
+        public List<RespuestaCorrectaDescarga> respuestasCorrectas = new List<RespuestaCorrectaDescarga>();
+        public List<RespuestaErrorDescarga> respuestasError = new List<RespuestaErrorDescarga>();
         envioAeat envio = new envioAeat();
         Utiles utilidad = new Utiles();
 
