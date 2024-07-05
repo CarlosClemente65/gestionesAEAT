@@ -89,7 +89,6 @@ namespace gestionesAEAT.Metodos
         public void envioPeticion(string ficheroEntrada, string ficheroSalida, string serieCertificado, gestionCertificados instanciaCertificado)
         {
             textoEnvio = utilidad.prepararGuion(ficheroEntrada); //Se procesa el guion para formar una lista que se pueda pasar al resto de metodos
-            utilidad.borrarFicheros(ficheroSalida); //Se borra el fichero de salida si existe, para que no haya problemas
 
             try
             {
@@ -154,9 +153,9 @@ namespace gestionesAEAT.Metodos
 
                 string jsonEnvio = JsonConvert.SerializeObject(contenidoEnvio, new JsonSerializerSettings
                 {
+                    //Serializa el json ignorando valores nulos y formateando la respuesta de forma indentada
                     NullValueHandling = NullValueHandling.Ignore,
                     Formatting = Formatting.Indented
-
                 });
 
                 envio.envioPost(utilidad.url, jsonEnvio, serieCertificado, instanciaCertificado, "json");
@@ -164,16 +163,15 @@ namespace gestionesAEAT.Metodos
 
                 if (envio.estadoRespuestaAEAT == "OK")
                 {
-                    //RespuestaPresBasicaDos respuestaJson = new RespuestaPresBasicaDos();
-                    //respuestaJson = JsonConvert.DeserializeObject<RespuestaPresBasicaDos>(respuestaAEAT);
-                    //textoSalida = utilidad.generarRespuestaEnvioModelos(respuestaJson, ficheroSalida);
-
+                    //Si se ha podido enviar, se serializa la respuesta de Hacienda
                     utilidad.respuestaEnvioModelos = JsonConvert.DeserializeObject<RespuestaPresBasicaDos>(respuestaAEAT);
                     textoSalida = utilidad.generarRespuesta(ficheroSalida, "enviar");
 
+                    //Procesado de los tipos de respuesta posibles
                     var respuestaEnvio = utilidad.respuestaEnvioModelos.respuesta;
                     if (respuestaEnvio.correcta != null)
                     {
+                        //Si hay datos en las propiedades de la respuesta correcta se graba el PDF y el fichero con los datos del modelo
                         var elementosRespuesta = respuestaEnvio.correcta;
                         if (elementosRespuesta.urlPdf != null)
                         {
@@ -190,7 +188,7 @@ namespace gestionesAEAT.Metodos
                         //Grabacion de los datos de la respuesta en el fichero de salida
                         using (StreamWriter writer = new StreamWriter(ficheroSalida))
                         {
-                            var propiedadesSeleccionadas = new List<string>
+                            var propiedadesSeleccionadas = new List<string> //Permite buscar solo las propiedades que necesitamos grabar en el fichero
                         {
                             "Modelo", "Ejercicio", "Periodo","CodigoSeguroVerificacion", "Justificante", "Expediente"
                         };
@@ -207,22 +205,22 @@ namespace gestionesAEAT.Metodos
 
                                 }
                             }
-                            if (elementosRespuesta.avisos != null)
+                            if (elementosRespuesta.avisos != null) //Si hay avisos tambien se graban en el fichero de salida
                             {
                                 for (int i = 0; i < elementosRespuesta.avisos.Count; i++)
                                 {
                                     writer.WriteLine($"Aviso {i + 1}: {elementosRespuesta.avisos[i]}");
                                 }
-
                             }
 
-                            if (elementosRespuesta.advertencias != null)
+                            if (elementosRespuesta.advertencias != null) //Si hay advertencias tambien se graban en el fichero de salida
+                            {
                                 for (int i = 0; i < elementosRespuesta.advertencias.Count; i++)
                                 {
                                     writer.WriteLine($"Advertencia {i + 1}: {elementosRespuesta.advertencias[i]}");
                                 }
+                            }
                         }
-
                     }
 
                     //Grabar un html con los errores, avisos o advertencias generados

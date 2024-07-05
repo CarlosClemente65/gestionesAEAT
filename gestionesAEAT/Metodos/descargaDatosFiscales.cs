@@ -40,7 +40,7 @@ namespace gestionesAEAT.Metodos
         string urlAutenticacion = "https://www2.agenciatributaria.gob.es/wlpl/ADHT-AUTH/AjaxRef";
         string nifDf = string.Empty;
         string refRenta = string.Empty;
-        string dfp = string.Empty;
+        string datosPersonales = string.Empty;
         string ficheroSalida = string.Empty;
         string ficheroErrores = string.Empty;
 
@@ -62,12 +62,12 @@ namespace gestionesAEAT.Metodos
             }
         }
 
-        public void descargaDF(string _urlDescarga, string _nifDf, string _refRenta, string _dfp, string _ficheroSalida)
+        public void descargaDF(string _urlDescarga, string _nifDf, string _refRenta, string _datosPersonales, string _ficheroSalida)
         {
             this.urlDescarga = _urlDescarga;
             this.nifDf = _nifDf;
             this.refRenta = _refRenta;
-            this.dfp = _dfp;
+            this.datosPersonales = _datosPersonales;
             this.ficheroSalida = _ficheroSalida;
             ficheroErrores = Path.Combine(Path.GetDirectoryName(ficheroSalida), "errores.txt");
             string respuestaAEAT = string.Empty;
@@ -180,7 +180,7 @@ namespace gestionesAEAT.Metodos
                 {
                     if (contenidoRespuesta.IndexOf("<status>0</status>") != -1)
                     {
-                        urlDescarga = $"{urlDescarga}?nif={nifDf}&pdp={dfp}";
+                        urlDescarga = $"{urlDescarga}?nif={nifDf}&pdp={datosPersonales}";
                         HttpWebRequest solicitudHttp1 = (HttpWebRequest)WebRequest.Create(urlDescarga);
                         solicitudHttp1.CookieContainer = cookies;
                         solicitudHttp1.KeepAlive = true;

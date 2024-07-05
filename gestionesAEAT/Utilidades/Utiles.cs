@@ -14,11 +14,13 @@ namespace gestionesAEAT
 {
     public class Utiles
     {
+        //Clase con diversas utilidades que se usan en los metodos
         public string url { get; set; } //Variable que almacena la url a la que enviar los datos a la AEAT
 
-        public List<string> cabecera = new List<string>(); //Lista con las lineas que vienen en el guion como cabecera
-        public List<string> body = new List<string>(); //Bloque de datos identificados como body en la entrada
-        public List<string> respuesta = new List<string>(); //Bloque de datos identificados como respuesta en la entrada
+        //Variables para almacenar en listas los datos de la cabecera, body y respuesta que vienen en el guion
+        public List<string> cabecera = new List<string>(); //Lineas de la cabecera
+        public List<string> body = new List<string>(); //Lineas del body 
+        public List<string> respuesta = new List<string>(); //Lineas de la respuesta 
 
         //Variables para almacenar las respuestas del envio
         private List<string> erroresArray = new List<string>();
@@ -103,6 +105,7 @@ namespace gestionesAEAT
 
         public void borrarFicheros(string fichero)
         {
+            //Borra ficheros anteriores antes de algunas ejecuciones
             if (File.Exists(fichero)) File.Delete(fichero);
         }
 
@@ -183,7 +186,7 @@ namespace gestionesAEAT
 
         public List<string> prepararGuion(string ficheroEntrada)
         {
-            //Recibe un string y devuelve una lista
+            //Lee el fichero de entrada y lo devuelve en forma de lista
 
             //Obtiene la codificacion del texto para procesarlo
             Encoding codificacion = Encoding.GetEncoding(codificacionFicheroEntrada(ficheroEntrada));
@@ -203,6 +206,7 @@ namespace gestionesAEAT
 
         public string generarRespuesta(string ficheroRespuesta, string tipo)
         {
+            //Metodo para generar un html si hay errores, avisos o advertencias
             string modelo = string.Empty;
             string ejercicio = string.Empty;
             string periodo = string.Empty;
@@ -275,12 +279,11 @@ namespace gestionesAEAT
                         if (linea.StartsWith("MODELO")) modelo = linea.Substring(indice + 1);
                         if (linea.StartsWith("EJERCICIO")) ejercicio = linea.Substring(indice + 1);
                         if (linea.StartsWith("PERIODO")) periodo = linea.Substring(indice + 1);
-
-                        //Cuando se ponga en la cabecera el cliente habilitar esta parte
                         if (linea.StartsWith("CLIENTE")) cliente = linea.Substring(indice + 1);
                     }
                 }
 
+                //Esta parte obtiene el numero de cliente desde el nombre del fichero, pero hay que cambiarlo para pasarlo en el guion
                 //int posicion;
                 ////Intenta asignar el numero de cliente tomandolo del nombre del fichero de respuesta
                 //try
@@ -306,6 +309,7 @@ namespace gestionesAEAT
 
         private string generarHtml(string modelo, string ejercicio, string periodo, string cliente)
         {
+            //Metodo que crea el html
             StringBuilder respuestaHtml = new StringBuilder();
 
             //Construye el html
@@ -396,6 +400,7 @@ namespace gestionesAEAT
 
         private string generarFilasHtml(string clave, string fondo, string borde)
         {
+            //Metodo que devuelve todas las lineas de los errores, avisos o advertencias con sus colores correspondientes
             StringBuilder elementos = new StringBuilder();
             List<string> listaElementos = null;
 

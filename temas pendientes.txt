@@ -1,6 +1,9 @@
 Temas pendientes:
 	- Revision general de metodos para ver si hace falta algun try-catch adicional
-	- Añadir metodo para la descarga de datos fiscales (ds_renta_dat_fisc)
+		* Revisados: Program, las Utilidades y el metodo enviarModelos (faltan el resto).
+	- Revisar si se puede suprimir en el guion el pasar el apartado [resppuesta] con los datos que se quieren
+	  (cada metodo ya devolvera lo que se necesite)
+	- Ver si es necesario el fichero de salida o se puede generar segun el fichero de entrada.
 	
 Temas terminados:
 	- Obtener datos de certificados instalados
@@ -8,4 +11,5 @@ Temas terminados:
 	- Consulta modelos presentados.
 	- Validar modelos (probado con renta y sociedades)
 	- Envio de modelos
+	- Descarga de datos fiscales
 	

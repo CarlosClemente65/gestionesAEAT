@@ -12,6 +12,7 @@ namespace gestionesAEAT
 {
     public class certificadoInfo
     {
+        //Clase que representa las propiedades de los certificados que necesitamos
         public string nifCertificado { get; set; }
         public string titularCertificado { get; set; }
         public string fechaEmision { get; set; }
@@ -36,6 +37,8 @@ namespace gestionesAEAT
 
     public class gestionCertificados
     {
+        //Clase que engloba la gestion de certificados
+
         private List<X509Certificate2> certificados; //Lista que contiene los certificados
         private List<certificadoInfo> certificadosInfo = new List<certificadoInfo>(); //Lista que contiene las propiedades de los certificados
 
@@ -90,7 +93,7 @@ namespace gestionesAEAT
 
         public List<certificadoInfo> listaCertificados()
         {
-            //Devuelve la lista de certificados (para rellenar el dgv)
+            //Devuelve la lista de certificados (para rellenar la pantalla de seleccion)
             return certificadosInfo;
         }
 
@@ -289,14 +292,15 @@ namespace gestionesAEAT
 
         public string leerCertificado(string fichero, string password)
         {
-            //Como se pasa el certificado como fichero, se borran los certificados que hay en la lista para que solo este el que se ha pasado
+            //Permite leer los datos de un certificado que se pase como fichero
+
+            //Como se pasa el certificado como fichero, se borran los certificados que hay en la lista para que solo aparezca el que se ha pasado
             if (certificados.Count > 0)
             {
                 certificados.Clear();
                 certificadosInfo.Clear();
             }
 
-            //Permite leer los datos de un certificado que se pase como fichero
             try
             {
                 X509Certificate2 certificado = new X509Certificate2(fichero, password);
@@ -322,7 +326,6 @@ namespace gestionesAEAT
 
             catch (Exception ex)
             {
-
                 return ex.Message;
             }
         }
@@ -345,7 +348,7 @@ namespace gestionesAEAT
 
             }
 
-            ////Graba en un fichero los datos de los certificados (lo dejo por si el procesado es mas como asi)
+            ////Graba en un fichero los datos de los certificados (lo dejo por si Manolo quiere la salida de este modo)
             //StringBuilder sb = new StringBuilder();
             //foreach (certificadoInfo info in certificadosInfo)
             //{

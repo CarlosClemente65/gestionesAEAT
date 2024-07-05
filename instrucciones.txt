@@ -1,50 +1,51 @@
 /*Funcionamiento
-    opcion 1: gestionAEAT dsclave tipo entrada salida NO
-	opcion 2: gestionAEAT dsclave tipo entrada salida SI
-    opcion 3: gestionAEAT dsclave tipo entrada salida SI numeroserie
-    opcion 4: gestionAEAT dsclave tipo entrada salida SI certificado password
-	opcion 5: gestionAEAT dsclave tipo salida
-	opcion 6: gestionAEAT dsclave tipo NIF refRenta dfp salida urlDescarga
+    opcion 1 - Procesos que no necesitan certificado (valdiacion de modelos): 
+		gestionAEAT dsclave tipo entrada salida NO
+		
+	opcion 2 - Procesos que necesitan un certificado. Al no pasar datos del certificado, se solicita por pantalla
+		gestionAEAT dsclave tipo entrada salida SI
+
+    opcion 3 - Procesos que necesitan un certificado y se pasa el nº de serie
+		gestionAEAT dsclave tipo entrada salida SI numeroserie
+		
+    opcion 4 - Procesos que necesitan un certificado y se pasa un fichero y su password
+		gestionAEAT dsclave tipo entrada salida SI certificado password
+		
+	opcion 5 - Proceso para obtener una relacion de certificados instalados en la maquina en formato json
+		gestionAEAT dsclave tipo salida
+		
+	opcion 6 - Proceso para la descarga de datos fiscales (tiene unos parametros diferentes al resto)
+		gestionAEAT dsclave tipo salida NIF refRenta datosPersonales urlDescarga
 
 - argumentos:
     * dsclave: unicamente sirve como medida de seguridad de ejecucion y debe pasarse siempre ds123456
-    * tipo: se puede utilizar para indicar el proceso a realizar (presentar, validar, o los que puedan usarse en el futuro).
+	* tipo: permite indicar el tipo de proceso segun los siguientes:
+		1 = envio modelos
+        2 = validacion de modelos (no necesita certificado)
+		3 = consulta de modelos presentados
+		4 = ratificacion domicilio renta
+		5 = Descarga de datos fiscales de la renta
+		6 = obtener relacion de certificados y sus datos.
+		
     * entrada: nombre del fichero que contiene los datos a enviar en txt
     * salida: nombre del fichero en el que se dejara la respuesta
-	* SI/NO: permite indicar si el proceso necesita usar certificado o no
-    * numeroserie: en el caso de ser necesario utilizar un certificado digital, este sera el numero de serie del certificado
-			       que hay que buscar en el almacen de certificados del equipo
-    * certificado: en el caso de pasar un fichero con el certificado, nombre del fichero.pfx que contiene el certificado digital.
-    * password: en el caso de pasar un fichero con el certificado, contraseña del certificado digital
-	* NIF: NIF del contribuyente para la descarga de datos fiscales
-	* refRenta: codigo de 5 caracteres con la referencia de la renta para la descarga de datos fiscales
-	* dfp: opciones 'S' o 'N' para descargar o no los datos personales tambien en la descarga de datos fiscales
+	* SI/NO: indica si el proceso necesita usar certificado. Si no se indica, los procesos que lo
+			 necesiten pediran seleccionar un certificado
+    * numeroserie: numero de serie del certificado de los instalados en la maquina a utilizar en el proceso
+    * certificado: nombre del fichero.pfx que contiene el certificado digital.
+    * password: contraseña del certificado que se pasa por fichero
+	* NIF: para la descarga de datos fiscales es necesario pasra el NIF del contribuyente
+	* refRenta: codigo de 5 caracteres de la referencia de renta para la descarga de datos fiscales
+	* datosPersonales: en la descarga de datos fiscales, indica si se quieren tambien los datos personales (opciones 'S' o 'N')
 	* urlDescarga: direccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año)
     
 Notas:
-    1.- Historicamente se ha usado el campo "dsclave" para indicar si se procesa desde el almacen de certificados del equipo (ds123456), 
-		se le pasa un fichero con el certificado (ds123457), o si se trata de una validacion de un modelo (ds123458), pero el campo "tipo" 
-		no veo que tenga uso por lo que lo utilizo para ese cometido del siguiente modo: 
-            1 = envio modelos
-			2 = obtener relacion de certificados y sus datos.
-            3 = validacion de modelos (no necesita certificado)
-			4 = ratificacion domicilio renta
-			5 = consulta de modelos presentados
-			6 = Descarga de datos fiscales de la renta
-	2.- La opcion 1 se utilizara para procesos que no necesiten certificado, como la validacion de un modelo.
-	3.- La opcion 2 sirve para mostrar el formulario de seleccion del certificado, ya que hace falta (lleva un SI) pero no se pasa ninguno
-	4.- La opcion 3 la dejo por compatibilidad con el sistema anterior en el que estaba grabado el nº de serie del certificado y se pasaba
-		como parametro para lanzar la presentacion del modelo. Con el nuevo sistema esto no seria necesario, ya que si viene
-		la opcion SI y no se pasa ningun parametro mas, se pedira la seleccion de un certificado del almacen de windows.
-	5.- La opcion 4 se utilizara basicamente con certbase (se pasan el certiicado y pass)
-	6.- La opcion 5 se utilizara unicamente para obtener un json con la relacion de certificados y sus datos
-	7.- En el guion hay que añadir una variable mas a la cabecera "CLIENTE=" con el codigo del cliente, para luego poder ponerlo en el html
-	8.- Con el punto 7, este punto no es necesario, pero ver de unificar el nombre del fichero de salida.
-		El fichero de salida debe tener siempre el codigo de cliente y el texto "_salida" para poder mostrarlo en el html
-		ejemplos: 70038_CONJUNTA_salida.txt; 70038_salida.txt
-		Nota: en modelos se genera como "resp70038.txt" y en renta del modo anterior, por lo que hay que unificarlos
-		Nota2: tambien seria factible que en el guion se ponga el numero del cliente, pero habria que modificar el codigo actual
-	9.- La opcion 6 se utiliza para la descarga de datos fiscales
+	- En el guion hay que añadir una variable mas a la cabecera "CLIENTE=" con el codigo del cliente, para luego poder ponerlo en el html
+	- El nombre del fichero de salida tiene una estructura diferente en cada aplicacion (modelos, renta, sociedades, etc). Con el
+	  punto anterior ya puedo saberlo para generar el html con los errores, avisos o advertencias, pero se podria unificar
+	  poniendo el numero de empresa + modelo (00000_303) y en renta se puede añadir el contribuyente (00000_TITULAR_100).
+	  Si se unifica yo puedo generar automaticamente el fichero de salida añadiendole al de entrada un prefijo o sufijo "respuesta" o "salida"
+	  
 
 */
 	
