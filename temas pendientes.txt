@@ -1,14 +1,11 @@
 Temas pendientes:
-	- Desarrollar la parte del envio de modelos
-	- Desarrollar la funcionalidad para que en guion venga el cliente para luego no tener que asignarlo desde el 
-	  nombre del fichero en el metodo 'Utiles.generarRespuestaValidar' y 'Utiles.generarRespuestaEnvioModelos'; en
-	  el metodo 'validarModelos.envioPeticion' esta el switch-case para asignar los datos de la cabecera, por lo que
-	  se puede crear una variable 'cliente' que luego se pueda pasar al otro metodo para que se incluya en el html 
-	
+	- Revision general de metodos para ver si hace falta algun try-catch adicional
+	- Añadir metodo para la descarga de datos fiscales (ds_renta_dat_fisc)
 	
 Temas terminados:
 	- Obtener datos de certificados instalados
 	- Ratificar domicilio (ver el punto pendiente).
 	- Consulta modelos presentados.
 	- Validar modelos (probado con renta y sociedades)
+	- Envio de modelos
 	
