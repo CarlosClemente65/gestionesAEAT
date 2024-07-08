@@ -57,7 +57,7 @@ namespace gestionesAEAT.Metodos
 
                 datosEnvio = formateoCabecera(paso); //Genera los datos a enviar (paso 1 para el titular y paso 2 para el conyuge)
 
-                envio.envioPost(url, datosEnvio, serieCertificado, instanciaCertificado);
+                envio.envioPost(url, datosEnvio, serieCertificado, instanciaCertificado);//Metodo con certificado
                 respuestaAEAT = envio.respuestaEnvioAEAT;
 
                 if (envio.estadoRespuestaAEAT == "OK")
@@ -68,9 +68,7 @@ namespace gestionesAEAT.Metodos
                 if (!valido)
                 {
                     //Si no se ha ratificado el domicilio
-                    string ruta = Path.GetDirectoryName(ficheroSalida);
-                    if (ruta == "") ruta = AppDomain.CurrentDomain.BaseDirectory;
-                    ruta = Path.Combine(ruta, "errores.html");
+                    string ruta = Path.ChangeExtension(ficheroSalida,"html");
                     File.WriteAllText(ruta, respuestaAEAT, Encoding.Default);
                 }
             }

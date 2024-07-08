@@ -170,7 +170,7 @@ namespace gestionesAEAT
                     //Como es necesario el certificado, se controla si se ha pasado como parametro
                     controlCertificado(ref serieCertificado);
 
-                    enviarModelos envio = new enviarModelos();
+                    presentacionDirecta envio = new presentacionDirecta();
                     envio.envioPeticion(ficheroEntrada, ficheroSalida, serieCertificado, instanciaCertificado);
 
                     break;

@@ -58,7 +58,7 @@ namespace gestionesAEAT.Metodos
                 {
                     refEncriptada.Append(b.ToString("x2"));
                 }
-                return refEncriptada.ToString(); ;
+                return refEncriptada.ToString().ToUpper(); ;
             }
         }
 
@@ -71,12 +71,11 @@ namespace gestionesAEAT.Metodos
             this.ficheroSalida = _ficheroSalida;
             ficheroErrores = Path.Combine(Path.GetDirectoryName(ficheroSalida), "errores.txt");
             string respuestaAEAT = string.Empty;
-
             byte[] datosEnvio = null;
 
             try
             {
-                string refEncriptada = encriptaRefRenta(refRenta).ToUpper();
+                string refEncriptada = encriptaRefRenta(refRenta);
                 StringBuilder datos = new StringBuilder();
 
                 datos.Append($"nif={nifDf}");
@@ -86,7 +85,6 @@ namespace gestionesAEAT.Metodos
                 datosEnvio = Encoding.Default.GetBytes(datos.ToString()); //Codificacion en ansi
 
                 respuestaAEAT = envioSolicitud(datosEnvio);
-
 
                 string mensajeError = string.Empty;
                 if (!string.IsNullOrEmpty(respuestaAEAT))

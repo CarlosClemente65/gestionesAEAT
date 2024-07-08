@@ -1,51 +1,46 @@
-/*Funcionamiento
-    opcion 1 - Procesos que no necesitan certificado (valdiacion de modelos): 
-		gestionAEAT dsclave tipo entrada salida NO
-		
-	opcion 2 - Procesos que necesitan un certificado. Al no pasar datos del certificado, se solicita por pantalla
-		gestionAEAT dsclave tipo entrada salida SI
+/*Uso de la aplicacion
+	gestionesAEAT parametros
+	
+	- Parametros:
+		* dsclave: unicamente sirve como medida de seguridad de ejecucion y debe pasarse siempre ds123456
+		* tipo: permite indicar el tipo de proceso segun los siguientes:
+			1 = envio modelos
+			2 = validacion de modelos (no necesita certificado)
+			3 = consulta de modelos presentados
+			4 = ratificacion domicilio renta
+			5 = Descarga de datos fiscales de la renta
+			6 = obtener relacion de certificados y sus datos.
+			
+		* entrada: nombre del fichero que contiene los datos a enviar en txt
+		* salida: nombre del fichero en el que se dejara la respuesta
+		* SI/NO: indica si el proceso necesita usar certificado. Si no se indica, los procesos que lo
+				necesiten pediran seleccionar un certificado
+		* numeroserie: numero de serie del certificado de los instalados en la maquina a utilizar en el proceso
+		* certificado: nombre del fichero.pfx que contiene el certificado digital.
+		* password: contraseña del certificado que se pasa por fichero
+		* NIF: para la descarga de datos fiscales es necesario pasra el NIF del contribuyente
+		* refRenta: codigo de 5 caracteres de la referencia de renta para la descarga de datos fiscales
+		* datosPersonales: en la descarga de datos fiscales, indica si se quieren tambien los datos personales (opciones 'S' o 'N')
+		* urlDescarga: direccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año)
 
-    opcion 3 - Procesos que necesitan un certificado y se pasa el nº de serie
-		gestionAEAT dsclave tipo entrada salida SI numeroserie
-		
-    opcion 4 - Procesos que necesitan un certificado y se pasa un fichero y su password
-		gestionAEAT dsclave tipo entrada salida SI certificado password
-		
-	opcion 5 - Proceso para obtener una relacion de certificados instalados en la maquina en formato json
-		gestionAEAT dsclave tipo salida
-		
-	opcion 6 - Proceso para la descarga de datos fiscales (tiene unos parametros diferentes al resto)
-		gestionAEAT dsclave tipo salida NIF refRenta datosPersonales urlDescarga
-
-- argumentos:
-    * dsclave: unicamente sirve como medida de seguridad de ejecucion y debe pasarse siempre ds123456
-	* tipo: permite indicar el tipo de proceso segun los siguientes:
-		1 = envio modelos
-        2 = validacion de modelos (no necesita certificado)
-		3 = consulta de modelos presentados
-		4 = ratificacion domicilio renta
-		5 = Descarga de datos fiscales de la renta
-		6 = obtener relacion de certificados y sus datos.
-		
-    * entrada: nombre del fichero que contiene los datos a enviar en txt
-    * salida: nombre del fichero en el que se dejara la respuesta
-	* SI/NO: indica si el proceso necesita usar certificado. Si no se indica, los procesos que lo
-			 necesiten pediran seleccionar un certificado
-    * numeroserie: numero de serie del certificado de los instalados en la maquina a utilizar en el proceso
-    * certificado: nombre del fichero.pfx que contiene el certificado digital.
-    * password: contraseña del certificado que se pasa por fichero
-	* NIF: para la descarga de datos fiscales es necesario pasra el NIF del contribuyente
-	* refRenta: codigo de 5 caracteres de la referencia de renta para la descarga de datos fiscales
-	* datosPersonales: en la descarga de datos fiscales, indica si se quieren tambien los datos personales (opciones 'S' o 'N')
-	* urlDescarga: direccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año)
+/* Ejemplos de uso:
+	Envio modelos: gestionesAEAT dsclave 1 entrada.txt salida.txt SI (numeroserie | (certificado password)
+    Validar modelos: gestionesAEAT dsclave 2 entrada.txt salida.txt NO
+    Consulta modelos: gestionesAEAT dsclave 3 entrada.txt salida.txt SI (numeroserie | (certificado password)
+    Ratificar domicilio renta: gestionesAEAT dsclave 4 entrada.txt salida.txt SI (numeroserie | (certificado password)
+    Descarga datos fiscales: gestionesAEAT dsclave 5 salida.txt NIF refRenta datosPersonales urlDescarga
+    Relacion certificados: gestionesAEAT dsclave tipo salida
     
 Notas:
+	- Si no se pasan los datos del certificado y el proceso lo requerire, se mostrara el formulario de seleccion
+	- Con la validacion de modelos (tipo 2) el parametro 5 debe ser un NO
+
+Notas para el desarrollo:
 	- En el guion hay que añadir una variable mas a la cabecera "CLIENTE=" con el codigo del cliente, para luego poder ponerlo en el html
 	- El nombre del fichero de salida tiene una estructura diferente en cada aplicacion (modelos, renta, sociedades, etc). Con el
 	  punto anterior ya puedo saberlo para generar el html con los errores, avisos o advertencias, pero se podria unificar
 	  poniendo el numero de empresa + modelo (00000_303) y en renta se puede añadir el contribuyente (00000_TITULAR_100).
-	  Si se unifica yo puedo generar automaticamente el fichero de salida añadiendole al de entrada un prefijo o sufijo "respuesta" o "salida"
+	- Si se unifica se puede generar automaticamente el fichero de salida añadiendole al de entrada un prefijo o sufijo "respuesta" o "salida"
 	  
-
 */
 	

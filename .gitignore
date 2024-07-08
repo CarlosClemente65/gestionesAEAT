@@ -10,8 +10,9 @@
 *.userosscache
 *.sln.docstates
 conversionVB/
-temas_pendientes.txt
+temas pendientes.txt
 pruebas/
+ejemplos
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

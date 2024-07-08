@@ -84,7 +84,7 @@ namespace gestionesAEAT.Metodos
             foreach (var elemento in respuestasCorrectas)
             {
                 datosEnvio = $"COMPLETA=SI&ORIGEN=E&NIF={elemento.nif}&CSV={elemento.csv}";
-                envio.envioPostSinCertificado(url, datosEnvio,"form");
+                envio.envioPost(url, datosEnvio,"form");//Metodo sin certificado
                 if (envio.estadoRespuestaAEAT == "OK")
                 {
                     string ficheroPDF = Path.Combine(pathSalida, elemento.ficheroSalida);

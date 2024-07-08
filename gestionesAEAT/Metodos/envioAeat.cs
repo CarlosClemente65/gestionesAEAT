@@ -33,7 +33,7 @@ namespace gestionesAEAT
                     //Configurar la solicitud
                     solicitudHttp.Method = "POST";
                     
-                    //configura el contenido en funcion de si el envio se hace por un formulario o un json
+                    //Configura el contenido en funcion de si el envio se hace por un formulario o un json
                     if (tipoEnvio == "form")
                     {
                         solicitudHttp.ContentType = "application/x-www-form-urlencoded";
@@ -43,7 +43,6 @@ namespace gestionesAEAT
                         solicitudHttp.ContentType = "application/json;charset=UTF-8";
                     }
 
-                    //solicitudHttp.ContentType = "application/x-www-form-urlencoded";
                     solicitudHttp.ContentLength = datosEnvio.Length;
                     solicitudHttp.ClientCertificates.Add(certificado);
                     //solicitudHttp.Proxy = null;
@@ -94,7 +93,7 @@ namespace gestionesAEAT
             }
         }
 
-        public void envioPostSinCertificado(string url, string datosEnvio, string tipoEnvio)
+        public void envioPost(string url, string datosEnvio, string tipoEnvio = "form")
         {
             //Mismo metodo que el anterior pero cuando no se necesita certificado 
             try
@@ -135,12 +134,14 @@ namespace gestionesAEAT
                 using (MemoryStream ms = new MemoryStream())
                 {
                     respuesta.GetResponseStream().CopyTo(ms);
-                    respuestaEnvioAEAT = Encoding.UTF8.GetString(ms.ToArray());
+                    contenidoRespuesta = Encoding.UTF8.GetString(ms.ToArray());
 
                     //Grabacion de la respuesta en formato bytes para el metodo de consulta de modelos que la respuesta siempre sera un PDF en base64 (se lee directamente desde el metodo esta variable)
                     ms.Seek(0, SeekOrigin.Begin);
                     respuestaEnvioAEATBytes = ms.ToArray();
                 }
+
+                respuestaEnvioAEAT = utilidad.quitaRaros(contenidoRespuesta);//Solo se quitan los caracteres raros en el string, ya que en byte no procede
             }
             catch (Exception ex)
             {

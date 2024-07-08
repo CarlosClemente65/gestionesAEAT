@@ -1,6 +1,4 @@
 Temas pendientes:
-	- Revision general de metodos para ver si hace falta algun try-catch adicional
-		* Revisados: Program, las Utilidades y el metodo enviarModelos (faltan el resto).
 	- Revisar si se puede suprimir en el guion el pasar el apartado [resppuesta] con los datos que se quieren
 	  (cada metodo ya devolvera lo que se necesite)
 	- Ver si es necesario el fichero de salida o se puede generar segun el fichero de entrada.

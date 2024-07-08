@@ -111,7 +111,7 @@ namespace gestionesAEAT.Metodos
 
                 });
 
-                envio.envioPostSinCertificado(utilidad.url, jsonEnvio, "json");
+                envio.envioPost(utilidad.url, jsonEnvio, "json");//Metodo sin certificado
                 respuestaAEAT = envio.respuestaEnvioAEAT;
 
                 if (envio.estadoRespuestaAEAT == "OK")
