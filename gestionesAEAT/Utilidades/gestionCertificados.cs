@@ -21,12 +21,12 @@ namespace gestionesAEAT
         public string nombreRepresentante { get; set; }
         public string serieCertificado { get; set; }
 
-        
+
         public certificadoInfo()
         {
             nifCertificado = string.Empty;
             titularCertificado = string.Empty;
-            fechaEmision = string.Empty; 
+            fechaEmision = string.Empty;
             fechaValidez = string.Empty;
             nifRepresentante = string.Empty;
             nombreRepresentante = string.Empty;
@@ -340,6 +340,26 @@ namespace gestionesAEAT
 
                 //Guardar el json
                 File.WriteAllText(ruta, jsonEnvio);
+
+                ////Graba en un fichero los datos de los certificados (lo dejo por si Manolo quiere la salida de este modo)
+                //StringBuilder sb = new StringBuilder();
+                //int numero = 1;
+                //string ruta2 = Path.Combine(Path.GetDirectoryName(ruta), Path.GetFileNameWithoutExtension(ruta) + "2.txt");
+                //foreach (certificadoInfo info in certificadosInfo)
+                //{
+                //    sb.AppendLine($"Certificado nº {numero}");
+                //    sb.AppendLine($"Titular certificado: {info.titularCertificado}");
+                //    sb.AppendLine($"NIF certificado: {info.nifCertificado}");
+                //    sb.AppendLine($"Fecha emision: {info.fechaEmision}");
+                //    sb.AppendLine($"Fecha validez: {info.fechaValidez}");
+                //    sb.AppendLine($"NIF representante: {info.nifRepresentante}");
+                //    sb.AppendLine($"Nombre representante: {info.nombreRepresentante}");
+                //    sb.AppendLine($"Serie certificado: {info.serieCertificado}");
+                //    sb.AppendLine();
+                //    File.WriteAllText(ruta2, sb.ToString());
+                //    numero++;
+                //}
+
             }
 
             catch (Exception e)
@@ -348,21 +368,6 @@ namespace gestionesAEAT
 
             }
 
-            ////Graba en un fichero los datos de los certificados (lo dejo por si Manolo quiere la salida de este modo)
-            //StringBuilder sb = new StringBuilder();
-            //foreach (certificadoInfo info in certificadosInfo)
-            //{
-            //    int numero = 1;
-            //    sb.AppendLine($"Certificado nº {numero}");
-            //    sb.AppendLine($"Titular certificado: {info.titularCertificado}");
-            //    sb.AppendLine($"NIF certificado: {info.nifCertificado}");
-            //    sb.AppendLine($"Fecha emision: {info.fechaEmision}");
-            //    sb.AppendLine($"Fecha validez: {info.fechaValidez}");
-            //    sb.AppendLine($"NIF representante: {info.nifRepresentante}");
-            //    sb.AppendLine($"Nombre representante: {info.nombreRepresentante}");
-            //    sb.AppendLine($"Serie certificado: {info.serieCertificado}");
-            //    File.WriteAllText (ruta, sb.ToString());
-            //}
         }
     }
 }

@@ -5,7 +5,7 @@
 ### Desarrollado por Carlos Clemente (07-2024)
 
 ### Control de versiones
-- Version 1.1.0 - Primera version funcional
+- Version 1.0.0 - Primera version funcional
 
 Instrucciones:
 - Mediante un fichero que contiene los datos de los modelos, permite hacer una validacion y envio a los servidores de Hacienda en presentacion directa.
