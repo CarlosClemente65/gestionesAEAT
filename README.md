@@ -1,20 +1,21 @@
-
-# gestionesAEAT v1.1
+# gestionesAEAT v1.0.0
 ## Programa para la validación, envío y consulta de modelos de Hacienda, ratificar domicilio y descarga de datos fiscales de renta, y obtener relación de certificados instalados en el equipo
 
 ### Desarrollado por Carlos Clemente (07-2024)
 
 ### Control de versiones
 - Version 1.0.0 - Primera version funcional
+<br>
 
-Instrucciones:
+### Instrucciones:
 - Mediante un fichero que contiene los datos de los modelos, permite hacer una validacion y envio a los servidores de Hacienda en presentacion directa.
 - Tambien permite la descarga de modelos presentados utilizando el NIF del presentador o de la empresa. Se pueden obtener todos los que correspondan al mismo modelo y ejercicio
 - En las gestiones de la campaña de renta, se puede hacer la consulta de la ratificacion del domicilio asi como la descarga de datos fiscales.
 - En el caso de ser necesario el uso de un certificado digital, si no se pasa como parametro, se solicita la seleccion de uno de los instalados en el equipo.
 - Tambien se puede obtener una relacion de los certificados instalados en el equipo con sus propiedades (de uso en el certbase o la presentacion directa).
+<br>
 
-Parametros de ejecucion:
+### Parametros de ejecucion:
 * dsclave: unicamente sirve como medida de seguridad de ejecucion y debe pasarse siempre ds123456
 * tipo: permite indicar el tipo de proceso segun los siguientes:
 	1 = envio modelos
@@ -35,13 +36,41 @@ Parametros de ejecucion:
 * datosPersonales: en la descarga de datos fiscales, indica si se quieren tambien los datos personales (opciones 'S' o 'N')
 * urlDescarga: direccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año)
 
-Ejemplos de uso:
+<br>
 
-    Envio modelos: gestionesAEAT dsclave 1 entrada.txt salida.txt SI (numeroserie | (certificado password)
-    
-    Validar modelos: gestionesAEAT dsclave 2 entrada.txt salida.txt NO
-    
-    Consulta modelos: gestionesAEAT dsclave 3 entrada.txt salida.txt SI (numeroserie | (certificado password)
-    
-    Ratificar domicilio renta: gestionesAEAT dsclave 4 entrada.txt salida.txt SI (numeroserie | (certificado password)
-    
+### Ejemplos de uso:
+
+* Envio modelos:
+```
+gestionesAEAT dsclave 1 entrada.txt salida.txt SI (numeroserie | (certificado password)
+```
+<br>
+
+* Validar modelos:
+```
+gestionesAEAT dsclave 2 entrada.txt salida.txt NO
+```
+<br>
+
+* Consulta modelos: 
+```
+gestionesAEAT dsclave 3 entrada.txt salida.txt SI (numeroserie | (certificado password)
+```
+<br>
+
+* Ratificar domicilio renta: 
+```
+gestionesAEAT dsclave 4 entrada.txt salida.txt SI (numeroserie | (certificado password)
+```
+<br>
+
+* Descarga datos fiscales: 
+```
+gestionesAEAT dsclave 5 salida.txt NIF refRenta datosPersonales urlDescarga
+```
+<br>
+
+* Relacion certificados: 
+```
+gestionesAEAT dsclave 6 salida.txt
+```
