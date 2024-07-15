@@ -76,6 +76,74 @@ namespace gestionesAEAT
                 {
                     if (argumentos.Length >= 6) //Tiene que haber por lo menos 5 argumentos
                     {
+                        switch (tipo)
+                        {
+                            case "5":
+                                ficheroSalida = Path.Combine(pathFicheros, argumentos[3]);
+                                utilidad.borrarFicheros(ficheroSalida);
+                                ficheroErrores = Path.Combine(Path.GetDirectoryName(ficheroSalida), "errores.txt");
+                                utilidad.borrarFicheros(ficheroErrores);
+
+                                nifDf = argumentos[4].ToUpper();
+                                refRenta = argumentos[5].ToUpper();
+                                datosPersonales = argumentos[6].ToUpper();
+                                if (datosPersonales != "S" && datosPersonales != "N") datosPersonales = "S"; //Se fuerza una 'S' si viene otra cosa como parametro
+                                urlDescargaDf = argumentos[7];
+                                break;
+
+                            case 7:
+
+                                break;
+
+                            default:
+                                ficheroEntrada = Path.Combine(pathFicheros, argumentos[3]);
+                                if (!File.Exists(ficheroEntrada))
+                                {
+                                    log += $"El fichero de entrada {ficheroEntrada} no existe";
+                                    salirAplicacion();
+                                }
+
+                                ficheroErrores = Path.Combine(Path.GetDirectoryName(ficheroEntrada), "errores.txt");
+                                utilidad.borrarFicheros(ficheroErrores);
+
+                                ficheroSalida = Path.Combine(pathFicheros, argumentos[4]);
+                                utilidad.borrarFicheros(ficheroSalida);
+
+                                if (argumentos[5].ToUpper() == "SI") conCertificado = true;
+                                if (conCertificado)
+                                {
+                                    if (argumentos.Length == 6)
+                                    {
+                                        //No se ha pasado ni el numero de serie ni el fichero, por lo que hay que cargar el formulario de seleccion de certificados.
+                                        serieCertificado = seleccionCertificados();
+                                    }
+                                    else if (argumentos.Length > 7)
+                                    {
+                                        //Se pasa el fichero del certificado y el pass
+                                        ficheroCertificado = Path.Combine(pathFicheros, argumentos[6]);
+                                        if (!File.Exists(ficheroCertificado))
+                                        {
+                                            log += $"El fichero del certificado {ficheroCertificado} no existe";
+                                            salirAplicacion();
+                                        }
+                                        passwordCertificado = argumentos[7];
+
+                                        string resultadoLectura = instanciaCertificado.leerCertificado(ficheroCertificado, passwordCertificado);
+                                        if (!string.IsNullOrEmpty(resultadoLectura))
+                                        {
+                                            log += $"Error al leer el certificado. {resultadoLectura}";
+                                            salirAplicacion();
+                                        }
+                                        var certificadosInfo = instanciaCertificado.listaCertificados();
+                                        serieCertificado = certificadosInfo.LastOrDefault()?.serieCertificado;
+                                    }
+                                    else if (argumentos.Length == 7) //Se pasa el numero de serie del certificado
+                                    {
+                                        serieCertificado = argumentos[6].ToUpper();
+                                    }
+                                }
+                                break;
+                        }
                         if (tipo != "5") //La descarga de datos fiscales tiene otros parametros
                         {
                             ficheroEntrada = Path.Combine(pathFicheros, argumentos[3]);
@@ -247,6 +315,34 @@ namespace gestionesAEAT
                     //gestionesAEAT.exe ds123456 6 certificados_salida.txt
 
                     instanciaCertificado.exportarDatosCertificados(ficheroSalida);
+                    break;
+
+                case "7":
+                    //Presentacion facturas SII. Necesita certificado
+
+                    //Ejemplo de ejecucion (se solicita el certificado en pantalla)
+                    //gestionesAEAT.exe ds123456 7 empresa_guion.txt empresa_salida.txt SI
+
+                    //Ejemplo de ejecucion (se pasa el numero de serie del certificado del almacen)
+                    //gestionesAEAT.exe ds123456 7 empresa_guion.txt empresa_salida.txt SI numeroserie
+
+                    //Ejemplo de ejecucion (se pasa fichero y password del certificado)
+                    //gestionesAEAT.exe ds123456 7 empresa_guion.txt empresa_salida.txt SI certificado.pdf password
+
+                    /*Nota: desarrollar esta gestion teniendo en cuenta que se genera el fichero sii_urls.txt que tiene la lista
+                     * de las urls a las que hacer el envio segun si se trata de emitidas, recibidas, etc. En la ejecucion anterior
+                     * se pasaba el numero de linea a la que hacer el envio en el tercer parametro (despues de la dsclave). Ademas se
+                     * añade en el sexto parametro un NO seguido del numero de serie del certificado, y si tiene 6 parametros, el
+                     * ultimo parametro es el nombre del certificado a utilizar que estan puesto en los parametros del sii_base en el
+                     * campo "Texto de busqueda del certificado automatico"
+                     * 
+                     * El proceso utiliza los mismos procesos que el envio de modelos, pero se envia un XML con el lote de facturas, 
+                     * y se recibe un XML con la respuesta de Hacienda, que luego se graba con el nombre de salida; 
+                     * el metodo "utilidad.envioPost" es el metodo que hace el envio y recibe la url, los datos de envio
+                     * (que sera el xml), la instancia del certificado, y el tipo de envio), por lo que solo habria que hacer la
+                     * llamada mandando la url y el xml leido del fichero de entrada.
+
+                    */
                     break;
             }
         }

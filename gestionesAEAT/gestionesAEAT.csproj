@@ -105,4 +105,9 @@
     <Content Include="dse.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if not exist "$(TargetDir)dse_dlls" mkdir "$(TargetDir)dse_dlls"
+xcopy "$(TargetDir)*.dll" "$(TargetDir)dse_dlls\" /Y /I
+del "$(TargetDir)*.dll"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

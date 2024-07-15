@@ -29,7 +29,7 @@
     Consulta modelos: gestionesAEAT dsclave 3 entrada.txt salida.txt SI (numeroserie | (certificado password)
     Ratificar domicilio renta: gestionesAEAT dsclave 4 entrada.txt salida.txt SI (numeroserie | (certificado password)
     Descarga datos fiscales: gestionesAEAT dsclave 5 salida.txt NIF refRenta datosPersonales urlDescarga
-    Relacion certificados: gestionesAEAT dsclave tipo salida
+    Relacion certificados: gestionesAEAT dsclave 6 salida
     
 Notas:
 	- Si no se pasan los datos del certificado y el proceso lo requerire, se mostrara el formulario de seleccion
