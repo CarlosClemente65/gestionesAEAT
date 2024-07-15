@@ -19,8 +19,21 @@ namespace gestionesAEAT
         //Permite controlar si la aplicacion se ejecuta por consola
         [DllImport("kernel32.dll")]
         private static extern bool AttachConsole(int dwProcessId);
-
         private const int ATTACH_PARENT_PROCESS = -1;
+
+        static string dsclave = string.Empty; //Unicamente servira como medida de seguridad de ejecucion y debe pasarse 'ds123456'
+        static string ficheroEntrada = string.Empty;
+        static string tipo = string.Empty;
+        static string ficheroSalida = "salida.txt";
+        static string serieCertificado = string.Empty;
+        static string ficheroCertificado = string.Empty;
+        static string passwordCertificado = string.Empty;
+        static bool conCertificado = false;
+        static string nifDf = string.Empty;
+        static string refRenta = string.Empty;
+        static string datosPersonales = "S";
+        static string urlDescargaDf = string.Empty;
+        static string respuestaAeat = string.Empty;
 
         static string pathFicheros = string.Empty;
         static string ficheroErrores = string.Empty;
@@ -28,19 +41,6 @@ namespace gestionesAEAT
         static void Main(string[] args)
         {
             //Variables para almacenar los argumentos pasados
-            string dsclave = string.Empty; //Unicamente servira como medida de seguridad de ejecucion y debe pasarse 'ds123456'
-            string tipo = string.Empty;
-            string ficheroEntrada = string.Empty;
-            string ficheroSalida = "salida.txt";
-            string serieCertificado = string.Empty;
-            string ficheroCertificado = string.Empty;
-            string passwordCertificado = string.Empty;
-            bool conCertificado = false;
-            string nifDf = string.Empty;
-            string refRenta = string.Empty;
-            string datosPersonales = "S";
-            string urlDescargaDf = string.Empty;
-            string respuestaAeat = string.Empty;
 
             //Se usa el path en varias partes del programa, y si se esta en modo de pruebas se cambia
 
@@ -52,175 +52,58 @@ namespace gestionesAEAT
 
             string[] argumentos = Environment.GetCommandLineArgs(); //Almacena en un array los argumentos introducidos.
 
-            if (argumentos.Length >= 4)
+            if (argumentos.Length < 2)
             {
-                //Control para que si la clave no es correcta no se ejecute el programa
-                dsclave = argumentos[1];
-                if (dsclave != "ds123456")
+                if (argumentos.Length > 1 && (argumentos[1] == "-h" || argumentos[1] == "?"))
                 {
-                    log += "Clave de ejecucion incorrecta";
-                    salirAplicacion();
-                }
-                tipo = argumentos[2];
-                if (argumentos.Length == 4) //La obtencion de los certificados instalados solo tiene 4 parametros
-                {
-                    if (tipo != "6")
-                    {
-                        log += "Parametros incorrectos. Con 4 parametros el tipo debe ser 6.";
-                        salirAplicacion();
-                    }
-                    ficheroSalida = Path.Combine(pathFicheros, argumentos[3]);
-                    utilidad.borrarFicheros(ficheroSalida);
+                    utilidad.SalirAplicacion(log, pathFicheros, ficheroErrores);
                 }
                 else
                 {
-                    if (argumentos.Length >= 6) //Tiene que haber por lo menos 5 argumentos
-                    {
-                        switch (tipo)
-                        {
-                            case "5":
-                                ficheroSalida = Path.Combine(pathFicheros, argumentos[3]);
-                                utilidad.borrarFicheros(ficheroSalida);
-                                ficheroErrores = Path.Combine(Path.GetDirectoryName(ficheroSalida), "errores.txt");
-                                utilidad.borrarFicheros(ficheroErrores);
-
-                                nifDf = argumentos[4].ToUpper();
-                                refRenta = argumentos[5].ToUpper();
-                                datosPersonales = argumentos[6].ToUpper();
-                                if (datosPersonales != "S" && datosPersonales != "N") datosPersonales = "S"; //Se fuerza una 'S' si viene otra cosa como parametro
-                                urlDescargaDf = argumentos[7];
-                                break;
-
-                            case 7:
-
-                                break;
-
-                            default:
-                                ficheroEntrada = Path.Combine(pathFicheros, argumentos[3]);
-                                if (!File.Exists(ficheroEntrada))
-                                {
-                                    log += $"El fichero de entrada {ficheroEntrada} no existe";
-                                    salirAplicacion();
-                                }
-
-                                ficheroErrores = Path.Combine(Path.GetDirectoryName(ficheroEntrada), "errores.txt");
-                                utilidad.borrarFicheros(ficheroErrores);
-
-                                ficheroSalida = Path.Combine(pathFicheros, argumentos[4]);
-                                utilidad.borrarFicheros(ficheroSalida);
-
-                                if (argumentos[5].ToUpper() == "SI") conCertificado = true;
-                                if (conCertificado)
-                                {
-                                    if (argumentos.Length == 6)
-                                    {
-                                        //No se ha pasado ni el numero de serie ni el fichero, por lo que hay que cargar el formulario de seleccion de certificados.
-                                        serieCertificado = seleccionCertificados();
-                                    }
-                                    else if (argumentos.Length > 7)
-                                    {
-                                        //Se pasa el fichero del certificado y el pass
-                                        ficheroCertificado = Path.Combine(pathFicheros, argumentos[6]);
-                                        if (!File.Exists(ficheroCertificado))
-                                        {
-                                            log += $"El fichero del certificado {ficheroCertificado} no existe";
-                                            salirAplicacion();
-                                        }
-                                        passwordCertificado = argumentos[7];
-
-                                        string resultadoLectura = instanciaCertificado.leerCertificado(ficheroCertificado, passwordCertificado);
-                                        if (!string.IsNullOrEmpty(resultadoLectura))
-                                        {
-                                            log += $"Error al leer el certificado. {resultadoLectura}";
-                                            salirAplicacion();
-                                        }
-                                        var certificadosInfo = instanciaCertificado.listaCertificados();
-                                        serieCertificado = certificadosInfo.LastOrDefault()?.serieCertificado;
-                                    }
-                                    else if (argumentos.Length == 7) //Se pasa el numero de serie del certificado
-                                    {
-                                        serieCertificado = argumentos[6].ToUpper();
-                                    }
-                                }
-                                break;
-                        }
-                        if (tipo != "5") //La descarga de datos fiscales tiene otros parametros
-                        {
-                            ficheroEntrada = Path.Combine(pathFicheros, argumentos[3]);
-                            if (!File.Exists(ficheroEntrada))
-                            {
-                                log += $"El fichero de entrada {ficheroEntrada} no existe";
-                                salirAplicacion();
-                            }
-
-                            ficheroErrores = Path.Combine(Path.GetDirectoryName(ficheroEntrada), "errores.txt");
-                            utilidad.borrarFicheros(ficheroErrores);
-
-                            ficheroSalida = Path.Combine(pathFicheros, argumentos[4]);
-                            utilidad.borrarFicheros(ficheroSalida);
-
-                            if (argumentos[5].ToUpper() == "SI") conCertificado = true;
-                            if (conCertificado)
-                            {
-                                if (argumentos.Length == 6)
-                                {
-                                    //No se ha pasado ni el numero de serie ni el fichero, por lo que hay que cargar el formulario de seleccion de certificados.
-                                    serieCertificado = seleccionCertificados();
-                                }
-                                else if (argumentos.Length > 7)
-                                {
-                                    //Se pasa el fichero del certificado y el pass
-                                    ficheroCertificado = Path.Combine(pathFicheros, argumentos[6]);
-                                    if (!File.Exists(ficheroCertificado))
-                                    {
-                                        log += $"El fichero del certificado {ficheroCertificado} no existe";
-                                        salirAplicacion();
-                                    }
-                                    passwordCertificado = argumentos[7];
-
-                                    string resultadoLectura = instanciaCertificado.leerCertificado(ficheroCertificado, passwordCertificado);
-                                    if (!string.IsNullOrEmpty(resultadoLectura))
-                                    {
-                                        log += $"Error al leer el certificado. {resultadoLectura}";
-                                        salirAplicacion();
-                                    }
-                                    var certificadosInfo = instanciaCertificado.listaCertificados();
-                                    serieCertificado = certificadosInfo.LastOrDefault()?.serieCertificado;
-                                }
-                                else if (argumentos.Length == 7) //Se pasa el numero de serie del certificado
-                                {
-                                    serieCertificado = argumentos[6].ToUpper();
-                                }
-                            }
-                        }
-                        else if (tipo == "5")
-                        {
-                            ficheroSalida = Path.Combine(pathFicheros, argumentos[3]);
-                            utilidad.borrarFicheros(ficheroSalida);
-                            ficheroErrores = Path.Combine(Path.GetDirectoryName(ficheroSalida), "errores.txt");
-                            utilidad.borrarFicheros(ficheroErrores);
-
-                            nifDf = argumentos[4].ToUpper();
-                            refRenta = argumentos[5].ToUpper();
-                            datosPersonales = argumentos[6].ToUpper();
-                            if (datosPersonales != "S" && datosPersonales != "N") datosPersonales = "S"; //Se fuerza una 'S' si viene otra cosa como parametro
-                            urlDescargaDf = argumentos[7];
-                        }
-                    }
+                    log += "Son necesarios al menos 2 parametros: dsclave y tipo";
+                    utilidad.SalirAplicacion(log, pathFicheros, ficheroErrores);
                 }
             }
-            //Muestra la ayuda del programa si se pasa como parametro '-h' o '?'
-            else if (argumentos.Length > 1 && (argumentos[1] == "-h" || argumentos[1] == "?"))
+
+            dsclave = argumentos[1];
+            if (dsclave != "ds123456")
             {
-                salirAplicacion();
+                log += "Clave de ejecucion incorrecta";
+                utilidad.SalirAplicacion(log, pathFicheros, ficheroErrores);
             }
-            else
+            tipo = argumentos[2];
+
+            try
             {
-                log += "Numero de parametros incorrectos";
-                salirAplicacion();
+                EjecutaProceso(tipo, argumentos);
             }
 
-            //Procesado de los datos segun el tipo pasado como argumento
+            catch (ArgumentException ex)
+            {
+                log += $"Parametros incorrectos. {ex.Message}";
+                utilidad.SalirAplicacion(log, pathFicheros, ficheroErrores);
+            }
+        }
+
+        private static void ValidarFicheros(string[] argumentos)
+        {
+            ficheroEntrada = Path.Combine(pathFicheros, argumentos[3]);
+            if (!File.Exists(ficheroEntrada))
+            {
+                log += $"El fichero de entrada {ficheroEntrada} no existe";
+                utilidad.SalirAplicacion(log, pathFicheros, ficheroErrores);
+            }
+
+            ficheroErrores = Path.Combine(Path.GetDirectoryName(ficheroEntrada), "errores.txt");
+            utilidad.borrarFicheros(ficheroErrores);
+
+            ficheroSalida = Path.Combine(pathFicheros, argumentos[4]);
+            utilidad.borrarFicheros(ficheroSalida);
+        }
+
+        private static void EjecutaProceso(string tipo, string[] argumentos)
+        {
+            string control = string.Empty;
             switch (tipo)
             {
                 case "1":
@@ -235,14 +118,13 @@ namespace gestionesAEAT
                     //Ejemplo de ejecucion (se pasa fichero y password del certificado)
                     //gestionesAEAT.exe ds123456 1 empresa_guion.txt empresa_salida.txt SI certificado.pdf password
 
-                    //Como es necesario el certificado, se controla si se ha pasado como parametro
-                    controlCertificado(ref serieCertificado);
+                    //Se necesitan pasar 6 parametros como minimo
+                    ControlParametros(argumentos, 6);
 
                     presentacionDirecta envio = new presentacionDirecta();
                     envio.envioPeticion(ficheroEntrada, ficheroSalida, serieCertificado, instanciaCertificado);
 
                     break;
-
 
                 case "2":
                     //Validacion de modelos. No necesita certificado
@@ -250,10 +132,14 @@ namespace gestionesAEAT
                     //Ejemplo de ejecucion
                     //gestionesAEAT.exe ds123456 2 empresa_guion.txt empresa_salida.txt NO
 
+                    //Se necesitan pasar 6 parametros 
+                    ControlParametros(argumentos, 6);
+
                     validarModelos valida = new validarModelos();
                     valida.envioPeticion(ficheroEntrada, ficheroSalida);
 
                     break;
+
 
                 case "3":
                     //Consulta de modelos presentados. Necesita certificado
@@ -267,8 +153,8 @@ namespace gestionesAEAT
                     //Ejemplo de ejecucion (se pasa fichero y password del certificado)
                     //gestionesAEAT.exe ds123456 3 empresa_guion.txt empresa_salida.txt SI certificado.pdf password
 
-                    //Como es necesario el certificado, se controla si se ha pasado como parametro
-                    controlCertificado(ref serieCertificado);
+                    //Se necesitan pasar 6 parametros como minimo
+                    ControlParametros(argumentos, 6);
 
                     descargaModelos descarga = new descargaModelos();
                     descarga.obtenerModelos(ficheroEntrada, ficheroSalida, serieCertificado, instanciaCertificado);
@@ -287,8 +173,8 @@ namespace gestionesAEAT
                     //Ejemplo de ejecucion (se pasa fichero y password del certificado)
                     //gestionesAEAT.exe ds123456 4 empresa_guion.txt empresa_salida.txt SI certificado.pdf password
 
-                    //Como es necesario el certificado, se controla si se ha pasado como parametro
-                    controlCertificado(ref serieCertificado);
+                    //Se necesitan pasar 6 parametros como minimo
+                    ControlParametros(argumentos, 6);
 
                     ratificarDomicilio ratifica = new ratificarDomicilio();
 
@@ -302,7 +188,27 @@ namespace gestionesAEAT
                     //Se puede hacer con certificado, pero esta preparado para hacerlo con la referencia de renta.
 
                     //Ejemplo de ejecucion (renta 2023) 
-                    // gestionesAEAT.exe ds123456 5 05197043D KEKTXP S fichero.txt https://www9.agenciatributaria.gob.es/wlpl/DFPA-D182/SvDesDF23Pei
+                    // gestionesAEAT.exe ds123456 5 salida.txt 05197043D KEKTXP S https://www9.agenciatributaria.gob.es/wlpl/DFPA-D182/SvDesDF23Pei
+
+                    //Como este tipo es especial se controlan los parametros directamente aqui
+                    if (argumentos.Length != 8)
+                    {
+                        log += "Parámetros insuficientes para la operación solicitada.";
+                        utilidad.SalirAplicacion(log, pathFicheros, ficheroErrores);
+                    }
+                    else
+                    {
+                        ficheroSalida = Path.Combine(pathFicheros, argumentos[3]);
+                        utilidad.borrarFicheros(ficheroSalida);
+                        ficheroErrores = Path.Combine(Path.GetDirectoryName(ficheroSalida), "errores.txt");
+                        utilidad.borrarFicheros(ficheroErrores);
+
+                        nifDf = argumentos[4].ToUpper();
+                        refRenta = argumentos[5].ToUpper();
+                        datosPersonales = argumentos[6].ToUpper();
+                        if (datosPersonales != "S" && datosPersonales != "N") datosPersonales = "S"; //Se fuerza una 'S' si viene otra cosa como parametro
+                        urlDescargaDf = argumentos[7];
+                    }
 
                     descargaDatosFiscales descargaDF = new descargaDatosFiscales();
                     descargaDF.descargaDF(urlDescargaDf, nifDf, refRenta, datosPersonales, ficheroSalida);
@@ -313,6 +219,18 @@ namespace gestionesAEAT
 
                     //Ejemplo de ejecucion
                     //gestionesAEAT.exe ds123456 6 certificados_salida.txt
+
+                    //La obtencion de los certificados instalados solo tiene 4 parametros
+                    if (argumentos.Length == 4)
+                    {
+                        ficheroSalida = Path.Combine(pathFicheros, argumentos[3]);
+                        utilidad.borrarFicheros(ficheroSalida);
+                    }
+                    else
+                    {
+                        log += "Parámetros insuficientes para la operación solicitada.";
+                        utilidad.SalirAplicacion(log, pathFicheros, ficheroErrores);
+                    }
 
                     instanciaCertificado.exportarDatosCertificados(ficheroSalida);
                     break;
@@ -347,6 +265,66 @@ namespace gestionesAEAT
             }
         }
 
+        private static void ControlParametros(string[] argumentos, int cantidadParametros)
+        {
+            string control = ValidarParametros(argumentos, cantidadParametros);
+            if (!string.IsNullOrEmpty(control))
+            {
+                log += control;
+                utilidad.SalirAplicacion(log, pathFicheros, ficheroErrores);
+            }
+            ValidarFicheros(argumentos);
+        }
+
+
+        private static string ValidarParametros(string[] argumentos, int cantidadParametros)
+        {
+            int totalParametros = argumentos.Length;
+            if (totalParametros < cantidadParametros)
+            {
+                return ("Parámetros insuficientes para la operación solicitada.");
+            }
+
+            if (totalParametros >= 6)
+            {
+                if (argumentos[5].ToUpper() == "SI") conCertificado = true;
+
+                if (conCertificado)
+                {
+                    if (totalParametros == 6)
+                    {
+                        //No se ha pasado ni el numero de serie ni el fichero, por lo que hay que cargar el formulario de seleccion de certificados.
+                        serieCertificado = seleccionCertificados();
+                    }
+                    else if (argumentos.Length > 7)
+                    {
+                        //Se pasa el fichero del certificado y el pass
+                        ficheroCertificado = Path.Combine(pathFicheros, argumentos[6]);
+                        if (!File.Exists(ficheroCertificado))
+                        {
+                            log += $"El fichero del certificado {ficheroCertificado} no existe";
+                            utilidad.SalirAplicacion(log, pathFicheros, ficheroErrores);
+                        }
+                        passwordCertificado = argumentos[7];
+
+                        string resultadoLectura = instanciaCertificado.leerCertificado(ficheroCertificado, passwordCertificado);
+                        if (!string.IsNullOrEmpty(resultadoLectura))
+                        {
+                            log += $"Error al leer el certificado. {resultadoLectura}";
+                            utilidad.SalirAplicacion(log, pathFicheros, ficheroErrores);
+                        }
+                        var certificadosInfo = instanciaCertificado.listaCertificados();
+                        serieCertificado = certificadosInfo.LastOrDefault()?.serieCertificado;
+                    }
+                    else if (argumentos.Length == 7) //Se pasa el numero de serie del certificado
+                    {
+                        serieCertificado = argumentos[6].ToUpper();
+                    }
+                }
+            }
+            return string.Empty;
+        }
+
         private static string seleccionCertificados()
         {
             //Muestra el formulario de seleccion de certificados
@@ -360,9 +338,10 @@ namespace gestionesAEAT
             return serieCertificado;
         }
 
-        private static void controlCertificado(ref string serieCertificado)
+        private static void ControlCertificado(ref string serieCertificado)
         {
             //Metodo para controlar si no se ha seleccionado un certificado y solicitarlo por pantalla (la variable se pasa por referencia para que si hay que modificarla se grabe en la clase
+            //Ya no tiene uso porque con el metodo 'ValidarParametros' siempre se generará le nº de serie del certificado, bien pidiendolo por pantalla o leyendolo de los parametros (nº serie o fichero)
             X509Certificate2 certificado;
             if (string.IsNullOrEmpty(serieCertificado))
             {
@@ -376,71 +355,14 @@ namespace gestionesAEAT
                 if (caducidad < DateTime.Now)
                 {
                     log += $"El certificado de {certificado.SubjectName.Name} esta caducado. Fecha de caducidad: {certificado.GetExpirationDateString()}";
-                    salirAplicacion();
+                    utilidad.SalirAplicacion(log, pathFicheros, ficheroErrores);
                 }
             }
             else
             {
                 log += "Certificado no encontrado en el almacen";
-                salirAplicacion();
+                utilidad.SalirAplicacion(log, pathFicheros, ficheroErrores);
             }
-        }
-
-        private static void salirAplicacion()
-        {
-            //Controla si se esta ejecutando la aplicacion desde la consola para poder mostrar un mensaje de uso
-            if (Environment.UserInteractive)
-            {
-                AttachConsole(ATTACH_PARENT_PROCESS);
-                mostrarAyuda();
-            }
-
-            //Si hay algun texto de error en el log, lo graba en un fichero
-            if (!string.IsNullOrEmpty(log))
-            {
-                string salida = Path.Combine(pathFicheros, ficheroErrores);
-                File.WriteAllText(salida, log);
-            }
-            Environment.Exit(0);
-        }
-
-        public static void mostrarAyuda()
-        {
-            StringBuilder mensaje = new StringBuilder();
-            mensaje.AppendLine("");
-            mensaje.AppendLine("Uso de la aplicacion: gestionesAEAT parametros");
-            mensaje.AppendLine("Parametros:");
-            mensaje.AppendLine("\tdsclave\t\t\tclave de ejecucion del programa (obligatorio)");
-            mensaje.AppendLine("\ttipo\t\t\t1 = Envio de modelos");
-            mensaje.AppendLine("\t    \t\t\t2 = Validar modelos (no necesita certificado)");
-            mensaje.AppendLine("\t    \t\t\t3 = Consulta y descarga PDF de modelos presentados");
-            mensaje.AppendLine("\t    \t\t\t4 = Ratificacion domicilio renta");
-            mensaje.AppendLine("\t    \t\t\t5 = Descarga datos fiscales renta");
-            mensaje.AppendLine("\t    \t\t\t6 = Obtener datos de certificados instalados en el equipo");
-            mensaje.AppendLine("\tentrada.txt\t\tNombre del fichero con los datos a enviar");
-            mensaje.AppendLine("\tsalida.txt\t\tNombre del fichero donde se grabara la salida");
-            mensaje.AppendLine("\t(SI | NO)\t\tIndica si el proceso necesita certificado(una de las dos opciones)");
-            mensaje.AppendLine("\tnumeroserie\t\tNumero de serie del certificado de los instalados en la maquina a utilizar en el proceso");
-            mensaje.AppendLine("\tcertificado\t\tNombre del fichero.pfx que contiene el certificado digital");
-            mensaje.AppendLine("\tpassword\t\tContraseña del certificado que se pasa por fichero");
-            mensaje.AppendLine("\tNIF\t\t\tPara la descarga de datos fiscales es necesario el NIF del contribuyente");
-            mensaje.AppendLine("\trefRenta\t\tCodigo de 5 caracteres de la referencia de renta para la descarga de datos fiscales");
-            mensaje.AppendLine("\tdatosPersonales\t\tEn la descarga de datos fiscales indica si se quieren tambien los datos personales");
-            mensaje.AppendLine("\turlDescarga\t\tDireccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año");
-            mensaje.AppendLine("\nEjemplos de uso:");
-            mensaje.AppendLine("\tEnvio modelos:\t\t\tgestionesAEAT dsclave 1 entrada.txt salida.txt SI (numeroserie | (certificado password)");
-            mensaje.AppendLine("\tValidar modelos:\t\tgestionesAEAT dsclave 2 entrada.txt salida.txt NO");
-            mensaje.AppendLine("\tConsulta modelos:\t\tgestionesAEAT dsclave 3 entrada.txt salida.txt SI (numeroserie | (certificado password)");
-            mensaje.AppendLine("\tRatificar domicilio renta:\tgestionesAEAT dsclave 4 entrada.txt salida.txt SI (numeroserie | (certificado password)");
-            mensaje.AppendLine("\tDescarga datos fiscales:\tgestionesAEAT dsclave 5 salida.txt NIF refRenta datosPersonales urlDescarga");
-            mensaje.AppendLine("\tRelacion certificados:\t\tgestionesAEAT dsclave tipo salida");
-            mensaje.AppendLine("\nNotas:");
-            mensaje.AppendLine("\t- Si no se pasan los datos del certificado y el proceso lo requerire, se mostrara el formulario de seleccion");
-            mensaje.AppendLine("\t- Con la validacion de modelos (tipo 2) el parametro 5 debe ser un NO");
-            mensaje.AppendLine("\nPulse una tecla para continuar");
-
-            Console.WriteLine(mensaje.ToString());
-            Console.ReadLine();
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 using gestionesAEAT.Metodos;
@@ -29,6 +30,12 @@ namespace gestionesAEAT
 
         public RespuestaValidarModelos respuestaValidarModelos; //Varible que almacena la respuesta completa de la AEAT en la validacion de modelos
         public RespuestaPresBasicaDos respuestaEnvioModelos; //Variable que almacena la respuesta completa de la AEAT en la presentacion directa
+
+        //Permite controlar si la aplicacion se ejecuta por consola
+        [DllImport("kernel32.dll")]
+        private static extern bool AttachConsole(int dwProcessId);
+        private const int ATTACH_PARENT_PROCESS = -1;
+
 
         public string quitaRaros(string cadena)
         {
@@ -284,6 +291,7 @@ namespace gestionesAEAT
                 }
 
                 //Esta parte obtiene el numero de cliente desde el nombre del fichero, pero hay que cambiarlo para pasarlo en el guion
+                //Lo dejo por si fuera necesario
                 //int posicion;
                 ////Intenta asignar el numero de cliente tomandolo del nombre del fichero de respuesta
                 //try
@@ -429,6 +437,63 @@ namespace gestionesAEAT
             }
 
             return elementos.ToString();
+        }
+
+        public void SalirAplicacion(string log, string pathFicheros, string ficheroErrores)
+        {
+            //Controla si se esta ejecutando la aplicacion desde la consola para poder mostrar un mensaje de uso
+            if (Environment.UserInteractive)
+            {
+                AttachConsole(ATTACH_PARENT_PROCESS);
+                MostrarAyuda();
+            }
+
+            //Si hay algun texto de error en el log, lo graba en un fichero
+            if (!string.IsNullOrEmpty(log))
+            {
+                string salida = Path.Combine(pathFicheros, ficheroErrores);
+                File.WriteAllText(salida, log);
+            }
+            Environment.Exit(0);
+        }
+
+        private void MostrarAyuda()
+        {
+            StringBuilder mensaje = new StringBuilder();
+            mensaje.AppendLine("");
+            mensaje.AppendLine("Uso de la aplicacion: gestionesAEAT parametros");
+            mensaje.AppendLine("Parametros:");
+            mensaje.AppendLine("\tdsclave\t\t\tclave de ejecucion del programa (obligatorio)");
+            mensaje.AppendLine("\ttipo\t\t\t1 = Envio de modelos");
+            mensaje.AppendLine("\t    \t\t\t2 = Validar modelos (no necesita certificado)");
+            mensaje.AppendLine("\t    \t\t\t3 = Consulta y descarga PDF de modelos presentados");
+            mensaje.AppendLine("\t    \t\t\t4 = Ratificacion domicilio renta");
+            mensaje.AppendLine("\t    \t\t\t5 = Descarga datos fiscales renta");
+            mensaje.AppendLine("\t    \t\t\t6 = Obtener datos de certificados instalados en el equipo");
+            mensaje.AppendLine("\tentrada.txt\t\tNombre del fichero con los datos a enviar");
+            mensaje.AppendLine("\tsalida.txt\t\tNombre del fichero donde se grabara la salida");
+            mensaje.AppendLine("\t(SI | NO)\t\tIndica si el proceso necesita certificado(una de las dos opciones)");
+            mensaje.AppendLine("\tnumeroserie\t\tNumero de serie del certificado de los instalados en la maquina a utilizar en el proceso");
+            mensaje.AppendLine("\tcertificado\t\tNombre del fichero.pfx que contiene el certificado digital");
+            mensaje.AppendLine("\tpassword\t\tContraseña del certificado que se pasa por fichero");
+            mensaje.AppendLine("\tNIF\t\t\tPara la descarga de datos fiscales es necesario el NIF del contribuyente");
+            mensaje.AppendLine("\trefRenta\t\tCodigo de 5 caracteres de la referencia de renta para la descarga de datos fiscales");
+            mensaje.AppendLine("\tdatosPersonales\t\tEn la descarga de datos fiscales indica si se quieren tambien los datos personales");
+            mensaje.AppendLine("\turlDescarga\t\tDireccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año");
+            mensaje.AppendLine("\nEjemplos de uso:");
+            mensaje.AppendLine("\tEnvio modelos:\t\t\tgestionesAEAT dsclave 1 entrada.txt salida.txt SI (numeroserie | (certificado password)");
+            mensaje.AppendLine("\tValidar modelos:\t\tgestionesAEAT dsclave 2 entrada.txt salida.txt NO");
+            mensaje.AppendLine("\tConsulta modelos:\t\tgestionesAEAT dsclave 3 entrada.txt salida.txt SI (numeroserie | (certificado password)");
+            mensaje.AppendLine("\tRatificar domicilio renta:\tgestionesAEAT dsclave 4 entrada.txt salida.txt SI (numeroserie | (certificado password)");
+            mensaje.AppendLine("\tDescarga datos fiscales:\tgestionesAEAT dsclave 5 salida.txt NIF refRenta datosPersonales urlDescarga");
+            mensaje.AppendLine("\tRelacion certificados:\t\tgestionesAEAT dsclave tipo salida");
+            mensaje.AppendLine("\nNotas:");
+            mensaje.AppendLine("\t- Si no se pasan los datos del certificado y el proceso lo requerire, se mostrara el formulario de seleccion");
+            mensaje.AppendLine("\t- Con la validacion de modelos (tipo 2) el parametro 5 debe ser un NO");
+            mensaje.AppendLine("\nPulse una tecla para continuar");
+
+            Console.WriteLine(mensaje.ToString());
+            Console.ReadLine();
         }
     }
 }
