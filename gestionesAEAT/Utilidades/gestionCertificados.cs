@@ -91,6 +91,18 @@ namespace gestionesAEAT
             return certificados.Find(cert => cert.SerialNumber == serieCertificado);
         }
 
+        public string buscarNombreCertificado (string textoBusqueda)
+        {
+            //Devuelve el certificado que contiene el texto a buscar en el NIF o nombre del titular
+            var resultadoBusqueda = certificadosInfo.Find(cert => 
+                cert.nifCertificado.Contains(textoBusqueda) ||
+                cert.titularCertificado.Contains(textoBusqueda) ||
+                cert.serieCertificado == textoBusqueda
+                );
+
+            return resultadoBusqueda.serieCertificado;
+        }
+
         public List<certificadoInfo> listaCertificados()
         {
             //Devuelve la lista de certificados (para rellenar la pantalla de seleccion)

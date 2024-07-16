@@ -32,7 +32,7 @@ namespace gestionesAEAT
         static string respuestaAeat = string.Empty;
 
         static string pathFicheros = string.Empty;
-        static string ficheroErrores = string.Empty;
+        static string ficheroErrores = "errores.txt";
 
         static string[] argumentos = null;
 
@@ -144,7 +144,6 @@ namespace gestionesAEAT
 
                     break;
 
-
                 case "3":
                     //Consulta de modelos presentados. Necesita certificado
 
@@ -243,13 +242,17 @@ namespace gestionesAEAT
                     //Presentacion facturas SII. Necesita certificado
 
                     //Ejemplo de ejecucion (se solicita el certificado en pantalla)
-                    //gestionesAEAT.exe ds123456 7 empresa_guion.txt empresa_salida.txt SI
+                    //gestionesAEAT.exe ds123456 7 facturaEmitida.xml respuesta.xml 0 SI
 
                     //Ejemplo de ejecucion (se pasa el numero de serie del certificado del almacen)
-                    //gestionesAEAT.exe ds123456 7 empresa_guion.txt empresa_salida.txt SI numeroserie
+                    //gestionesAEAT.exe ds123456 7 empresa_guion.txt empresa_salida.txt 0 SI numeroserie
 
                     //Ejemplo de ejecucion (se pasa fichero y password del certificado)
-                    //gestionesAEAT.exe ds123456 7 empresa_guion.txt empresa_salida.txt SI certificado.pdf password
+                    //gestionesAEAT.exe ds123456 7 empresa_guion.txt empresa_salida.txt 0 SI certificado.pdf password
+
+                    //Ejemplo de ejecucion (se pasa el nombre a buscar en los certificados)
+                    //gestionesAEAT.exe ds123456 7 facturaEmitida.xml respuesta.xml 0 SI textoBusqueda
+
 
                     /*Nota: desarrollar esta gestion teniendo en cuenta que se genera el fichero sii_urls.txt que tiene la lista
                      * de las urls a las que hacer el envio segun si se trata de emitidas, recibidas, etc. En la ejecucion anterior
@@ -265,6 +268,51 @@ namespace gestionesAEAT
                      * llamada mandando la url y el xml leido del fichero de entrada.
 
                     */
+
+                    string ficheroUrls = string.Empty;
+
+                    if (argumentos.Length < 7)
+                    {
+                        log += "Parámetros insuficientes para la operación solicitada.";
+                        utilidad.SalirAplicacion(log, pathFicheros, ficheroErrores);
+                    }
+
+                    else
+                    {
+                        ficheroEntrada = argumentos[3];
+                        ficheroSalida = argumentos[4];
+                        ficheroUrls = Path.Combine(Path.GetDirectoryName(ficheroEntrada), "sii_urls.txt");
+
+#if DEBUG
+                        {
+                            ficheroUrls = Path.Combine(pathFicheros, "sii_urls.txt");
+                        }
+#endif
+                        if (!File.Exists(ficheroUrls))
+                        {
+                            log += "El fichero de urls no exite en la ruta de ejecucion";
+                            utilidad.SalirAplicacion(log, pathFicheros, ficheroErrores);
+                        }
+
+                        int indiceUrl = int.Parse(argumentos[5]);
+
+                        EnvioSii nuevoEnvio = new EnvioSii(ficheroUrls);//Instanciacion de la clase que carga las urls
+                        utilidad.url = nuevoEnvio.urlEnvio(indiceUrl);
+
+
+                        if (argumentos.Length == 8)
+                        {
+                            //Viene con el nombre del certificado que hay que buscar
+                            serieCertificado = instanciaCertificado.buscarNombreCertificado(argumentos[7]);
+                        }
+
+                        //Esto es copia de la presentacion directa, modificarlo para este metodo
+                        //presentacionDirecta envio = new presentacionDirecta();
+                        //envio.envioPeticion(ficheroEntrada, ficheroSalida, serieCertificado, instanciaCertificado);
+
+
+                    }
+
                     break;
             }
         }
