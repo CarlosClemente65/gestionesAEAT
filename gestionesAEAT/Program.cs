@@ -101,7 +101,6 @@ namespace gestionesAEAT
             foreach (string fichero in ficherosSalida)
             {
                 utilidad.borrarFicheros(fichero);
-
             }
         }
 
