@@ -9,22 +9,22 @@ namespace gestionesAEAT.Formularios
     {
         private int columnaOrdenada = -1;
         private ListSortDirection ordenColumna = ListSortDirection.Ascending;
-        private gestionCertificados instanciaCertificado;
-        public certificadoInfo certificadoSeleccionado { get; set; }
-        private List<certificadoInfo> certificados;
+        private GestionCertificados instanciaCertificado;
+        public ElementosCertificado certificadoSeleccionado { get; set; }
+        private List<ElementosCertificado> certificados;
 
 
-        public frmSeleccion(gestionCertificados instanciaCertificado)
+        public frmSeleccion(GestionCertificados instanciaCertificado)
         {
             InitializeComponent();
             this.instanciaCertificado = instanciaCertificado;
-            certificadoSeleccionado = new certificadoInfo();
-            certificados = instanciaCertificado.listaCertificados();
+            certificadoSeleccionado = new ElementosCertificado();
+            certificados = instanciaCertificado.relacionCertificados();
             rellenarDGV(certificados);
             this.Load += frmSeleccion_Load;
         }
 
-        private void rellenarDGV(List<certificadoInfo> certificados)
+        private void rellenarDGV(List<ElementosCertificado> certificados)
         {
             //Metodo para rellenar el listado de certificados con sus columnas (necesario para regrabar en el caso de ordenacion)
             //dgvCertificados.DataSource = null;
@@ -70,7 +70,7 @@ namespace gestionesAEAT.Formularios
         private void txtBusqueda_TextChanged(object sender, EventArgs e)
         {
             //gestionCertificados proceso = gestionCertificados.ObtenerInstancia();
-            List<certificadoInfo> certificados = instanciaCertificado.listaCertificados();
+            List<ElementosCertificado> certificados = instanciaCertificado.relacionCertificados();
             if (certificados != null)
             {
                 certificados = instanciaCertificado.filtrarCertificados(txtBusqueda.Text);

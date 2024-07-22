@@ -74,7 +74,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Utilidades\gestionCertificados.cs" />
+    <Compile Include="Utilidades\GestionCertificados.cs" />
     <Compile Include="Metodos\descargaDatosFiscales.cs" />
     <Compile Include="Metodos\descargaModelos.cs" />
     <Compile Include="Metodos\ratificarDomicilio.cs" />

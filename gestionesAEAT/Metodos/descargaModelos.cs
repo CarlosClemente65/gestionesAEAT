@@ -48,7 +48,7 @@ namespace gestionesAEAT.Metodos
         Utiles utilidad = new Utiles();
 
 
-        public void obtenerModelos(string guion, string ficheroSalida, string serieCertificado, gestionCertificados instanciaCertificado)
+        public void obtenerModelos(string guion, string ficheroSalida, string serieCertificado, GestionCertificados instanciaCertificado)
         {
             //El parametro 'guion' es el texto que viene en el fichero que luego se formatea para poder hacer el envio al metodo 'envioAEAT.envioPOST'
             //El parametro 'serieCertificado' es necesario para luego pasarlo al metodo de envio

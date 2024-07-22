@@ -113,7 +113,14 @@ namespace gestionesAEAT
         public void borrarFicheros(string fichero)
         {
             //Borra ficheros anteriores antes de algunas ejecuciones
-            if (File.Exists(fichero)) File.Delete(fichero);
+            string rutaSalida = Path.GetDirectoryName(fichero);
+            string patronFicheros = Path.GetFileNameWithoutExtension(fichero) + ".*";
+
+            string[] elementos = Directory.GetFiles(rutaSalida, patronFicheros);//Se borran todos los ficheros de salida posibles ya que puede haber .txt, .html o .pdf
+            foreach (string elemento in elementos)
+            {
+                File.Delete(elemento);
+            }
         }
 
         public string procesarGuionHtml(string guion)

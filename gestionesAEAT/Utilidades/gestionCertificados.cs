@@ -3,46 +3,77 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 
 
 namespace gestionesAEAT
 {
-    public class certificadoInfo
+    public class ListaInfoCertificados
+    {
+        [JsonProperty("certificados")]
+        public List<ElementosCertificado> certificadosInfo { get; set; }
+
+        public ListaInfoCertificados()
+        {
+            certificadosInfo = new List<ElementosCertificado>();
+        }
+    }
+    public class ElementosCertificado
     {
         //Clase que representa las propiedades de los certificados que necesitamos
+        [JsonProperty("A")]
         public string nifCertificado { get; set; }
+
+        [JsonProperty("B")]
         public string titularCertificado { get; set; }
-        public string fechaEmision { get; set; }
-        public string fechaValidez { get; set; }
-        public string nifRepresentante { get; set; }
-        public string nombreRepresentante { get; set; }
+
+        [JsonProperty("C")]
         public string serieCertificado { get; set; }
 
+        [JsonProperty("D")]
+        public string fechaEmision { get; set; }
 
-        public certificadoInfo()
+        [JsonProperty("E")]
+        public string fechaValidez { get; set; }
+
+        [JsonProperty("F")]
+        public string nifRepresentante { get; set; }
+
+        [JsonProperty("G")]
+        public string nombreRepresentante { get; set; }
+
+        [JsonProperty("H")]
+        public string datosRepresentante { get; set; }
+
+        [JsonProperty("I")]
+        public string huellaCertificado { get; set; }
+
+        public ElementosCertificado()
         {
             nifCertificado = string.Empty;
             titularCertificado = string.Empty;
+            serieCertificado = string.Empty;
             fechaEmision = string.Empty;
             fechaValidez = string.Empty;
             nifRepresentante = string.Empty;
             nombreRepresentante = string.Empty;
-            serieCertificado = string.Empty;
+            datosRepresentante = string.Empty;
+            huellaCertificado = string.Empty;
         }
     }
 
 
-    public class gestionCertificados
+    public class GestionCertificados
     {
         //Clase que engloba la gestion de certificados
 
         private List<X509Certificate2> certificados; //Lista que contiene los certificados
-        private List<certificadoInfo> certificadosInfo = new List<certificadoInfo>(); //Lista que contiene las propiedades de los certificados
+        private ListaInfoCertificados listaCertificados = new ListaInfoCertificados();
 
-        public gestionCertificados()
+        //private List<ElementosCertificado> certificadosInfo = new List<ElementosCertificado>(); //Lista que contiene las propiedades de los certificados
+
+        public GestionCertificados()
         {
             //Al instanciar esta clase, se crea una nueva lista de certificados y se cargan los que estan instalados en la maquina.
             certificados = new List<X509Certificate2>();
@@ -63,25 +94,26 @@ namespace gestionesAEAT
                 }
                 store.Close();
 
-                // Graba las propiedades de los certificados en la clase certificadosInfo
+                // Graba las propiedades de los certificados en la clase ListaCertificados
                 foreach (X509Certificate2 cert in certificados)
                 {
                     if (cert.Subject.Contains("SERIALNUMBER")) //Deben tener esto para que sean de persona fisica o juridica
                     {
                         //En el Subject estan todos los datos del certificado
                         string datosSubject = cert.Subject;
-                        certificadoInfo info = new certificadoInfo
+                        ElementosCertificado info = new ElementosCertificado
                         {
                             serieCertificado = cert.SerialNumber,
                             fechaValidez = cert.NotAfter.ToString("d"),
-                            fechaEmision = cert.NotBefore.ToString("d")
+                            fechaEmision = cert.NotBefore.ToString("d"),
+                            huellaCertificado = cert.Thumbprint.ToString()
                         };
                         obtenerDatosSubject(datosSubject, info);
-                        certificadosInfo.Add(info);
+                        listaCertificados.certificadosInfo.Add(info);
                     }
                 }
                 //Una vez obtenidos los datos, se ordena la lista por el nombre del titular del certificado
-                certificadosInfo = ordenarCertificados(certificadosInfo, "titularCertificado", true);
+                listaCertificados.certificadosInfo = ordenarCertificados("titularCertificado", true);
             }
         }
 
@@ -91,31 +123,37 @@ namespace gestionesAEAT
             return certificados.Find(cert => cert.SerialNumber == serieCertificado);
         }
 
-        public string buscarCertificado (string textoBusqueda)
+        public string buscarCertificado(string textoBusqueda)
         {
+            string resultadoBusqueda = string.Empty;
             //Devuelve el certificado que contiene el texto a buscar en el NIF o nombre del titular
-            var resultadoBusqueda = certificadosInfo.Find(cert => 
+            var buscaCertificado = listaCertificados.certificadosInfo.Find(cert =>
                 cert.nifCertificado.Contains(textoBusqueda) ||
                 cert.titularCertificado.Contains(textoBusqueda) ||
                 cert.serieCertificado == textoBusqueda
                 );
+            if (buscaCertificado != null)
+            {
+                resultadoBusqueda = buscaCertificado.serieCertificado;
+            }
 
-            return resultadoBusqueda.serieCertificado;
+            return resultadoBusqueda;
         }
 
-        public List<certificadoInfo> listaCertificados()
+        public List<ElementosCertificado> relacionCertificados()
         {
             //Devuelve la lista de certificados (para rellenar la pantalla de seleccion)
-            return certificadosInfo;
+            return listaCertificados.certificadosInfo;
         }
 
-        public List<certificadoInfo> ordenarCertificados(List<certificadoInfo> certificados, string campoOrdenacion, bool ascendente)
+        public List<ElementosCertificado> ordenarCertificados(string campoOrdenacion, bool ascendente)
         {
+            List<ElementosCertificado> certificados = listaCertificados.certificadosInfo;
             //Devuelve la lista de los certificados ordenados por el campo pasado y en orden ascendente/descedente
             if (certificados == null || certificados.Count == 0)
             {
                 //Evita que se produzca una excepcion si no se pasa una lista de certificados
-                return certificados;
+                return listaCertificados.certificadosInfo;
             }
 
             switch (campoOrdenacion)
@@ -123,77 +161,77 @@ namespace gestionesAEAT
                 case "nifCertificado":
                     if (ascendente)
                     {
-                        certificados = new List<certificadoInfo>(certificados.OrderBy(certificado => certificado.nifCertificado).ToList());
+                        certificados = new List<ElementosCertificado>(certificados.OrderBy(certificado => certificado.nifCertificado).ToList());
                     }
                     else
                     {
-                        certificados = new List<certificadoInfo>(certificados.OrderByDescending(certificado => certificado.nifCertificado).ToList());
+                        certificados = new List<ElementosCertificado>(certificados.OrderByDescending(certificado => certificado.nifCertificado).ToList());
                     }
                     break;
 
                 case "titularCertificado":
                     if (ascendente)
                     {
-                        certificados = new List<certificadoInfo>(certificados.OrderBy(certificado => certificado.titularCertificado).ToList());
+                        certificados = new List<ElementosCertificado>(certificados.OrderBy(certificado => certificado.titularCertificado).ToList());
                     }
                     else
                     {
-                        certificados = new List<certificadoInfo>(certificados.OrderByDescending(certificado => certificado.titularCertificado).ToList());
+                        certificados = new List<ElementosCertificado>(certificados.OrderByDescending(certificado => certificado.titularCertificado).ToList());
                     }
                     break;
 
                 case "fechaValidez":
                     if (ascendente)
                     {
-                        certificados = new List<certificadoInfo>(certificados.OrderBy(certificado => certificado.fechaValidez).ToList());
+                        certificados = new List<ElementosCertificado>(certificados.OrderBy(certificado => certificado.fechaValidez).ToList());
                     }
                     else
                     {
-                        certificados = new List<certificadoInfo>(certificados.OrderByDescending(certificado => certificado.fechaValidez).ToList());
+                        certificados = new List<ElementosCertificado>(certificados.OrderByDescending(certificado => certificado.fechaValidez).ToList());
                     }
                     break;
 
                 case "fechaEmision":
                     if (ascendente)
                     {
-                        certificados = new List<certificadoInfo>(certificados.OrderBy(certificado => certificado.fechaEmision).ToList());
+                        certificados = new List<ElementosCertificado>(certificados.OrderBy(certificado => certificado.fechaEmision).ToList());
                     }
                     else
                     {
-                        certificados = new List<certificadoInfo>(certificados.OrderByDescending(certificado => certificado.fechaEmision).ToList());
+                        certificados = new List<ElementosCertificado>(certificados.OrderByDescending(certificado => certificado.fechaEmision).ToList());
                     }
                     break;
 
                 case "nifRepresentante":
                     if (ascendente)
                     {
-                        certificados = new List<certificadoInfo>(certificados.OrderBy(certificado => certificado.nifRepresentante).ToList());
+                        certificados = new List<ElementosCertificado>(certificados.OrderBy(certificado => certificado.nifRepresentante).ToList());
                     }
                     else
                     {
-                        certificados = new List<certificadoInfo>(certificados.OrderByDescending(certificado => certificado.nifRepresentante).ToList());
+                        certificados = new List<ElementosCertificado>(certificados.OrderByDescending(certificado => certificado.nifRepresentante).ToList());
                     }
                     break;
 
                 case "nombreRepresentante":
                     if (ascendente)
                     {
-                        certificados = new List<certificadoInfo>(certificados.OrderBy(certificado => certificado.nombreRepresentante).ToList());
+                        certificados = new List<ElementosCertificado>(certificados.OrderBy(certificado => certificado.nombreRepresentante).ToList());
                     }
                     else
                     {
-                        certificados = new List<certificadoInfo>(certificados.OrderByDescending(certificado => certificado.nombreRepresentante).ToList());
+                        certificados = new List<ElementosCertificado>(certificados.OrderByDescending(certificado => certificado.nombreRepresentante).ToList());
                     }
                     break;
 
                 case "serieCertificado":
                     if (ascendente)
                     {
-                        certificados = new List<certificadoInfo>(certificados.OrderBy(certificado => certificado.serieCertificado).ToList());
+                        certificados = new List<ElementosCertificado>(certificados.OrderBy(certificado => certificado.serieCertificado).ToList());
                     }
                     else
                     {
-                        certificados = new List<certificadoInfo>(certificados.OrderByDescending(certificado => certificado.serieCertificado).ToList());
+                        certificados = new List<ElementosCertificado>(certificados.OrderByDescending(certificado => certificado.serieCertificado).ToList());
                     }
                     break;
 
@@ -202,19 +240,19 @@ namespace gestionesAEAT
 
         }
 
-        public List<certificadoInfo> filtrarCertificados(string filtro)
+        public List<ElementosCertificado> filtrarCertificados(string filtro)
         {
             //Devuelve la lista de certificados filtrada por el filtro pasado
-            List<certificadoInfo> certificados = certificadosInfo;
+            List<ElementosCertificado> certificados = listaCertificados.certificadosInfo;
             if (!string.IsNullOrEmpty(filtro))
             {
                 filtro = filtro.ToUpper();
-                certificados = new List<certificadoInfo>(certificados.FindAll(certificado => certificado.titularCertificado.ToUpper().Contains(filtro)));
+                certificados = new List<ElementosCertificado>(certificados.FindAll(certificado => certificado.titularCertificado.ToUpper().Contains(filtro)));
             }
             return certificados;
         }
 
-        public void obtenerDatosSubject(string subject, certificadoInfo info)
+        public void obtenerDatosSubject(string subject, ElementosCertificado info)
         {
             //Carga los datos del certificado en las propiedades de la clase
             bool juridica = false;
@@ -281,6 +319,13 @@ namespace gestionesAEAT
                     case "OID.2.5.4.97": //NIF de la sociedad
                         nifCertificado = valor.Substring(6);
                         break;
+
+                    case "CN": //Datos representante
+                        if (juridica)
+                        {
+                            info.datosRepresentante = valor;
+                        }
+                        break;
                 }
 
                 if (string.IsNullOrEmpty(info.nifCertificado)) info.nifCertificado = nifCertificado;
@@ -310,7 +355,7 @@ namespace gestionesAEAT
             if (certificados.Count > 0)
             {
                 certificados.Clear();
-                certificadosInfo.Clear();
+                listaCertificados.certificadosInfo.Clear();
             }
 
             try
@@ -324,13 +369,14 @@ namespace gestionesAEAT
                     {
                         //En el Subject estan todos los datos del certificado
                         string datosSubject = cert.Subject;
-                        certificadoInfo info = new certificadoInfo
+                        ElementosCertificado info = new ElementosCertificado
                         {
                             serieCertificado = cert.SerialNumber,
-                            fechaValidez = cert.NotAfter.ToString("d")
+                            fechaValidez = cert.NotAfter.ToString("d"),
+                            huellaCertificado = cert.Thumbprint.ToString()
                         };
                         obtenerDatosSubject(datosSubject, info);
-                        certificadosInfo.Add(info);
+                        listaCertificados.certificadosInfo.Add(info);
                     }
                 }
                 return string.Empty;
@@ -348,7 +394,7 @@ namespace gestionesAEAT
             try
             {
                 // Serializar la lista de ficheros a JSON
-                string jsonEnvio = JsonConvert.SerializeObject(certificadosInfo, Formatting.Indented);
+                string jsonEnvio = JsonConvert.SerializeObject(listaCertificados, Formatting.Indented);
 
                 //Guardar el json
                 File.WriteAllText(ruta, jsonEnvio);

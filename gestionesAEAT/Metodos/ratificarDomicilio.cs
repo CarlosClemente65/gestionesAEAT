@@ -22,7 +22,7 @@ namespace gestionesAEAT.Metodos
         string respuestaAEAT; //Contenido de la respuesta de la AEAT a la solicitud enviada
         string estadoRespuesta; //Devuelve OK si la respuesta es correcta
         bool valido = false; //Control si el domicilio esta ratificado
-        bool nifConyuge = false; //Si hay que pasar tambien el NIF del conyuge
+        public bool nifConyuge = false; //Si hay que pasar tambien el NIF del conyuge
         List<string> textoEntrada = new List<string>();
         string textoSalida = string.Empty; //Texto que se grabara en el fichero de salida
 
@@ -31,11 +31,12 @@ namespace gestionesAEAT.Metodos
         Utiles utilidad = new Utiles(); //Instanciacion de las utilidades para poder usarlas
         envioAeat envio = new envioAeat();
 
-        public void envioPeticion(string serieCertificado, string entrada, string salida, int paso, gestionCertificados instanciaCertificado)
+        public void envioPeticion(string serieCertificado, string entrada, string salida, int paso, GestionCertificados instanciaCertificado)
         {
             this.ficheroEntrada = entrada; //Se pasa como parametro el fichero de entrada
             this.ficheroSalida = salida; //Se pasa como parametro el fichero de salida
-            ficheroSalidaConyuge = Path.GetFileNameWithoutExtension(ficheroSalida) + "2" + Path.GetExtension(ficheroSalida);
+            string rutaSalida = Path.GetDirectoryName(ficheroEntrada);
+            ficheroSalidaConyuge = Path.Combine(rutaSalida, Path.GetFileNameWithoutExtension(ficheroSalida) + "2" + Path.GetExtension(ficheroSalida));
 
             //Borrar los ficheros si existen en la ruta pasada
             if (paso == 1)

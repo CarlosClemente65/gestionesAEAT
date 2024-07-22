@@ -86,7 +86,7 @@ namespace gestionesAEAT.Metodos
         Utiles utilidad = new Utiles(); //Instanciacion de las utilidades para poder usarlas
         envioAeat envio = new envioAeat();
 
-        public void envioPeticion(string ficheroEntrada, string ficheroSalida, string serieCertificado, gestionCertificados instanciaCertificado)
+        public void envioPeticion(string ficheroEntrada, string ficheroSalida, string serieCertificado, GestionCertificados instanciaCertificado)
         {
             textoEnvio = utilidad.prepararGuion(ficheroEntrada); //Se procesa el guion para formar una lista que se pueda pasar al resto de metodos
 

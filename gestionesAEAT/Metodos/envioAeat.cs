@@ -16,7 +16,7 @@ namespace gestionesAEAT
         Utiles utilidad = new Utiles();
 
 
-        public void envioPost(string url, string datosEnvio, string serieCertificado, gestionCertificados instanciaCertificados, string tipoEnvio = "form") //Se pone el tipo de envio opcional como formulario y si es de tipo json se debe pasar en la llamada al metodo
+        public void envioPost(string url, string datosEnvio, string serieCertificado, GestionCertificados instanciaCertificados, string tipoEnvio = "form") //Se pone el tipo de envio opcional como formulario y si es de tipo json se debe pasar en la llamada al metodo
         {
             try
             {
