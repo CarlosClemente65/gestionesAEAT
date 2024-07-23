@@ -479,6 +479,10 @@ namespace gestionesAEAT
                         urlDescargaDf = valor;
 
                         break;
+
+                    case "CLIENTE":
+                        utilidad.cliente = valor;
+                        break;
                 }
 
             }

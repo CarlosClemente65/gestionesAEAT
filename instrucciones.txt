@@ -1,48 +1,158 @@
 /*Uso de la aplicacion
-	gestionesAEAT parametros
+	gestionesAEAT clave opciones.txt
 	
 	- Parametros:
 		* dsclave: unicamente sirve como medida de seguridad de ejecucion y debe pasarse siempre ds123456
-		* tipo: permite indicar el tipo de proceso segun los siguientes:
-			1 = Envio modelos
-			2 = Validacion de modelos (no necesita certificado)
-			3 = Consulta de modelos presentados
-			4 = Ratificacion domicilio renta
-			5 = Descarga de datos fiscales de la renta
-			6 = Obtener relacion de certificados y sus datos.
-			7 = Envio facturas al Sii
-			
-		* entrada: nombre del fichero que contiene los datos a enviar en txt
-		* salida: nombre del fichero en el que se dejara la respuesta
-		* SI/NO: indica si el proceso necesita usar certificado. Si no se indica, los procesos que lo
-				necesiten pediran seleccionar un certificado
-		* numeroserie: numero de serie del certificado de los instalados en la maquina a utilizar en el proceso
-		* certificado: nombre del fichero.pfx que contiene el certificado digital.
-		* password: contraseña del certificado que se pasa por fichero
-		* NIF: para la descarga de datos fiscales es necesario pasra el NIF del contribuyente
-		* refRenta: codigo de 5 caracteres de la referencia de renta para la descarga de datos fiscales
-		* datosPersonales: en la descarga de datos fiscales, indica si se quieren tambien los datos personales (opciones 'S' o 'N')
-		* urlDescarga: direccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año)
+		* opciones.txt: fichero que contiene las opciones que admite la aplicacion que son las siguientes:
+			*CLIENTE= Codigo de cliente para incluirlo en el html de respuestas
+			* TIPO= Tipo de proceso a ejecutar segun los siguientes:
+				1 = Envio modelos
+				2 = Validacion de modelos (no necesita certificado)
+				3 = Consulta de modelos presentados
+				4 = Ratificacion domicilio renta
+				5 = Descarga de datos fiscales de la renta
+				6 = Obtener relacion de certificados y sus datos.
+				7 = Envio facturas al Sii
+			* ENTRADA= Nombre del fichero que contiene los datos a enviar en txt
+			* SALIDA= Nombre del fichero en el que se dejara la respuesta
+			* INDICESII= En el envio de facturas al sii indica el indice del fichero sii_urls.txt para hacer el envio
+			* OBLIGADO= Indica si el proceso necesita usar certificado (valores SI/NO). Si no se indica, los procesos
+						que lo necesiten pediran seleccionar un certificado
+			* BUSQUEDA= Cadena a buscar en los certificados instalados en la maquina a utilizar en el proceso (puede ser
+						el numero de serie, el NIF o el nombre del titular del certificado)
+			* CERTIFICADO= Nombre del fichero.pfx que contiene el certificado digital.
+			* PASSWORD= Contraseña del certificado que se pasa por fichero
+			* NIFRENTA= Para la descarga de datos fiscales es necesario pasar el NIF del contribuyente
+			* REFRENTA= Codigo de 5 caracteres de la referencia de renta para la descarga de datos fiscales
+			* DPRENTA= En la descarga de datos fiscales, indica si se quieren tambien los datos personales (opciones 'S' o 'N')
+			* URLRENTA= Direccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año)
 
 /* Ejemplos de uso:
-	Envio modelos: gestionesAEAT dsclave 1 entrada.txt salida.txt SI (numeroserie | (certificado password)
-    Validar modelos: gestionesAEAT dsclave 2 entrada.txt salida.txt NO
-    Consulta modelos: gestionesAEAT dsclave 3 entrada.txt salida.txt SI (numeroserie | (certificado password)
-    Ratificar domicilio renta: gestionesAEAT dsclave 4 entrada.txt salida.txt SI (numeroserie | (certificado password)
-    Descarga datos fiscales: gestionesAEAT dsclave 5 salida.txt NIF refRenta datosPersonales urlDescarga
-    Relacion certificados: gestionesAEAT dsclave 6 salida
-	Envio facturas al sii: gestionesAEAT dsclave 7 fichero_opciones.txt
+	Envio modelos: gestionesAEAT dsclave opciones.txt 
+		Fichero de opciones con solicitud de certificado por pantalla
+			CLIENTE=00001
+			TIPO=1
+			ENTRADA=entrada.txt
+			SALIDA=salida.txt
+			OBLIGADO=SI
+		
+		Fichero de opciones con numero de serie
+			CLIENTE=00001
+			TIPO=1
+			ENTRADA=entrada.txt
+			SALIDA=salida.txt
+			OBLIGADO=SI
+			BUSQUEDA=numeroserie
+
+		Fichero de opciones con fichero y password del certificado
+			CLIENTE=00001
+			TIPO=1
+			ENTRADA=entrada.txt
+			SALIDA=salida.txt
+			OBLIGADO=SI
+			CERTIFICADO=certificado.pfx
+			PASSWORD=contraseña
+
+    Validar modelos: gestionesAEAT dsclave opciones.txt
+		Fichero de opciones (no necesita certificado)
+			CLIENTE=00001
+			TIPO=2
+			ENTRADA=entrada.txt
+			SALIDA=salida.txt
+			OBLIGADO=NO
+		
+    Consulta modelos: gestionesAEAT dsclave opciones.txt
+		Fichero de opciones con solicitud de certificado por pantalla
+			CLIENTE=00001
+			TIPO=3
+			ENTRADA=entrada.txt
+			SALIDA=salida.txt
+			OBLIGADO=SI
+		
+		Fichero de opciones con el NIF del titular del certificado
+			CLIENTE=00001
+			TIPO=3
+			ENTRADA=entrada.txt
+			SALIDA=salida.txt
+			OBLIGADO=SI
+			BUSQUEDA=NIFcertificado 
+
+		Fichero de opciones con fichero y password del certificado
+			CLIENTE=00001
+			TIPO=3
+			ENTRADA=entrada.txt
+			SALIDA=salida.txt
+			OBLIGADO=SI
+			CERTIFICADO=certificado.pfx
+			PASSWORD=contraseña
+		
+    Ratificar domicilio renta: gestionesAEAT dsclave opciones.txt
+		Fichero de opciones con solicitud del certificado por pantalla
+			CLIENTE=00001
+			TIPO=4
+			ENTRADA=entrada.txt
+			SALIDA=salida.txt
+			OBLIGADO=SI
+		
+		Fichero de opciones con	el nombre del titular del certificado
+			CLIENTE=00001
+			TIPO=4
+			ENTRADA=entrada.txt
+			SALIDA=salida.txt
+			OBLIGADO=SI
+			BUSQUEDA=NombreCertificado
+
+		Fichero de opciones con fichero y password del certificado
+			CLIENTE=00001
+			TIPO=4
+			ENTRADA=entrada.txt
+			SALIDA=salida.txt
+			OBLIGADO=SI
+			CERTIFICADO=certificado.pfx
+			PASSWORD=contraseña
+		
+    Descarga datos fiscales: gestionesAEAT dsclave opciones.txt
+		Fichero de opciones
+			TIPO=5
+			SALIDA=salida.txt
+			NIFRENTA=NIF
+			REFRENTA=refRenta
+			DPRENTA=S
+			URLRENTA=https://www9.agenciatributaria.gob.es/wlpl/DFPA-D182/SvDesDF23Pei
+		
+    Relacion certificados: gestionesAEAT dsclave opciones.txt
+		Fichero de opciones
+			TIPO=6
+			SALIDA=salida.txt
+		
+	Envio facturas al sii: gestionesAEAT dsclave opciones.txt
+		Fichero de opciones con solicitu de certificado por pantalla
+			TIPO=7
+			ENTRADA=facturaEmitida.xml
+			SALIDA=respuesta-xml
+			INDICESII=0
+			OBLIGADO=SI
+
+		Fichero de opciones con numero de serie del certificado
+			TIPO=7
+			ENTRADA=facturaEmitida.xml
+			SALIDA=respuesta-xml
+			INDICESII=0
+			OBLIGADO=SI
+			BUSQUEDA=numeroSerie
+
+		Fichero de opciones con fichero y password del certificado
+			TIPO=7
+			ENTRADA=facturaEmitida.xml
+			SALIDA=respuesta-xml
+			INDICESII=0
+			OBLIGADO=SI
+			CERTIFICADO=certificado.pfx
+			PASSWORD=contraseña
     
 Notas:
 	- Si no se pasan los datos del certificado y el proceso lo requerire, se mostrara el formulario de seleccion
 	- Con la validacion de modelos (tipo 2) el parametro 5 debe ser un NO
 
-Notas para el desarrollo:
-	- En el guion hay que añadir una variable mas a la cabecera "CLIENTE=" con el codigo del cliente, para luego poder ponerlo en el html
-	- El nombre del fichero de salida tiene una estructura diferente en cada aplicacion (modelos, renta, sociedades, etc). Con el
-	  punto anterior ya puedo saberlo para generar el html con los errores, avisos o advertencias, pero se podria unificar
-	  poniendo el numero de empresa + modelo (00000_303) y en renta se puede añadir el contribuyente (00000_TITULAR_100).
-	- Si se unifica se puede generar automaticamente el fichero de salida añadiendole al de entrada un prefijo o sufijo "respuesta" o "salida"
-	  
 */
 	

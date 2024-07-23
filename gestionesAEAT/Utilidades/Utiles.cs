@@ -18,6 +18,8 @@ namespace gestionesAEAT
         //Clase con diversas utilidades que se usan en los metodos
         public string url { get; set; } //Variable que almacena la url a la que enviar los datos a la AEAT
 
+        public string cliente { get; set; }
+
         //Variables para almacenar en listas los datos de la cabecera, body y respuesta que vienen en el guion
         public List<string> cabecera = new List<string>(); //Lineas de la cabecera
         public List<string> body = new List<string>(); //Lineas del body 
@@ -224,7 +226,6 @@ namespace gestionesAEAT
             string modelo = string.Empty;
             string ejercicio = string.Empty;
             string periodo = string.Empty;
-            string cliente = string.Empty;
             string respuestaHtml = string.Empty;
             int control = 0;
 
