@@ -20,7 +20,7 @@ namespace gestionesAEAT
         {
             try
             {
-                certificado = instanciaCertificados.buscarSerieCertificado(serieCertificado);
+                certificado = instanciaCertificados.buscarCertificado(serieCertificado);
 
                 if (certificado != null)
                 {
@@ -32,15 +32,23 @@ namespace gestionesAEAT
 
                     //Configurar la solicitud
                     solicitudHttp.Method = "POST";
-                    
+
                     //Configura el contenido en funcion de si el envio se hace por un formulario o un json
-                    if (tipoEnvio == "form")
+                    switch (tipoEnvio)
                     {
-                        solicitudHttp.ContentType = "application/x-www-form-urlencoded";
-                    }
-                    else if (tipoEnvio == "json")
-                    {
-                        solicitudHttp.ContentType = "application/json;charset=UTF-8";
+                        case "form":
+                            solicitudHttp.ContentType = "application/x-www-form-urlencoded";
+
+                            break;
+
+                        case "json":
+                            solicitudHttp.ContentType = "application/json;charset=UTF-8";
+
+                            break;
+
+                        case "xml":
+                            solicitudHttp.ContentType = "text/xml;charset=UTF-8";
+                            break;
                     }
 
                     solicitudHttp.ContentLength = datosEnvio.Length;
@@ -89,7 +97,7 @@ namespace gestionesAEAT
 
             catch (Exception ex)
             {
-                File.WriteAllText("errores.txt", $"Error en la conexion con el servidor. {ex.Message}");
+                File.WriteAllText(Program.ficheroErrores, $"Error en la conexion con el servidor. {ex.Message}");
             }
         }
 
@@ -108,13 +116,21 @@ namespace gestionesAEAT
                 solicitudHttp.Method = "POST";
 
                 //configura el contenido en funcion de si el envio se hace por un formulario o un json
-                if (tipoEnvio == "form")
+                switch (tipoEnvio)
                 {
-                    solicitudHttp.ContentType = "application/x-www-form-urlencoded";
-                }
-                else if (tipoEnvio == "json")
-                {
-                    solicitudHttp.ContentType= "application/json;charset=UTF-8";
+                    case "form":
+                        solicitudHttp.ContentType = "application/x-www-form-urlencoded";
+
+                        break;
+
+                    case "json":
+                        solicitudHttp.ContentType = "application/json;charset=UTF-8";
+
+                        break;
+
+                    case "xml":
+                        solicitudHttp.ContentType = "text/xml;charset=UTF-8";
+                        break;
                 }
 
                 solicitudHttp.ContentLength = datosEnvio.Length;
@@ -145,7 +161,7 @@ namespace gestionesAEAT
             }
             catch (Exception ex)
             {
-                File.WriteAllText("errores.txt", $"Error en la conexion con el servidor. {ex.Message}");
+                File.WriteAllText(Program.ficheroErrores, $"Error en la conexion con el servidor. {ex.Message}");
             }
         }
     }

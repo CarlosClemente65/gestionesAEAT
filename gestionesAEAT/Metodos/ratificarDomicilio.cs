@@ -1,42 +1,30 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+
 
 namespace gestionesAEAT.Metodos
 {
     public class ratificarDomicilio
     {
-        string ficheroEntrada = string.Empty;
-        string ficheroSalida = string.Empty;
-        string ficheroSalidaConyuge = string.Empty;
-        string url; //Url a la que se envian los datos
-        List<string> cabecera = new List<string>(); //Bloque de datos identificados como cabecera en la entrada
-        List<string> body = new List<string>(); //Bloque de datos identificados como body en la entrada
-        List<string> respuesta = new List<string>(); //Bloque de datos identificados como respuesta en la entrada
         string atributo = string.Empty; //Cada una de las variables que se pasan a la AEAT
         string valor = string.Empty; //Valor del atributo que se pasa a la AEAT
-        string codificacion; //Codificacion del texto que se pasa a la url
         string datosEnvio; //Datos formateados para hacer el envio a Hacienda
         string respuestaAEAT; //Contenido de la respuesta de la AEAT a la solicitud enviada
-        string estadoRespuesta; //Devuelve OK si la respuesta es correcta
         bool valido = false; //Control si el domicilio esta ratificado
         public bool nifConyuge = false; //Si hay que pasar tambien el NIF del conyuge
         List<string> textoEntrada = new List<string>();
-        string textoSalida = string.Empty; //Texto que se grabara en el fichero de salida
 
-        string aux; //Variable auxiliar para la grabacion de la respuesta
+        string mensaje; //Variable auxiliar para la grabacion de la respuesta
 
         Utiles utilidad = new Utiles(); //Instanciacion de las utilidades para poder usarlas
         envioAeat envio = new envioAeat();
 
-        public void envioPeticion(string serieCertificado, string entrada, string salida, int paso, GestionCertificados instanciaCertificado)
+        public void envioPeticion(string serieCertificado, string ficheroEntrada, string ficheroSalida, int paso, GestionCertificados instanciaCertificado)
         {
-            this.ficheroEntrada = entrada; //Se pasa como parametro el fichero de entrada
-            this.ficheroSalida = salida; //Se pasa como parametro el fichero de salida
             string rutaSalida = Path.GetDirectoryName(ficheroEntrada);
-            ficheroSalidaConyuge = Path.Combine(rutaSalida, Path.GetFileNameWithoutExtension(ficheroSalida) + "2" + Path.GetExtension(ficheroSalida));
+            string ficheroSalidaConyuge = Path.Combine(rutaSalida, Path.GetFileNameWithoutExtension(ficheroSalida) + "2" + Path.GetExtension(ficheroSalida));
 
             //Borrar los ficheros si existen en la ruta pasada
             if (paso == 1)
@@ -51,25 +39,20 @@ namespace gestionesAEAT.Metodos
             {
                 if (paso == 1) utilidad.cargaDatosGuion(textoEntrada);
 
-                //Se cargan las variables del metodo con la lectura del metodo de utilidades
-                this.url = utilidad.url;
-                this.cabecera = utilidad.cabecera;
-                this.body = utilidad.body;
-
                 datosEnvio = formateoCabecera(paso); //Genera los datos a enviar (paso 1 para el titular y paso 2 para el conyuge)
 
-                envio.envioPost(url, datosEnvio, serieCertificado, instanciaCertificado);//Metodo con certificado
+                envio.envioPost(utilidad.url, datosEnvio, serieCertificado, instanciaCertificado);//Metodo con certificado
                 respuestaAEAT = envio.respuestaEnvioAEAT;
 
                 if (envio.estadoRespuestaAEAT == "OK")
                 {
-                    aux = formateaRespuesta();
+                    mensaje = formateaRespuesta();
                 }
 
                 if (!valido)
                 {
                     //Si no se ha ratificado el domicilio
-                    string ruta = Path.ChangeExtension(ficheroSalida,"html");
+                    string ruta = Path.ChangeExtension(ficheroSalida, "html");
                     File.WriteAllText(ruta, respuestaAEAT, Encoding.Default);
                 }
             }
@@ -77,22 +60,21 @@ namespace gestionesAEAT.Metodos
             catch (Exception ex)
             {
                 //Si se ha producido algun error en el envio
-                aux = $"MENSAJE = Proceso cancelado o error en el envio. {ex.Message}";
+                mensaje = $"MENSAJE = Proceso cancelado o error en el envio. {ex.Message}";
+                File.WriteAllText(Program.ficheroErrores, mensaje);
             }
 
             try
             {
-                if (ficheroSalida != null)
-                {
-                    //Graba el fichero con la respuesta del titular
-                    if (paso == 1) File.WriteAllText(ficheroSalida, aux, Encoding.Default);
-                    if (paso == 2 && nifConyuge) File.WriteAllText(ficheroSalidaConyuge, aux, Encoding.Default);
-                }
+                //Graba el fichero con la respuesta del titular
+                if (paso == 1) File.WriteAllText(ficheroSalida, mensaje, Encoding.Default);
+                if (paso == 2 && nifConyuge) File.WriteAllText(ficheroSalidaConyuge, mensaje, Encoding.Default);
             }
 
             catch (Exception ex)
             {
-
+                mensaje = $"MENSAJE = Se ha producido un error al grabar los ficheros de respuesta. {ex.Message}";
+                File.WriteAllText(Program.ficheroErrores,mensaje);
             }
         }
 
@@ -105,7 +87,7 @@ namespace gestionesAEAT.Metodos
             string car;
             string valor;
             string cadena = string.Empty;
-            this.respuesta = utilidad.respuesta;
+             var respuesta = utilidad.respuesta;
             for (int i = 0; i < respuesta.Count; i++)
             {
                 //Busca la posicion de la palabra que se pasa en el bloque 'respuesta' del fichero de entrada
@@ -137,9 +119,9 @@ namespace gestionesAEAT.Metodos
         private string formateoCabecera(int paso)
         {
             nifConyuge = false;
-            for (int i = 0; i < cabecera.Count; i++)
+            for (int i = 0; i < utilidad.cabecera.Count; i++)
             {
-                cargaCabecera(cabecera[i]);
+                cargaCabecera(utilidad.cabecera[i]);
 
                 if (paso == 1 && atributo == "NIF2")
                 {
@@ -179,7 +161,8 @@ namespace gestionesAEAT.Metodos
 
             catch (Exception ex)
             {
-                //Falta el control de la posible excepcion
+                mensaje = $"Se ha producido un error al procesar el guion. {ex.Message}";
+                File.WriteAllText(Program.ficheroErrores, mensaje);
             }
         }
     }

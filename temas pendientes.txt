@@ -1,14 +1,7 @@
 Temas pendientes:
-	- Revisar si se puede suprimir en el guion el pasar el apartado [resppuesta] con los datos que se quieren
-	  (cada metodo ya devolvera lo que se necesite)
-	- Reformular el metodo Utiles.MostrarAyuda para incluir como usar el fichero_opciones (solo se pasan, clave y opciones)
-	- Se ha creado el metodo Program.ControlParametros, revisarlo que este bien.
-	- Revisar el metodo Program.EjecutaProceso para adaptar las ayudas a los cambios con el fichero de opciones
-	- Revisar el metodo Program.ControlCertificados por si esta bien.
-	- Revisar el metodo Program.GestionOpciones para ver si esta bien o falta algo.
-	- Revisar el metodo Program.Main con los cambios (solo se pasa clave, tipo y opciones)
-	- Revisar el metodo gestionCertificados.exportarDatosCertificados para poner en la salida las letras que se ponen ahora
-
+	- Envio de modelos anuales por TGVIOnline
+	
+	
 	
 Temas terminados:
 	- Obtener datos de certificados instalados
@@ -17,4 +10,5 @@ Temas terminados:
 	- Validar modelos (probado con renta y sociedades)
 	- Envio de modelos
 	- Descarga de datos fiscales
+	- Envio facturas al SII
 	

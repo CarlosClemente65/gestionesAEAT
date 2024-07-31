@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Security.Cryptography;
 using System.Net;
 using System.IO;
@@ -42,10 +38,10 @@ namespace gestionesAEAT.Metodos
         string refRenta = string.Empty;
         string datosPersonales = string.Empty;
         string ficheroSalida = string.Empty;
-        string ficheroErrores = string.Empty;
 
         public string encriptaRefRenta(string refRenta)
         {
+            //Metodo para encriptar la referencia renta ya que debe pasarse asi
             UTF8Encoding utf8 = new UTF8Encoding();
             byte[] bytes = Encoding.UTF8.GetBytes(refRenta);
 
@@ -64,12 +60,12 @@ namespace gestionesAEAT.Metodos
 
         public void descargaDF(string _urlDescarga, string _nifDf, string _refRenta, string _datosPersonales, string _ficheroSalida)
         {
+            //Metodo para descargar los datos fiscales
             this.urlDescarga = _urlDescarga;
             this.nifDf = _nifDf;
             this.refRenta = _refRenta;
             this.datosPersonales = _datosPersonales;
             this.ficheroSalida = _ficheroSalida;
-            ficheroErrores = Path.Combine(Path.GetDirectoryName(ficheroSalida), "errores.txt");
             string respuestaAEAT = string.Empty;
             byte[] datosEnvio = null;
 
@@ -131,18 +127,19 @@ namespace gestionesAEAT.Metodos
                     }
                 }
 
-                if (!string.IsNullOrEmpty(mensajeError)) File.WriteAllText(ficheroErrores, mensajeError);
+                if (!string.IsNullOrEmpty(mensajeError)) File.WriteAllText(Program.ficheroErrores, mensajeError);
                 if (string.IsNullOrEmpty(mensajeError) && !string.IsNullOrEmpty(respuestaAEAT)) File.WriteAllText(ficheroSalida, respuestaAEAT);
             }
 
             catch (Exception ex)
             {
-                File.WriteAllText(ficheroErrores, $"Error al descargar datos fiscales. {ex.Message}");
+                File.WriteAllText(Program.ficheroErrores, $"Error al descargar datos fiscales. {ex.Message}");
             }
         }
 
         private string envioSolicitud(byte[] datosEnvio)
         {
+            //Metodo para hacer el envio a Hacienda. No se incluye en el metodo envioAeat porque aqui se necesitan las cookies de sesion para validarse y descargar luego.
             string contenidoRespuesta = string.Empty;
             try
             {
@@ -195,7 +192,7 @@ namespace gestionesAEAT.Metodos
             }
             catch (Exception ex)
             {
-                File.WriteAllText(ficheroErrores, $"Error en la conexion con el servidor. {ex.Message}");
+                File.WriteAllText(Program.ficheroErrores, $"Error en la conexion con el servidor. {ex.Message}");
             }
 
             return contenidoRespuesta;
@@ -212,6 +209,7 @@ namespace gestionesAEAT.Metodos
 
         private enum tipoContenido
         {
+            //Tipos de contenido que pueden tener las respuestas
             XML,
             HTML,
             TXT,
@@ -220,6 +218,7 @@ namespace gestionesAEAT.Metodos
 
         private tipoContenido detectarTipoRespuestaAEAT(string input)
         {
+            //Metodo que devuelve el tipo de contenido que tiene una respuesta.
             //Comrpueba si es una cadena vacia o solo tiene espacios en blanco
             if (string.IsNullOrWhiteSpace(input)) return tipoContenido.desconocido;
 

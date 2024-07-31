@@ -7,8 +7,9 @@ namespace gestionesAEAT.Formularios
 {
     public partial class frmSeleccion : Form
     {
-        private int columnaOrdenada = -1;
-        private ListSortDirection ordenColumna = ListSortDirection.Ascending;
+        //Crea un diccionario para saber el orden de cada columna
+        private Dictionary<string, EstadoOrdenacion> estadosOrdenacion;
+
         private GestionCertificados instanciaCertificado;
         public ElementosCertificado certificadoSeleccionado { get; set; }
         private List<ElementosCertificado> certificados;
@@ -27,8 +28,6 @@ namespace gestionesAEAT.Formularios
         private void rellenarDGV(List<ElementosCertificado> certificados)
         {
             //Metodo para rellenar el listado de certificados con sus columnas (necesario para regrabar en el caso de ordenacion)
-            //dgvCertificados.DataSource = null;
-            //Padding padding = new Padding(2);
             dgvCertificados.DataSource = certificados;
             dgvCertificados.Columns["nifCertificado"].HeaderText = "NIF titular";
             dgvCertificados.Columns["nifCertificado"].Width = 80;
@@ -36,7 +35,6 @@ namespace gestionesAEAT.Formularios
             dgvCertificados.Columns["nifCertificado"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dgvCertificados.Columns["nifCertificado"].DisplayIndex = 0;
             dgvCertificados.Columns["titularCertificado"].HeaderText = "Titular del certificado";
-            //dgvCertificados.Columns["titularCertificado"].HeaderCell.Style.Padding = padding;
             dgvCertificados.Columns["titularCertificado"].Width = 250;
             dgvCertificados.Columns["titularCertificado"].DisplayIndex = 1;
             dgvCertificados.Columns["fechaEmision"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
@@ -66,17 +64,20 @@ namespace gestionesAEAT.Formularios
             dgvCertificados.Columns["huellaCertificado"].HeaderText = "Huella certificado";
             dgvCertificados.Columns["huellaCertificado"].Width = 300;
             dgvCertificados.Columns["huellaCertificado"].DisplayIndex = 8;
-
         }
 
-        private void dgvCertificados_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
-        {
 
-        }
 
         private void frmSeleccion_Load(object sender, EventArgs e)
         {
             txtBusqueda.Focus();
+
+            //Crea el diccionacion con las columnas y su ordenacion por defecto a true
+            estadosOrdenacion = new Dictionary<string, EstadoOrdenacion>();
+            foreach (DataGridViewColumn column in dgvCertificados.Columns)
+            {
+                estadosOrdenacion[column.Name] = new EstadoOrdenacion { CampoOrden = column.Name, Ascendente = true };
+            }
         }
 
         private void txtBusqueda_TextChanged(object sender, EventArgs e)
@@ -89,7 +90,6 @@ namespace gestionesAEAT.Formularios
                 rellenarDGV(certificados);
             }
         }
-
 
         private void button2_Click(object sender, EventArgs e)
         {
@@ -124,5 +124,29 @@ namespace gestionesAEAT.Formularios
         {
             btnSeleccion.PerformClick();
         }
+
+        private void dgvCertificados_ColumnHeaderMouseClick_1(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            //Metodo para ordenar por la cabecera de la columna que se haya pulsado
+            string columna = dgvCertificados.Columns[e.ColumnIndex].Name;
+
+            //Lee el estado de ordenacion que tiene la columna
+            EstadoOrdenacion estado = estadosOrdenacion[columna];
+
+            //Carga en la variable los certificado ordenados
+            var certificados = instanciaCertificado.ordenarCertificados(estado.CampoOrden, estado.Ascendente);
+
+            //Cambia el estado para la siguiente ordenacion hacerlo a la inversa
+            estado.Ascendente = !estado.Ascendente;
+
+            //Rellena el formulario con los certificado ya ordenados
+            rellenarDGV(certificados);
+        }
+    }
+
+    public class EstadoOrdenacion
+    {
+        public string CampoOrden { get; set; }
+        public bool Ascendente { get; set; }
     }
 }

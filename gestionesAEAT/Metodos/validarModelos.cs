@@ -1,56 +1,61 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.ConstrainedExecution;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace gestionesAEAT.Metodos
 {
     public class servaliDos
     {
-        public string MODELO { get; set; }
-        public string EJERCICIO { get; set; }
-        public string PERIODO { get; set; }
+        [JsonProperty("MODELO")]
+        public string Modelo { get; set; }
+
+        [JsonProperty("EJERCICIO")]
+        public string Ejercicio { get; set; }
+
+        [JsonProperty("PERIODO")]
+        public string Periodo { get; set; }
+
+        [JsonProperty("F01")]
         public string F01 { get; set; }
-        public string IDI { get; set; }
-        public string SINVL { get; set; }
+
+        [JsonProperty("IDI")]
+        public string Idioma { get; set; }
+
+        [JsonProperty("SINVIL")]
+        public string SinValidar { get; set; }
     }
 
     public class RespuestaValidarModelos
     {
+        [JsonProperty("respuesta")]
         public elementosRespuesta respuesta { get; set; }
     }
     public class elementosRespuesta
     {
+        [JsonProperty("errores")]
         public List<string> errores { get; set; }
 
+        [JsonProperty("pdf")]
         public List<string> pdf { get; set; }
 
+        [JsonProperty("avisos")]
         public List<string> avisos { get; set; }
 
+        [JsonProperty("advertencias")]
         public List<string> advertencias { get; set; }
     }
 
     public class validarModelos
     {
-        string url; //Url a la que se envian los datos
-
         string atributo = string.Empty; //Cada una de las variables que se pasan a la AEAT
         string valor = string.Empty; //Valor del atributo que se pasa a la AEAT
 
         string respuestaAEAT; //Contenido de la respuesta de la AEAT a la solicitud enviada
-        string estadoRespuesta; //Devuelve OK si la respuesta es correcta
-
-        string datosEnvio; //Datos a enviar a la AEAT ya formateados
-
+        
         List<string> textoEnvio = new List<string>(); //Prepara una lista con los datos del guion
 
         string textoSalida = string.Empty; //Texto que se grabara en el fichero de salida
-        string aux; //Variable auxiliar para la grabacion de la respuesta
 
         Utiles utilidad = new Utiles(); //Instanciacion de las utilidades para poder usarlas
         envioAeat envio = new envioAeat();
@@ -58,7 +63,6 @@ namespace gestionesAEAT.Metodos
         public void envioPeticion(string ficheroEntrada, string ficheroSalida)
         {
             textoEnvio = utilidad.prepararGuion(ficheroEntrada); //Se procesa el guion para formar una lista que se pueda pasar al resto de metodos
-            utilidad.borrarFicheros(ficheroSalida); //Se borra el fichero de salida si existe, para que no haya problemas
 
             try
             {
@@ -81,29 +85,29 @@ namespace gestionesAEAT.Metodos
                     switch (atributo)
                     {
                         case "MODELO":
-                            dato.MODELO = valor;
+                            dato.Modelo = valor;
                             break;
                         case "EJERCICIO":
-                            dato.EJERCICIO = valor;
+                            dato.Ejercicio = valor;
                             break;
                         case "PERIODO":
-                            dato.PERIODO = valor;
+                            dato.Periodo = valor;
                             break;
                         case "F01":
                             dato.F01 = valor;
                             break;
                         case "IDI":
-                            dato.IDI = valor;
+                            dato.Idioma = valor;
                             break;
                         case "SINVL":
-                            dato.SINVL = valor;
+                            dato.SinValidar = valor;
                             break;
-
                         default:
                             break;
                     }
                 }
 
+                //Serializa el Json para hacer el envio
                 string jsonEnvio = JsonConvert.SerializeObject(dato, new JsonSerializerSettings
                 {
                     NullValueHandling = NullValueHandling.Ignore,
@@ -116,19 +120,20 @@ namespace gestionesAEAT.Metodos
 
                 if (envio.estadoRespuestaAEAT == "OK")
                 {
+                    //Deserializa la respuesta de Hacienda con la clase RespuestaValidarModelos
                     utilidad.respuestaValidarModelos = JsonConvert.DeserializeObject<RespuestaValidarModelos>(respuestaAEAT);
                     textoSalida = utilidad.generarRespuesta(ficheroSalida, "validar");
 
-                    //Grabar un fichero con los errores
+                    //Grabar un fichero con los errores, avisos o advertencias que se han podido producir
                     if (!string.IsNullOrEmpty(textoSalida))
                     {
                         string rutaHtml = Path.ChangeExtension(ficheroSalida, "html");
                         File.WriteAllText(rutaHtml, textoSalida);
                     }
 
+                    //Si hay una respuesta en pdf se graba en la ruta de salida
                     if (utilidad.respuestaValidarModelos.respuesta.pdf != null)
                     {
-                        //Grabar el PDF en la ruta
                         string ficheroPdf = Path.ChangeExtension(ficheroSalida, "pdf");
                         string respuestaPDF = utilidad.respuestaValidarModelos.respuesta.pdf[0];
                         byte[] contenidoPDF = Convert.FromBase64String(respuestaPDF);
@@ -140,24 +145,8 @@ namespace gestionesAEAT.Metodos
             catch (Exception ex)
             {
                 //Si se ha producido algun error en el envio
-                aux = $"MENSAJE = Proceso cancelado o error en el envio. {ex.Message}";
-            }
-        }
-
-
-        private void cargaCabecera(object cadena)
-        {
-            string[] parte;
-            try
-            {
-                parte = cadena.ToString().Split('=');
-                atributo = parte[0].ToString().Trim();
-                valor = parte[1].ToString().Trim();
-            }
-
-            catch (Exception ex)
-            {
-                //Falta el control de la posible excepcion
+                string mensaje = $"MENSAJE = Proceso cancelado o error en el envio. {ex.Message}";
+                File.WriteAllText(Program.ficheroErrores, mensaje);
             }
         }
     }

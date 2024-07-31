@@ -1,14 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.NetworkInformation;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace gestionesAEAT.Metodos
 {
@@ -36,11 +30,6 @@ namespace gestionesAEAT.Metodos
         public List<string> errores { get; set; }
     }
 
-    //public class RespuestaCorrectaPresBasicaDos
-    //{
-    //    public ElementosRespuestaCorrecta elementosCorrecta { get; set; }
-    //}
-
     public class RespuestaCorrectaPresBasicaDos
     {
         public string FormaPago { get; set; }
@@ -65,23 +54,18 @@ namespace gestionesAEAT.Metodos
         public List<string> advertencias { get; set; }
     }
 
-    
     public class presentacionDirecta
     {
-        string url; //Url a la que se envian los datos
-
         string atributo = string.Empty; //Cada una de las variables que se pasan a la AEAT
         string valor = string.Empty; //Valor del atributo que se pasa a la AEAT
 
         string respuestaAEAT; //Contenido de la respuesta de la AEAT a la solicitud enviada
-        string estadoRespuesta; //Devuelve OK si la respuesta es correcta
-
-        string datosEnvio; //Datos a enviar a la AEAT ya formateados
+        //string estadoRespuesta; //Devuelve OK si la respuesta es correcta
 
         List<string> textoEnvio = new List<string>(); //Prepara una lista con los datos del guion
 
         string textoSalida = string.Empty; //Texto que se grabara en el fichero de salida
-        string aux; //Variable auxiliar para la grabacion de la respuesta
+        //string aux; //Variable auxiliar para la grabacion de la respuesta
 
         Utiles utilidad = new Utiles(); //Instanciacion de las utilidades para poder usarlas
         envioAeat envio = new envioAeat();
@@ -100,12 +84,9 @@ namespace gestionesAEAT.Metodos
                 //Formatear datos de la cabecera
                 foreach (var elemento in utilidad.cabecera)
                 {
-                    int indice = elemento.IndexOf("=");
-                    if (indice != -1)
-                    {
-                        atributo = elemento.Substring(0, indice).Trim();
-                        valor = elemento.Substring(indice + 1).Trim();
-                    }
+                    string[] partes = elemento.Split('=');
+                    atributo = partes[0].Trim();
+                    valor = partes[1].Trim();
 
                     // Verificar si el nombre coincide con alguna propiedad de la clase servaliDos y asignar el valor correspondiente
                     switch (atributo)
@@ -235,7 +216,8 @@ namespace gestionesAEAT.Metodos
             catch (Exception ex)
             {
                 //Si se ha producido algun error en el envio
-                aux = $"MENSAJE = Proceso cancelado o error en el envio. {ex.Message}";
+                string mensaje = $"MENSAJE = Proceso cancelado o error en el envio. {ex.Message}";
+                File.WriteAllText(Program.ficheroErrores, mensaje);
             }
         }
     }

@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Security;
 using System.Text;
 using gestionesAEAT.Metodos;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace gestionesAEAT
 {
@@ -33,7 +27,7 @@ namespace gestionesAEAT
         public RespuestaValidarModelos respuestaValidarModelos; //Varible que almacena la respuesta completa de la AEAT en la validacion de modelos
         public RespuestaPresBasicaDos respuestaEnvioModelos; //Variable que almacena la respuesta completa de la AEAT en la presentacion directa
 
-        //Permite controlar si la aplicacion se ejecuta por consola
+        ////Permite controlar si la aplicacion se ejecuta por consola
         [DllImport("kernel32.dll")]
         private static extern bool AttachConsole(int dwProcessId);
         private const int ATTACH_PARENT_PROCESS = -1;
@@ -48,7 +42,7 @@ namespace gestionesAEAT
                 {'Á', 'A'}, {'É', 'E'}, {'Í', 'I'}, {'Ó', 'O'}, {'Ú', 'U'}
                 //{'\u00AA', '.'}, {'ª', '.'}, {'\u00BA', '.'}, {'°', '.' }
             };
-            //Nota: los caracteres ª y º estan con la forma unicode y en caracter para contemplar ambas opcioens, pero los comento porque no esta mal que salgan (si dan pegas ya se arreglara)
+            //Nota: los caracteres ª y º estan con la forma unicode y en caracter para contemplar ambas opciones, pero los comento porque no esta mal que salgan (si dan pegas ya se arreglara)
 
             StringBuilder resultado = new StringBuilder(cadena.Length);
             foreach (char c in cadena)
@@ -68,7 +62,7 @@ namespace gestionesAEAT
 
         public string codificacionFicheroEntrada(string guion)
         {
-            //Permite obtener la codificacion UTF-8 o ISO8859-1 (ascii extendido 256 bits o ansi)
+            //Permite obtener la codificacion UTF-8 o ISO8859-1 (ascii extendido 256 bits o ansi), ya que algun guion se le pasa como parametro la codificacion
             List<string> textoGuion = new List<string>();
             using (StreamReader sr = new StreamReader(guion))
             {
@@ -116,9 +110,13 @@ namespace gestionesAEAT
         {
             //Borra ficheros anteriores antes de algunas ejecuciones
             string rutaSalida = Path.GetDirectoryName(fichero);
+            if (string.IsNullOrEmpty(rutaSalida)) 
+            {
+                rutaSalida = Directory.GetCurrentDirectory();
+            }
             string patronFicheros = Path.GetFileNameWithoutExtension(fichero) + ".*";
-
             string[] elementos = Directory.GetFiles(rutaSalida, patronFicheros);//Se borran todos los ficheros de salida posibles ya que puede haber .txt, .html o .pdf
+
             foreach (string elemento in elementos)
             {
                 File.Delete(elemento);
@@ -222,7 +220,7 @@ namespace gestionesAEAT
 
         public string generarRespuesta(string ficheroRespuesta, string tipo)
         {
-            //Metodo para generar un html si hay errores, avisos o advertencias
+            //Metodo para generar un html si hay errores, avisos o advertencias. Se recibe como parametro el tipo ya que el tratamiento de la respuesta cambia si es en el envio o en la validacion
             string modelo = string.Empty;
             string ejercicio = string.Empty;
             string periodo = string.Empty;
@@ -298,25 +296,6 @@ namespace gestionesAEAT
                     }
                 }
 
-                //Esta parte obtiene el numero de cliente desde el nombre del fichero, pero hay que cambiarlo para pasarlo en el guion
-                //Lo dejo por si fuera necesario
-                //int posicion;
-                ////Intenta asignar el numero de cliente tomandolo del nombre del fichero de respuesta
-                //try
-                //{
-                //    string codCliente = Path.GetFileNameWithoutExtension(ficheroRespuesta);
-                //    posicion = codCliente.IndexOf("_salida");
-                //    if (posicion != -1)
-                //    {
-                //        cliente = codCliente.Substring(0, posicion);
-
-                //    }
-                //}
-                //catch (Exception ex)
-                //{
-                //    //Si no se encuentra el cliente se devuelve vacio
-                //}
-
                 respuestaHtml = generarHtml(modelo, ejercicio, periodo, cliente);
             }
 
@@ -326,7 +305,6 @@ namespace gestionesAEAT
         private string generarHtml(string modelo, string ejercicio, string periodo, string cliente)
         {
             //Metodo que crea el html
-            StringBuilder respuestaHtml = new StringBuilder();
 
             //Construye el html
             StringBuilder contenidoHtml = new StringBuilder();
@@ -436,7 +414,6 @@ namespace gestionesAEAT
 
                 default:
                     return string.Empty;
-                    break;
             }
 
             foreach (var elemento in listaElementos)
@@ -447,7 +424,7 @@ namespace gestionesAEAT
             return elementos.ToString();
         }
 
-        public void SalirAplicacion(string log, string pathFicheros, string ficheroErrores)
+        public void SalirAplicacion(string mensaje)
         {
             //Controla si se esta ejecutando la aplicacion desde la consola para poder mostrar un mensaje de uso
             if (Environment.UserInteractive)
@@ -457,10 +434,9 @@ namespace gestionesAEAT
             }
 
             //Si hay algun texto de error en el log, lo graba en un fichero
-            if (!string.IsNullOrEmpty(log))
+            if (!string.IsNullOrEmpty(mensaje))
             {
-                string salida = Path.Combine(pathFicheros, ficheroErrores);
-                File.WriteAllText(salida, log);
+                File.WriteAllText(Program.ficheroErrores, mensaje);
             }
             Environment.Exit(0);
         }
@@ -469,37 +445,82 @@ namespace gestionesAEAT
         {
             StringBuilder mensaje = new StringBuilder();
             mensaje.AppendLine("");
-            mensaje.AppendLine("Uso de la aplicacion: gestionesAEAT parametros");
-            mensaje.AppendLine("Parametros:");
-            mensaje.AppendLine("\tdsclave\t\t\tclave de ejecucion del programa (obligatorio)");
-            mensaje.AppendLine("\ttipo\t\t\t1 = Envio de modelos");
-            mensaje.AppendLine("\t    \t\t\t2 = Validar modelos (no necesita certificado)");
-            mensaje.AppendLine("\t    \t\t\t3 = Consulta y descarga PDF de modelos presentados");
-            mensaje.AppendLine("\t    \t\t\t4 = Ratificacion domicilio renta");
-            mensaje.AppendLine("\t    \t\t\t5 = Descarga datos fiscales renta");
-            mensaje.AppendLine("\t    \t\t\t6 = Obtener datos de certificados instalados en el equipo");
-            mensaje.AppendLine("\tentrada.txt\t\tNombre del fichero con los datos a enviar");
-            mensaje.AppendLine("\tsalida.txt\t\tNombre del fichero donde se grabara la salida");
-            mensaje.AppendLine("\t(SI | NO)\t\tIndica si el proceso necesita certificado(una de las dos opciones)");
-            mensaje.AppendLine("\tnumeroserie\t\tNumero de serie del certificado de los instalados en la maquina a utilizar en el proceso");
-            mensaje.AppendLine("\tcertificado\t\tNombre del fichero.pfx que contiene el certificado digital");
-            mensaje.AppendLine("\tpassword\t\tContraseña del certificado que se pasa por fichero");
-            mensaje.AppendLine("\tNIF\t\t\tPara la descarga de datos fiscales es necesario el NIF del contribuyente");
-            mensaje.AppendLine("\trefRenta\t\tCodigo de 5 caracteres de la referencia de renta para la descarga de datos fiscales");
-            mensaje.AppendLine("\tdatosPersonales\t\tEn la descarga de datos fiscales indica si se quieren tambien los datos personales");
-            mensaje.AppendLine("\turlDescarga\t\tDireccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año");
-            mensaje.AppendLine("\nEjemplos de uso:");
-            mensaje.AppendLine("\tEnvio modelos:\t\t\tgestionesAEAT dsclave 1 entrada.txt salida.txt SI (numeroserie | (certificado password)");
-            mensaje.AppendLine("\tValidar modelos:\t\tgestionesAEAT dsclave 2 entrada.txt salida.txt NO");
-            mensaje.AppendLine("\tConsulta modelos:\t\tgestionesAEAT dsclave 3 entrada.txt salida.txt SI (numeroserie | (certificado password)");
-            mensaje.AppendLine("\tRatificar domicilio renta:\tgestionesAEAT dsclave 4 entrada.txt salida.txt SI (numeroserie | (certificado password)");
-            mensaje.AppendLine("\tDescarga datos fiscales:\tgestionesAEAT dsclave 5 salida.txt NIF refRenta datosPersonales urlDescarga");
-            mensaje.AppendLine("\tRelacion certificados:\t\tgestionesAEAT dsclave tipo salida");
+            mensaje.AppendLine(@"Uso de la aplicacion: gestionesAEAT.exe clave c:\carpeta\opciones.txt");
+            mensaje.AppendLine("\nParametros:");
+            mensaje.AppendLine("\tclave\t\tclave de ejecucion del programa");
+            mensaje.AppendLine("\topciones.txt\tFichero que contiene las siguientes opciones que admite la aplicacion:");
+            mensaje.AppendLine("\t\tCLIENTE= Codigo de cliente para incluirlo en el html de respuestas");
+            mensaje.AppendLine("\t\tTIPO= Tipo de proceso a ejecutar segun la siguiente lista:");
+            mensaje.AppendLine("\t\t\t1 = Envio de modelos");
+            mensaje.AppendLine("\t\t\t2 = Validar modelos (no necesita certificado)");
+            mensaje.AppendLine("\t\t\t3 = Consulta y descarga PDF de modelos presentados");
+            mensaje.AppendLine("\t\t\t4 = Ratificacion domicilio renta");
+            mensaje.AppendLine("\t\t\t5 = Descarga datos fiscales renta");
+            mensaje.AppendLine("\t\t\t6 = Obtener datos de certificados instalados en el equipo");
+            mensaje.AppendLine("\t\t\t7 = Envio de facturas al SII");
+            mensaje.AppendLine("\t\tENTRADA= Nombre del fichero con los datos a enviar");
+            mensaje.AppendLine("\t\tSALIDA= Nombre del fichero donde se grabara la salida");
+            mensaje.AppendLine("\t\tINDICESII= En el envio de facturas al sii indica el indice del fichero sii_urls.txt para hacer el envio");
+            mensaje.AppendLine("\t\tOBLIGADO= Indica si el proceso necesita usar certificado (valores SI/NO)");
+            mensaje.AppendLine("\t\tBUSQUEDA= Cadena a buscar en los certificados (numero de serie, NIF o nombre del titular del certificado");
+            mensaje.AppendLine("\t\tCERTIFICADO= Nombre del fichero.pfx que contiene el certificado digital");
+            mensaje.AppendLine("\t\tPASSWORD= Contraseña del certificado que se pasa por fichero");
+            mensaje.AppendLine("\t\tNIFRENTA= Para la descarga de datos fiscales es necesario el NIF del contribuyente");
+            mensaje.AppendLine("\t\tREFRENTA= Codigo de 5 caracteres de la referencia de renta para la descarga de datos fiscales");
+            mensaje.AppendLine("\t\tDPRENTA= En la descarga de datos fiscales indica si se quieren tambien los datos personales (valor 'S' o 'N')");
+            mensaje.AppendLine("\t\tURLRENTA= Direccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año)");
+            mensaje.AppendLine("\nEjemplos de fichero de opciones:");
+            mensaje.AppendLine("\tEnvio modelos con numero de serie:");
+            mensaje.AppendLine("\t\tCLIENTE=00001");
+            mensaje.AppendLine("\t\tTIPO=1");
+            mensaje.AppendLine("\t\tENTRADA=guion.txt");
+            mensaje.AppendLine("\t\tSALIDA=salida.txt");
+            mensaje.AppendLine("\t\tOBLIGADO=SI");
+            mensaje.AppendLine("\t\tBUSQUEDA=numeroSerieCertificado");
+            mensaje.AppendLine("\n\tValidar modelos:");
+            mensaje.AppendLine("\t\tCLIENTE=00001");
+            mensaje.AppendLine("\t\tTIPO=2");
+            mensaje.AppendLine("\t\tENTRADA=guion.txt");
+            mensaje.AppendLine("\t\tSALIDA=salida.txt");
+            mensaje.AppendLine("\t\tOBLIGADO=NO");
+            mensaje.AppendLine("\n\tConsulta modelos con fichero y password:");
+            mensaje.AppendLine("\t\tCLIENTE=00001");
+            mensaje.AppendLine("\t\tTIPO=3");
+            mensaje.AppendLine("\t\tENTRADA=guion.txt");
+            mensaje.AppendLine("\t\tSALIDA=salida.txt");
+            mensaje.AppendLine("\t\tOBLIGADO=SI");
+            mensaje.AppendLine("\t\tCERTIFICADO=certificado.pfx");
+            mensaje.AppendLine("\t\tPASSWORD=contraseña");
+            mensaje.AppendLine("\n\tRatificar domicilio renta con NIF del titular del certificado");
+            mensaje.AppendLine("\t\tCLIENTE=00001");
+            mensaje.AppendLine("\t\tTIPO=4");
+            mensaje.AppendLine("\t\tENTRADA=guion.txt");
+            mensaje.AppendLine("\t\tSALIDA=salida.txt");
+            mensaje.AppendLine("\t\tOBLIGADO=SI");
+            mensaje.AppendLine("\t\tBUSQUEDA=nifTitularCertificado");
+            mensaje.AppendLine("\n\tDescarga datos fiscales:");
+            mensaje.AppendLine("\t\tTIPO=5");
+            mensaje.AppendLine("\t\tSALIDA=salida.txt");
+            mensaje.AppendLine("\t\tNIFRENTA=nifTitular");
+            mensaje.AppendLine("\t\tREFRENTA=referenciaRenta");
+            mensaje.AppendLine("\t\tDPRENTA=S");
+            mensaje.AppendLine("\t\tURLRENTA=https://www9.agenciatributaria.gob.es/wlpl/DFPA-D182/SvDesDF23Pei");
+            mensaje.AppendLine("\n\tRelacion certificados:");
+            mensaje.AppendLine("\t\tTIPO=6");
+            mensaje.AppendLine("\t\tSALIDA=salida.txt");
+            mensaje.AppendLine("\n\tEnvio facturas al SII con nombre del titular del certificado:");
+            mensaje.AppendLine("\t\tTIPO=7");
+            mensaje.AppendLine("\t\tENTERADA=facturaEmitida.xml");
+            mensaje.AppendLine("\t\tSALIDA=respuesta.xml");
+            mensaje.AppendLine("\t\tINDICESII=0");
+            mensaje.AppendLine("\t\tOBLIGADO=SI");
+            mensaje.AppendLine("\t\tBUSQUEDA=nombreCertificado");
             mensaje.AppendLine("\nNotas:");
             mensaje.AppendLine("\t- Si no se pasan los datos del certificado y el proceso lo requerire, se mostrara el formulario de seleccion");
-            mensaje.AppendLine("\t- Con la validacion de modelos (tipo 2) el parametro 5 debe ser un NO");
+            mensaje.AppendLine("\t- Los ficheros deben venir con la ruta completa, incluido el de opciones");
             mensaje.AppendLine("\nPulse una tecla para continuar");
 
+            string texto = mensaje.ToString();
             Console.WriteLine(mensaje.ToString());
             Console.ReadLine();
         }

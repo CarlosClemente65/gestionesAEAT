@@ -1,11 +1,8 @@
 ﻿using gestionesAEAT.Formularios;
 using gestionesAEAT.Metodos;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace gestionesAEAT
@@ -20,9 +17,10 @@ namespace gestionesAEAT
         //Declaracion de variables a nivel de clase para hacerlas accesibles al resto.
         static string dsclave = string.Empty; //Unicamente servira como medida de seguridad de ejecucion y debe pasarse 'ds123456'
         static string tipo = string.Empty;
+        static string pathFicheros = string.Empty;
         static string ficheroOpciones = string.Empty;
         static string ficheroEntrada = string.Empty;
-        static string ficheroSalida = "salida.txt";
+        static string ficheroSalida = string.Empty;
         static string textoBusqueda = string.Empty;
         static string serieCertificado = string.Empty;
         static string ficheroCertificado = string.Empty;
@@ -35,86 +33,78 @@ namespace gestionesAEAT
         static string respuestaAeat = string.Empty;
         static int indiceUrl = -1;
 
-        static string pathFicheros = string.Empty;
-        static string ficheroErrores = "errores.txt";
+        public static string ficheroErrores = "errores.txt";
 
-        static string[] argumentos = null;
-
-        static void Main(string[] args)
+        static void Main(string[] argumentos)
         {
-            //Se usa el path en varias partes del programa, y si se esta en modo de pruebas se cambia
-
-#if DEBUG
+            try
             {
-                pathFicheros = @"C:\Programacion\c#\gestionesAEAT\pruebas"; //Path por defecto para almacenar los ficheros (dejar en blanco para la version de produccion)
-            }
-#endif
+                //Console.WriteLine("Directorio actual: " + Directory.GetCurrentDirectory());
+                //Console.WriteLine("Argumentos recibidos: ");
+                //foreach (var arg in args)
+                //{
+                //    Console.WriteLine(arg);
+                //}
 
-            argumentos = Environment.GetCommandLineArgs(); //Almacena en un array los argumentos introducidos.
-
-            if (argumentos.Length < 3)
-            {
-                if (argumentos.Length > 1 && (argumentos[1] == "-h" || argumentos[1] == "?"))
+                if (argumentos.Length < 2)
                 {
-                    utilidad.SalirAplicacion(log, pathFicheros, ficheroErrores);
-                }
-                else
-                {
-                    log += "Son necesarios al menos 2 parametros: dsclave y fichero de opciones";
-                    utilidad.SalirAplicacion(log, pathFicheros, ficheroErrores);
-                }
-            }
-            else
-            {
-                dsclave = argumentos[1];
-                ficheroOpciones = Path.Combine(pathFicheros, argumentos[2]);
-                if (dsclave != "ds123456")
-                {
-                    log += "Clave de ejecucion incorrecta";
-                    utilidad.SalirAplicacion(log, pathFicheros, ficheroErrores);
-                }
-
-                if (!File.Exists(ficheroOpciones))
-                {
-                    log += "No existe el fichero de opciones";
-                    utilidad.SalirAplicacion(log, pathFicheros, ficheroErrores);
-                }
-                else
-                {
-                    GestionOpciones();
-
-                    log += ControlParametros(tipo);
-                    if (!string.IsNullOrEmpty(log)) utilidad.SalirAplicacion(log, pathFicheros, ficheroErrores);
-
-                    try
+                    if (argumentos.Length > 1 && (argumentos[1] == "-h" || argumentos[1] == "?"))
                     {
-                        ControlCertificado();
-                        EjecutaProceso();
+                        utilidad.SalirAplicacion(log);
                     }
-
-                    catch (ArgumentException ex)
+                    else
                     {
-                        log += $"Se ha producido un error al procesar la peticion. {ex.Message}";
-                        utilidad.SalirAplicacion(log, pathFicheros, ficheroErrores);
+                        log += $"Son necesarios al menos 2 parametros: dsclave y fichero de opciones\n{argumentos[0]}\n{argumentos[1]}";
+                        utilidad.SalirAplicacion(log);
                     }
                 }
-            }
-        }
 
-        private static void ValidarFicheros()
-        {
-            ficheroEntrada = Path.Combine(pathFicheros, argumentos[3]);
-            if (!File.Exists(ficheroEntrada))
+                else
+                {
+                    dsclave = argumentos[0];
+                    if (dsclave != "ds123456")
+                    {
+                        log += "Clave de ejecucion incorrecta";
+                        utilidad.SalirAplicacion(log);
+                    }
+
+                    ficheroOpciones = argumentos[1];
+
+                    if (!File.Exists(ficheroOpciones))
+                    {
+                        log += "No existe el fichero de opciones";
+                        utilidad.SalirAplicacion(log);
+                    }
+                    else
+                    {
+                        //Procesa el fichero de opciones
+                        CargarOpciones();
+
+                        //Controla si las opciones pasadas son correctas.
+                        log += ControlOpciones(tipo);
+                        if (!string.IsNullOrEmpty(log)) utilidad.SalirAplicacion(log);
+
+                        try
+                        {
+                            //Controla si hace falta solicitar el certificado por pantalla
+                            ControlCertificado();
+
+                            EjecutaProceso();
+                        }
+
+                        catch (ArgumentException ex)
+                        {
+                            log += $"Se ha producido un error al procesar la peticion. {ex.Message}";
+                            utilidad.SalirAplicacion(log);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
             {
-                log += $"El fichero de entrada {ficheroEntrada} no existe";
-                utilidad.SalirAplicacion(log, pathFicheros, ficheroErrores);
+                string mensaje = $"Error en el proceso {ex.Message}\nRuta de acceso: {Directory.GetCurrentDirectory()}";
+                File.WriteAllText("errorProceso.txt", mensaje);
             }
-
-            ficheroErrores = Path.Combine(Path.GetDirectoryName(ficheroEntrada), "errores.txt");
-            utilidad.borrarFicheros(ficheroErrores);
-
-            ficheroSalida = Path.Combine(pathFicheros, argumentos[4]);
-            utilidad.borrarFicheros(ficheroSalida);
         }
 
         private static void EjecutaProceso()
@@ -123,103 +113,30 @@ namespace gestionesAEAT
             {
                 case "1":
                     //Envio de modelos. Necesita certificado 
-
-                    //Ejemplo de fichero de opciones (se solicita el certificado en pantalla)
-                    //TIPO=1
-                    //ENTRADA=empresa_guion.txt
-                    //SALIDA=empresa_salida.txt
-                    //OBLIGADO=SI
-
-                    //Ejemplo de fichero de opciones (se pasa el numero de serie del certificado del almacen)
-                    //TIPO=1
-                    //ENTRADA=empresa_guion.txt
-                    //SALIDA=empresa_salida.txt
-                    //OBLIGADO=SI
-                    //BUSQUEDA=numeroSerie
-
-                    //Ejemplo de fichero de opciones (se pasa fichero y password del certificado)
-                    //TIPO=1
-                    //ENTRADA=empresa_guion.txt
-                    //SALIDA=empresa_salida.txt
-                    //OBLIGADO=SI
-                    //CERTIFICADO=certificado.pfx
-                    //PASSWORD=contraseña
-
                     presentacionDirecta envioDirecto = new presentacionDirecta();
                     envioDirecto.envioPeticion(ficheroEntrada, ficheroSalida, serieCertificado, instanciaCertificado);
-
                     break;
 
                 case "2":
                     //Validacion de modelos. No necesita certificado
-
-                    //Ejemplo de fichero de opciones
-                    //TIPO=2
-                    //ENTRADA=empresa_guion.txt
-                    //SALIDA=empresa_salida.txt
-                    //OBLIGADO=NO
-
                     validarModelos valida = new validarModelos();
                     valida.envioPeticion(ficheroEntrada, ficheroSalida);
-
                     break;
 
                 case "3":
                     //Consulta de modelos presentados. Necesita certificado
-
-                    //Ejemplo de fichero de opciones (se solicita el certificado en pantalla)
-                    //TIPO=3
-                    //ENTRADA=empresa_guion.txt
-                    //SALIDA=empresa_salida.txt
-                    //OBLIGADO=SI
-
-                    //Ejemplo de fichero de opciones (se pasa el numero de serie del certificado del almacen)
-                    //TIPO=3
-                    //ENTRADA=empresa_guion.txt
-                    //SALIDA=empresa_salida.txt
-                    //OBLIGADO=SI
-                    //BUSQUEDA=numeroSerie
-
-                    //Ejemplo de fichero de opciones (se pasa fichero y password del certificado)
-                    //TIPO=3
-                    //ENTRADA=empresa_guion.txt
-                    //SALIDA=empresa_salida.txt
-                    //OBLIGADO=SI
-                    //CERTIFICADO=certificado.pfx
-                    //PASSWORD=contraseña
-
                     descargaModelos descarga = new descargaModelos();
                     descarga.obtenerModelos(ficheroEntrada, ficheroSalida, serieCertificado, instanciaCertificado);
                     break;
 
                 case "4":
                     //Ratificacion de domicilio. Necesita certificado
-
-                    //Ejemplo de fichero de opciones (se solicita el certificado en pantalla)
-                    //TIPO=4
-                    //ENTRADA=empresa_guion.txt
-                    //SALIDA=empresa_salida.txt
-                    //OBLIGADO=SI
-
-                    //Ejemplo de fichero de opciones (se pasa el numero de serie del certificado del almacen)
-                    //TIPO=4
-                    //ENTRADA=empresa_guion.txt
-                    //SALIDA=empresa_salida.txt
-                    //OBLIGADO=SI
-                    //BUSQUEDA=numeroSerie
-
-                    //Ejemplo de fichero de opciones (se pasa fichero y password del certificado)
-                    //TIPO=4
-                    //ENTRADA=empresa_guion.txt
-                    //SALIDA=empresa_salida.txt
-                    //OBLIGADO=SI
-                    //CERTIFICADO=certificado.pfx
-                    //PASSWORD=contraseña
-
                     ratificarDomicilio ratifica = new ratificarDomicilio();
 
-                    //Se procesa dos veces para el titular y conyuge
+                    //Se procesa para el titular primero
                     ratifica.envioPeticion(serieCertificado, ficheroEntrada, ficheroSalida, 1, instanciaCertificado);
+
+                    //Si se ha pasado el nif del conyuge se procesa de nuevo
                     if (ratifica.nifConyuge)
                     {
                         ratifica.envioPeticion(serieCertificado, ficheroEntrada, ficheroSalida, 2, instanciaCertificado);
@@ -229,77 +146,34 @@ namespace gestionesAEAT
                 case "5":
                     //Descarga datos fiscales renta. No necesita certificado
                     //Se puede hacer con certificado, pero esta preparado para hacerlo con la referencia de renta.
-
-                    //Ejemplo de fichero de opciones (renta 2023)
-                    //TIPO=5
-                    //SALIDA=empresa_salida.txt
-                    //NIFRENTA=05197043D
-                    //REFRENTA=KEKTXP
-                    //DPRENTA=S
-                    //URLRENTA=https://www9.agenciatributaria.gob.es/wlpl/DFPA-D182/SvDesDF23Pei
-
                     descargaDatosFiscales descargaDF = new descargaDatosFiscales();
                     descargaDF.descargaDF(urlDescargaDf, nifDf, refRenta, datosPersonales, ficheroSalida);
                     break;
 
                 case "6":
                     //Obtener datos certificados instalados. No necesita certificado
-
-                    //Ejemplo de fichero de opciones (renta 2023)
-                    //TIPO=6
-                    //SALIDA=certificados_salida.txt
-
                     instanciaCertificado.exportarDatosCertificados(ficheroSalida);
                     break;
 
                 case "7":
                     //Presentacion facturas SII. Necesita certificado
-
-                    //Ejemplo de fichero de opciones (se solicita el certificado en pantalla)
-                    //TIPO=7
-                    //ENTRADA=facturaEmitida.xml
-                    //SALIDA=respuesta-xml
-                    //INDICESII=0
-                    //OBLIGADO=SI
-
-                    //Ejemplo de fichero de opciones (se pasa el numero de serie del certificado del almacen)
-                    //TIPO=7
-                    //ENTRADA=facturaEmitida.xml
-                    //SALIDA=respuesta-xml
-                    //INDICESII=0
-                    //OBLIGADO=SI
-                    //BUSQUEDA=numeroSerie
-
-                    //Ejemplo de fichero de opciones (se pasa fichero y password del certificado)
-                    //TIPO=7
-                    //ENTRADA=facturaEmitida.xml
-                    //SALIDA=respuesta-xml
-                    //INDICESII=0
-                    //OBLIGADO=SI
-                    //CERTIFICADO=certificado.pfx
-                    //PASSWORD=contraseña
-
+                    //El fichero 'sii_urls.txt' debe estar en la misma ruta que el fichero de entrada
                     string ficheroUrls = Path.Combine(Path.GetDirectoryName(ficheroEntrada), "sii_urls.txt");
-#if DEBUG
-                    {
-                        ficheroUrls = Path.Combine(pathFicheros, "sii_urls.txt");
-                    }
-#endif
 
+                    //Controla que exista el fichero de urls
                     if (!File.Exists(ficheroUrls))
                     {
                         log += "El fichero de urls no exite en la ruta de ejecucion";
-                        utilidad.SalirAplicacion(log, pathFicheros, ficheroErrores);
+                        utilidad.SalirAplicacion(log);
                     }
 
                     EnvioSii nuevoEnvio = new EnvioSii(ficheroUrls);//Instanciacion de la clase que carga las urls
-                    utilidad.url = nuevoEnvio.urlEnvio(indiceUrl);
-
+                    nuevoEnvio.envioFacturas(ficheroEntrada, ficheroSalida, serieCertificado, instanciaCertificado, indiceUrl);
                     break;
             }
         }
 
-        private static string ControlParametros(string tipo)
+        private static string ControlOpciones(string tipo)
         {
             StringBuilder mensaje = new StringBuilder();
             switch (tipo)
@@ -332,7 +206,6 @@ namespace gestionesAEAT
 
             //Borrado de ficheros de salida y errores si existen de una ejecucion anterior.
             utilidad.borrarFicheros(ficheroSalida);
-            ficheroErrores = Path.Combine(Path.GetDirectoryName(ficheroSalida), "errores.txt");
             utilidad.borrarFicheros(ficheroErrores);
 
             return mensaje.ToString();
@@ -357,32 +230,33 @@ namespace gestionesAEAT
             //Metodo para controlar si no se ha seleccionado un certificado y solicitarlo por pantalla
             if (conCertificado)
             {
+                //Si se ha pasado un texto de busqueda, localiza el numero de serie del certificado por ese texto.
                 if (!string.IsNullOrEmpty(textoBusqueda))
                 {
-                    serieCertificado = instanciaCertificado.buscarCertificado(textoBusqueda);
+                    serieCertificado = instanciaCertificado.buscarSerieCertificado(textoBusqueda);
                 }
                 else
                 {
+                    //Si se ha pasado un fichero con el certificado
                     if (!string.IsNullOrEmpty(ficheroCertificado))
                     {
+                        //Controla si existe el fichero y se ha pasado la contraseña
                         if (!File.Exists(ficheroCertificado))
                         {
                             mensaje = $"El fichero del certificado {ficheroCertificado} no existe";
-                            utilidad.SalirAplicacion(mensaje, pathFicheros, ficheroErrores);
+                            utilidad.SalirAplicacion(mensaje);
                         }
                         if (string.IsNullOrEmpty(passwordCertificado))
                         {
                             mensaje = "No se ha pasado la contraseña del certificado";
-                            utilidad.SalirAplicacion(mensaje, pathFicheros, ficheroErrores);
-
+                            utilidad.SalirAplicacion(mensaje);
                         }
 
-                        //Se pasa el fichero del certificado y el pass
                         string resultadoLectura = instanciaCertificado.leerCertificado(ficheroCertificado, passwordCertificado);
                         if (!string.IsNullOrEmpty(resultadoLectura))
                         {
                             mensaje = $"Error al leer el certificado. {resultadoLectura}";
-                            utilidad.SalirAplicacion(mensaje, pathFicheros, ficheroErrores);
+                            utilidad.SalirAplicacion(mensaje);
                         }
                         var certificadosInfo = instanciaCertificado.relacionCertificados();
                         serieCertificado = certificadosInfo.LastOrDefault()?.serieCertificado;
@@ -394,7 +268,7 @@ namespace gestionesAEAT
             }
         }
 
-        private static void GestionOpciones()
+        private static void CargarOpciones()
         {
             //Metodo para procesar el fichero de opciones
             string[] lineas = File.ReadAllLines(ficheroOpciones);
@@ -410,81 +284,74 @@ namespace gestionesAEAT
 
                 switch (clave)
                 {
+                    case "CLIENTE":
+                        utilidad.cliente = valor;
+                        break;
+
                     case "TIPO":
                         tipo = valor;
-
                         break;
 
                     case "ENTRADA":
+                        //Se controla si se pasa el fichero de entrada para evitar una excepcion al asignarlo a la variable
                         if (!string.IsNullOrEmpty(valor))
                         {
-                            ficheroEntrada = Path.Combine(pathFicheros, valor);
+                            ficheroEntrada = valor;
                         }
-
                         break;
 
                     case "SALIDA":
+                        //Se controla si se pasa el fichero de salida para evitar una excepcion al asignarlo a la variable
                         if (!string.IsNullOrEmpty(valor))
                         {
-                            ficheroSalida = Path.Combine(pathFicheros, valor);
+                            //Como el fichero de salida siempre tiene que estar presente, se carga la ruta de los ficheros
+                            pathFicheros = Path.GetDirectoryName(valor);
+                            ficheroErrores = Path.Combine(pathFicheros, "errores.txt");
+                            ficheroSalida = valor;
                         }
-
                         break;
 
                     case "INDICESII":
                         if (int.TryParse(valor, out int valorUrl)) indiceUrl = valorUrl;
-
                         break;
 
                     case "OBLIGADO":
                         if (valor.ToUpper() == "SI") conCertificado = true;
-
                         break;
 
                     case "BUSQUEDA":
                         textoBusqueda = valor;
-
                         break;
 
                     case "CERTIFICADO":
+                        //Se controla si se pasa el fichero del certificado para evitar una excepcion al asignarlo a la variable
                         if (!string.IsNullOrEmpty(valor))
                         {
-                            ficheroCertificado = Path.Combine(pathFicheros, valor);
+                            ficheroCertificado = valor;
                         }
-
                         break;
 
                     case "PASSWORD":
                         passwordCertificado = valor;
-
                         break;
 
                     case "NIFRENTA":
                         nifDf = valor;
-
                         break;
 
                     case "REFRENTA":
                         refRenta = valor;
-
                         break;
 
                     case "DPRENTA":
                         datosPersonales = valor.ToUpper();
                         if (datosPersonales != "S" && datosPersonales != "N") datosPersonales = "S"; //Se fuerza una 'S' si viene otra cosa como parametro
-
                         break;
 
                     case "URLRENTA":
                         urlDescargaDf = valor;
-
-                        break;
-
-                    case "CLIENTE":
-                        utilidad.cliente = valor;
                         break;
                 }
-
             }
         }
     }

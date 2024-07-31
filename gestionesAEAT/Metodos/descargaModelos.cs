@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Xml.Linq;
 using System.Xml.Serialization;
 
 namespace gestionesAEAT.Metodos
 {
-    //Esta clase sirve para serializar los datos del XML recibido con la respuesta a una consulta de modelos presentados y poder tratarlos para generar el fichero de salida.
+    //Clase para serializar los datos del XML recibido con la respuesta a una consulta de modelos presentados y poder tratarlos para generar el fichero de salida.
 
     // Define la clase para representar la respuesta XML
     [XmlRoot("servicioConsultasDirectas")]
@@ -22,6 +21,7 @@ namespace gestionesAEAT.Metodos
 
     public class RespuestaCorrectaDescarga
     {
+        //Clase con las propiedades que devuelve Hacienda si la respuesta es correcta
         public string ejercicio { get; set; }
         public string modelo { get; set; }
         public string periodo { get; set; }
@@ -30,11 +30,12 @@ namespace gestionesAEAT.Metodos
         public string expediente { get; set; }
         public string justificante { get; set; }
         public DateTime fechaYHoraPresentacion { get; set; }
-        public string ficheroSalida { get; set; } //Esta propiedad la incluyo para que al grabar el fichero de salida se incluya el nombre del fichero generado
+        public string nombreFicheroPDF { get; set; } //Al descargar los modelos, el mombre de cada PDF se forma con el NIF + modelo + ejercicio + periodo + justificante
     }
 
     public class RespuestaErrorDescarga
     {
+        //Clase con las propiedades que devuelve Hacienda si hay errores en la respuesta
         public string descripcionError { get; set; }
     }
 
@@ -77,17 +78,17 @@ namespace gestionesAEAT.Metodos
 
         private void descargaPDF(string pathSalida)
         {
-            //Permite descargar el PDF de los modelos presentados a traves del CSV
+            //Metodo para descargar el PDF de los modelos presentados a traves del CSV
             string url = @"https://www2.agenciatributaria.gob.es/wlpl/inwinvoc/es.aeat.dit.adu.eeca.catalogo.vis.VisualizaSc";
             string datosEnvio = string.Empty;
 
-            foreach (var elemento in respuestasCorrectas)
+            foreach (var respuesta in respuestasCorrectas)
             {
-                datosEnvio = $"COMPLETA=SI&ORIGEN=E&NIF={elemento.nif}&CSV={elemento.csv}";
+                datosEnvio = $"COMPLETA=SI&ORIGEN=E&NIF={respuesta.nif}&CSV={respuesta.csv}";
                 envio.envioPost(url, datosEnvio,"form");//Metodo sin certificado
                 if (envio.estadoRespuestaAEAT == "OK")
                 {
-                    string ficheroPDF = Path.Combine(pathSalida, elemento.ficheroSalida);
+                    string ficheroPDF = Path.Combine(pathSalida, respuesta.nombreFicheroPDF);
                     File.WriteAllBytes(ficheroPDF, envio.respuestaEnvioAEATBytes);
                 }
             }
@@ -117,7 +118,7 @@ namespace gestionesAEAT.Metodos
                 foreach (var respuesta in servicio.Respuestas)
                 {
                     //Forma el nombre del fichero PDF que se grabara para ponerlo en el fichero de respuestas.
-                    respuesta.ficheroSalida = $"{respuesta.nif}_{respuesta.modelo}_{respuesta.ejercicio}_{respuesta.periodo}_{respuesta.justificante}.pdf";
+                    respuesta.nombreFicheroPDF = $"{respuesta.nif}_{respuesta.modelo}_{respuesta.ejercicio}_{respuesta.periodo}_{respuesta.justificante}.pdf";
                     textoSalida.AppendLine($"Modelo nº {elemento}");
                     textoSalida.AppendLine($"NIF: {respuesta.nif}");
                     textoSalida.AppendLine($"Modelo: {respuesta.modelo}");
@@ -127,7 +128,7 @@ namespace gestionesAEAT.Metodos
                     textoSalida.AppendLine($"Justificante: {respuesta.justificante}");
                     textoSalida.AppendLine($"Expediente: {respuesta.expediente}");
                     textoSalida.AppendLine($"Fecha presentacion: {respuesta.fechaYHoraPresentacion}");
-                    textoSalida.AppendLine($"Fichero PDF: {respuesta.ficheroSalida}");
+                    textoSalida.AppendLine($"Fichero PDF: {respuesta.nombreFicheroPDF}");
                     textoSalida.AppendLine();
                     elemento++;
                 }
