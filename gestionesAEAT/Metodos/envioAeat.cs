@@ -13,8 +13,8 @@ namespace gestionesAEAT
         public string estadoRespuestaAEAT { get; set; } //Almacena si ha habido algun problema de conexion
         string contenidoRespuesta; //Almacena la respuesta del servidor para poder quitar simbolos extraños
         X509Certificate2 certificado = null;
-        Utiles utilidad = new Utiles();
 
+        Utiles utilidad = Program.utilidad;
 
         public void envioPost(string url, string datosEnvio, string serieCertificado, GestionCertificados instanciaCertificados, string tipoEnvio = "form") //Se pone el tipo de envio opcional como formulario y si es de tipo json se debe pasar en la llamada al metodo
         {

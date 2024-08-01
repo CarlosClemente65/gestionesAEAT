@@ -18,11 +18,13 @@ namespace gestionesAEAT.Metodos
 
         string mensaje; //Variable auxiliar para la grabacion de la respuesta
 
-        Utiles utilidad = new Utiles(); //Instanciacion de las utilidades para poder usarlas
+        Utiles utilidad = Program.utilidad; //Instanciacion de las utilidades para poder usarlas
         envioAeat envio = new envioAeat();
+
 
         public void envioPeticion(string serieCertificado, string ficheroEntrada, string ficheroSalida, int paso, GestionCertificados instanciaCertificado)
         {
+
             string rutaSalida = Path.GetDirectoryName(ficheroEntrada);
             string ficheroSalidaConyuge = Path.Combine(rutaSalida, Path.GetFileNameWithoutExtension(ficheroSalida) + "2" + Path.GetExtension(ficheroSalida));
 

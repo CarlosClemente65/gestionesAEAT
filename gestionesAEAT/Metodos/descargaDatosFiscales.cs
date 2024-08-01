@@ -39,25 +39,6 @@ namespace gestionesAEAT.Metodos
         string datosPersonales = string.Empty;
         string ficheroSalida = string.Empty;
 
-        public string encriptaRefRenta(string refRenta)
-        {
-            //Metodo para encriptar la referencia renta ya que debe pasarse asi
-            UTF8Encoding utf8 = new UTF8Encoding();
-            byte[] bytes = Encoding.UTF8.GetBytes(refRenta);
-
-            using (SHA512 sha = SHA512.Create())
-            {
-                byte[] hashBytes = sha.ComputeHash(bytes);
-                StringBuilder refEncriptada = new StringBuilder(128);
-
-                foreach (byte b in hashBytes)
-                {
-                    refEncriptada.Append(b.ToString("x2"));
-                }
-                return refEncriptada.ToString().ToUpper(); ;
-            }
-        }
-
         public void descargaDF(string _urlDescarga, string _nifDf, string _refRenta, string _datosPersonales, string _ficheroSalida)
         {
             //Metodo para descargar los datos fiscales
@@ -134,6 +115,25 @@ namespace gestionesAEAT.Metodos
             catch (Exception ex)
             {
                 File.WriteAllText(Program.ficheroErrores, $"Error al descargar datos fiscales. {ex.Message}");
+            }
+        }
+
+        public string encriptaRefRenta(string refRenta)
+        {
+            //Metodo para encriptar la referencia renta ya que debe pasarse asi
+            UTF8Encoding utf8 = new UTF8Encoding();
+            byte[] bytes = Encoding.UTF8.GetBytes(refRenta);
+
+            using (SHA512 sha = SHA512.Create())
+            {
+                byte[] hashBytes = sha.ComputeHash(bytes);
+                StringBuilder refEncriptada = new StringBuilder(128);
+
+                foreach (byte b in hashBytes)
+                {
+                    refEncriptada.Append(b.ToString("x2"));
+                }
+                return refEncriptada.ToString().ToUpper(); ;
             }
         }
 

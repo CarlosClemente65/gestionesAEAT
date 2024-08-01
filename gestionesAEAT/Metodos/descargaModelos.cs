@@ -1,4 +1,5 @@
-﻿using System;
+﻿using gestionesAEAT.Utilidades;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -46,7 +47,7 @@ namespace gestionesAEAT.Metodos
         public List<RespuestaCorrectaDescarga> respuestasCorrectas = new List<RespuestaCorrectaDescarga>();
         public List<RespuestaErrorDescarga> respuestasError = new List<RespuestaErrorDescarga>();
         envioAeat envio = new envioAeat();
-        Utiles utilidad = new Utiles();
+        Utiles utilidad = Program.utilidad;
 
 
         public void obtenerModelos(string guion, string ficheroSalida, string serieCertificado, GestionCertificados instanciaCertificado)
@@ -71,8 +72,7 @@ namespace gestionesAEAT.Metodos
             }
             if (respuestasCorrectas.Count > 0)
             {
-                string pathSalida = Path.GetDirectoryName(ficheroSalida);
-                descargaPDF(pathSalida);
+                descargaPDF(Parametros.Configuracion.Parametros.pathFicheros);
             }
         }
 

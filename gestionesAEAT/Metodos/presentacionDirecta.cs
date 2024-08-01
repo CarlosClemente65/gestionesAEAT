@@ -65,13 +65,13 @@ namespace gestionesAEAT.Metodos
         List<string> textoEnvio = new List<string>(); //Prepara una lista con los datos del guion
 
         string textoSalida = string.Empty; //Texto que se grabara en el fichero de salida
-        //string aux; //Variable auxiliar para la grabacion de la respuesta
 
-        Utiles utilidad = new Utiles(); //Instanciacion de las utilidades para poder usarlas
-        envioAeat envio = new envioAeat();
+        Utiles utilidad = Program.utilidad; //Instanciacion de las utilidades para poder usarlas
 
         public void envioPeticion(string ficheroEntrada, string ficheroSalida, string serieCertificado, GestionCertificados instanciaCertificado)
         {
+            envioAeat envio = new envioAeat();
+
             textoEnvio = utilidad.prepararGuion(ficheroEntrada); //Se procesa el guion para formar una lista que se pueda pasar al resto de metodos
 
             try

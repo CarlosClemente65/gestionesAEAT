@@ -82,6 +82,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilidades\Parametros.cs" />
     <Compile Include="Utilidades\Utiles.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace gestionesAEAT.Metodos
 {
@@ -52,12 +53,12 @@ namespace gestionesAEAT.Metodos
         string valor = string.Empty; //Valor del atributo que se pasa a la AEAT
 
         string respuestaAEAT; //Contenido de la respuesta de la AEAT a la solicitud enviada
-        
+
         List<string> textoEnvio = new List<string>(); //Prepara una lista con los datos del guion
 
         string textoSalida = string.Empty; //Texto que se grabara en el fichero de salida
 
-        Utiles utilidad = new Utiles(); //Instanciacion de las utilidades para poder usarlas
+        Utiles utilidad = Program.utilidad; //Instanciacion de las utilidades para poder usarlas
         envioAeat envio = new envioAeat();
 
         public void envioPeticion(string ficheroEntrada, string ficheroSalida)
@@ -74,12 +75,9 @@ namespace gestionesAEAT.Metodos
                 //Formatear datos de la cabecera
                 foreach (var elemento in utilidad.cabecera)
                 {
-                    int indice = elemento.IndexOf("=");
-                    if (indice != -1)
-                    {
-                        atributo = elemento.Substring(0, indice).Trim();
-                        valor = elemento.Substring(indice + 1).Trim();
-                    }
+                    string[] partes = elemento.Split('=');
+                    atributo = partes[0].Trim();
+                    valor = partes[1].Trim();
 
                     // Verificar si el nombre coincide con alguna propiedad de la clase servaliDos y asignar el valor correspondiente
                     switch (atributo)
@@ -87,21 +85,27 @@ namespace gestionesAEAT.Metodos
                         case "MODELO":
                             dato.Modelo = valor;
                             break;
+
                         case "EJERCICIO":
                             dato.Ejercicio = valor;
                             break;
+                        
                         case "PERIODO":
                             dato.Periodo = valor;
                             break;
+                        
                         case "F01":
                             dato.F01 = valor;
                             break;
+                        
                         case "IDI":
                             dato.Idioma = valor;
                             break;
+                        
                         case "SINVL":
                             dato.SinValidar = valor;
                             break;
+                        
                         default:
                             break;
                     }

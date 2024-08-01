@@ -11,7 +11,7 @@ namespace gestionesAEAT.Metodos
         
         //Instanciacion de las clases de envio y utilidades
         envioAeat envio = new envioAeat();
-        Utiles utilidad = new Utiles();
+        Utiles utilidad = Program.utilidad;
 
         public EnvioSii(string ficheroUrls)
         {

@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using gestionesAEAT.Metodos;
+using gestionesAEAT.Utilidades;
 
 namespace gestionesAEAT
 {
@@ -110,7 +111,7 @@ namespace gestionesAEAT
         {
             //Borra ficheros anteriores antes de algunas ejecuciones
             string rutaSalida = Path.GetDirectoryName(fichero);
-            if (string.IsNullOrEmpty(rutaSalida)) 
+            if (string.IsNullOrEmpty(rutaSalida))
             {
                 rutaSalida = Directory.GetCurrentDirectory();
             }
@@ -281,20 +282,29 @@ namespace gestionesAEAT
             //Si se ha encontrado algun error, aviso o advertencia, hace el html
             if (control > 0)
             {
-                int indice;
-
                 //Asigna las variables modelo, ejercicio y periodo segun los valores de la cabecera
                 foreach (string linea in cabecera)
                 {
-                    indice = linea.IndexOf("=");
-                    if (indice != -1)
+                    string[] partes = linea.Split('=');
+                    string atributo = partes[0];
+                    string valor = partes[1];
+                    switch (atributo)
                     {
-                        if (linea.StartsWith("MODELO")) modelo = linea.Substring(indice + 1);
-                        if (linea.StartsWith("EJERCICIO")) ejercicio = linea.Substring(indice + 1);
-                        if (linea.StartsWith("PERIODO")) periodo = linea.Substring(indice + 1);
-                        if (linea.StartsWith("CLIENTE")) cliente = linea.Substring(indice + 1);
+                        case "MODELO":
+                            modelo = valor;
+                            break;
+
+                        case "EJERCICIO":
+                            ejercicio = valor;
+                            break;
+
+                        case "PERIODO":
+                            periodo = valor;
+                            break;
                     }
+
                 }
+                cliente = Parametros.Configuracion.Parametros.cliente;
 
                 respuestaHtml = generarHtml(modelo, ejercicio, periodo, cliente);
             }
