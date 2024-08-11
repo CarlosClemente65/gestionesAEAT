@@ -2,6 +2,7 @@
 using gestionesAEAT.Metodos;
 using gestionesAEAT.Utilidades;
 using System;
+using System.Windows.Forms;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,8 @@ namespace gestionesAEAT
 
         public static string ficheroErrores = "errores.txt";
 
+
+        [STAThread] //Atributo necesario para que la aplicacion pueda abrir el formulario de carga de certificado
         static void Main(string[] argumentos)
         {
             try
@@ -35,7 +38,7 @@ namespace gestionesAEAT
                     }
                     else
                     {
-                        log += $"Son necesarios al menos 2 parametros: dsclave y fichero de opciones\n{argumentos[0]}\n{argumentos[1]}";
+                        log += $"Son necesarios al menos 2 parametros: dsclave y fichero de opciones";
                         utilidad.SalirAplicacion(log);
                     }
                 }
@@ -156,6 +159,20 @@ namespace gestionesAEAT
                     EnvioSii nuevoEnvio = new EnvioSii(ficheroUrls);//Instanciacion de la clase que carga las urls
                     nuevoEnvio.envioFacturas(parametros.ficheroEntrada, parametros.ficheroSalida, parametros.serieCertificado, instanciaCertificado, parametros.indiceUrl);
                     break;
+
+                case "8":
+                    //Grabar datos de certificado desde fichero (para certbase)
+
+                    // Inicializa la aplicación de Windows Forms
+                    Application.EnableVisualStyles();
+                    Application.SetCompatibleTextRenderingDefault(false);
+
+                    using (frmCarga frmCarga = new frmCarga())
+                    {
+                        frmCarga.ShowDialog();
+                    }
+
+                    break;
             }
         }
 
@@ -181,6 +198,7 @@ namespace gestionesAEAT
                     break;
 
                 case "6":
+                case "8":
                     if (string.IsNullOrEmpty(parametros.ficheroSalida)) mensaje.AppendLine("No se ha pasado el fichero de salida");
                     break;
 

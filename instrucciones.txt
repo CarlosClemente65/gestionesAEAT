@@ -11,8 +11,9 @@
 				3 = Consulta de modelos presentados
 				4 = Ratificacion domicilio renta
 				5 = Descarga de datos fiscales de la renta
-				6 = Obtener relacion de certificados y sus datos.
+				6 = Obtener relacion de certificados y sus datos (salida en .json).
 				7 = Envio facturas al Sii
+				8 = Grabar datos certificado desde fichero (salida en .json)
 			* ENTRADA= Nombre del fichero que contiene los datos a enviar en txt
 			* SALIDA= Nombre del fichero en el que se dejara la respuesta
 			* INDICESII= En el envio de facturas al sii indica el indice del fichero sii_urls.txt para hacer el envio
@@ -149,6 +150,11 @@
 			OBLIGADO=SI
 			CERTIFICADO=certificado.pfx
 			PASSWORD=contraseña
+			
+	Grabar datos de certificado desde fichero
+		Fichero opciones
+			TIPO=8
+			SALIDA=datosCertificado.txt
     
 Notas:
 	- Si no se pasan los datos del certificado y el proceso lo requerire, se mostrara el formulario de seleccion

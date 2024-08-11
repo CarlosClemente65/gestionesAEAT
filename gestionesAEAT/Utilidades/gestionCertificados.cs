@@ -33,19 +33,19 @@ namespace gestionesAEAT
         public string serieCertificado { get; set; }
 
         private DateTime _fechaEmision;
-        [JsonProperty("D")]
-        public DateTime fechaEmision 
+        [JsonProperty("D")] 
+        public DateTime fechaEmision
         {
-            get => _fechaEmision.Date; 
-            set => _fechaEmision = value.Date; 
+            get => _fechaEmision.Date;
+            set => _fechaEmision = value.Date;
         }
 
-        private DateTime _fechaValidez;
+        private DateTime _fechaValidez; 
         [JsonProperty("E")]
         public DateTime fechaValidez
         {
             get => _fechaValidez.Date;
-            set => _fechaValidez = value.Date; 
+            set => _fechaValidez = value.Date;
         }
 
         [JsonProperty("F")]
@@ -58,6 +58,9 @@ namespace gestionesAEAT
         public string datosRepresentante { get; set; }
 
         [JsonProperty("I")]
+        public string passwordCertificado { get; set; }
+
+        [JsonProperty("J")]
         public string huellaCertificado { get; set; }
 
         public ElementosCertificado()
@@ -70,6 +73,7 @@ namespace gestionesAEAT
             nifRepresentante = string.Empty;
             nombreRepresentante = string.Empty;
             datosRepresentante = string.Empty;
+            passwordCertificado = string.Empty;
             huellaCertificado = string.Empty;
         }
     }
@@ -406,10 +410,12 @@ namespace gestionesAEAT
                             serieCertificado = cert.SerialNumber,
                             fechaValidez = cert.NotAfter,
                             fechaEmision = certificado.NotBefore,
+                            passwordCertificado = password,
                             huellaCertificado = cert.Thumbprint.ToString()
                         };
                         obtenerDatosSubject(datosSubject, info);
                         listaCertificados.certificadosInfo.Add(info);
+
                     }
                 }
                 return string.Empty;
@@ -427,7 +433,13 @@ namespace gestionesAEAT
             try
             {
                 // Serializar la lista de ficheros a JSON
-                string jsonEnvio = JsonConvert.SerializeObject(listaCertificados, Formatting.Indented);
+                var jsonSettings = new JsonSerializerSettings
+                {
+                    DateFormatString = "dd/MM/yyyy", //Formato de fechas
+                    Formatting = Formatting.Indented //Aplica indentacion
+                };
+
+                string jsonEnvio = JsonConvert.SerializeObject(listaCertificados, jsonSettings);
 
                 //Guardar el json
                 File.WriteAllText(ruta, jsonEnvio);
