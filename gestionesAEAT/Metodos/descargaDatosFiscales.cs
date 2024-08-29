@@ -52,6 +52,7 @@ namespace gestionesAEAT.Metodos
 
             try
             {
+                //Se debe encriptar la referencia de la renta para pasarla a la AEAT
                 string refEncriptada = encriptaRefRenta(refRenta);
                 StringBuilder datos = new StringBuilder();
 

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using System.Windows.Forms;
 using Newtonsoft.Json;
 
 
@@ -99,13 +97,13 @@ namespace gestionesAEAT
             if (certificados.Count == 0)
             {
                 //Metodo para cargar los certificados del almacen de windows
-                X509Store store = new X509Store(StoreLocation.CurrentUser);
-                store.Open(OpenFlags.ReadOnly);
-                foreach (X509Certificate2 cert in store.Certificates)
+                X509Store almacen = new X509Store(StoreLocation.CurrentUser);
+                almacen.Open(OpenFlags.ReadOnly);
+                foreach (X509Certificate2 elemento in almacen.Certificates)
                 {
-                    certificados.Add(cert);
+                    certificados.Add(elemento);
                 }
-                store.Close();
+                almacen.Close();
 
                 // Graba las propiedades de los certificados en la clase ListaCertificados
                 foreach (X509Certificate2 certificado in certificados)
@@ -130,13 +128,13 @@ namespace gestionesAEAT
             }
         }
 
-        public X509Certificate2 buscarCertificado(string serieCertificado)
+        public X509Certificate2 seleccionaCertificado(string serieCertificado)
         {
             //Devuelve el certificado que tiene la serie pasada
             return certificados.Find(cert => cert.SerialNumber == serieCertificado);
         }
 
-        public string buscarSerieCertificado(string textoBusqueda)
+        public string buscarCertificado(string textoBusqueda)
         {
             //Devuelve el certificado que contiene el texto a buscar en la serie, el NIF o nombre del titular
 
@@ -426,32 +424,5 @@ namespace gestionesAEAT
                 return ex.Message;
             }
         }
-
-        public void exportarDatosCertificados(string ruta)
-        {
-            //Permite grabar un fichero con los datos de los certificados
-            try
-            {
-                // Serializar la lista de ficheros a JSON
-                var jsonSettings = new JsonSerializerSettings
-                {
-                    DateFormatString = "dd/MM/yyyy", //Formato de fechas
-                    Formatting = Formatting.Indented //Aplica indentacion
-                };
-
-                string jsonEnvio = JsonConvert.SerializeObject(listaCertificados, jsonSettings);
-
-                //Guardar el json
-                File.WriteAllText(ruta, jsonEnvio);
-            }
-
-            catch (Exception ex)
-            {
-                string mensaje = $"No se ha podido grabar los datos de los certificados. {ex.Message}";
-                File.WriteAllText(Program.ficheroErrores, mensaje);
-            }
-
-        }
-
     }
 }

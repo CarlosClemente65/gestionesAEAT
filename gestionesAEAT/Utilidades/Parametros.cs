@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace gestionesAEAT.Utilidades
 {
@@ -48,8 +42,13 @@ namespace gestionesAEAT.Utilidades
 
                 //Divide la linea en clave=valor
                 string[] partes = linea.Split('=');
-                string clave = partes[0].Trim();
-                string valor = partes[1].Trim();
+                string clave = string.Empty;
+                string valor = string.Empty;
+                if (partes.Length == 2)
+                {
+                    clave = partes[0].Trim();
+                    valor = partes[1].Trim();
+                }
 
                 switch (clave)
                 {
@@ -69,10 +68,10 @@ namespace gestionesAEAT.Utilidades
                         //Se controla si se pasa el fichero de salida para evitar una excepcion al asignarlo a la variable
                         //if (!string.IsNullOrEmpty(valor))
                         //{
-                            //Como el fichero de salida siempre tiene que estar presente, se carga la ruta de los ficheros
-                            pathFicheros = Path.GetDirectoryName(valor);
-                            ficheroErrores = Path.Combine(pathFicheros, "errores.txt");
-                            ficheroSalida = valor;
+                        //Como el fichero de salida siempre tiene que estar presente, se carga la ruta de los ficheros
+                        pathFicheros = Path.GetDirectoryName(valor);
+                        ficheroErrores = Path.Combine(pathFicheros, "errores.txt");
+                        ficheroSalida = valor;
                         //}
                         break;
 

@@ -286,8 +286,14 @@ namespace gestionesAEAT
                 foreach (string linea in cabecera)
                 {
                     string[] partes = linea.Split('=');
-                    string atributo = partes[0];
-                    string valor = partes[1];
+                    string atributo = string.Empty;
+                    string valor = string.Empty;
+                    if (partes.Length == 2)
+                    {
+                        atributo = partes[0];
+                        valor = partes[1];
+                    }
+
                     switch (atributo)
                     {
                         case "MODELO":
@@ -466,9 +472,7 @@ namespace gestionesAEAT
             mensaje.AppendLine(@"            3 = Consulta y descarga PDF de modelos presentados");
             mensaje.AppendLine(@"            4 = Ratificacion domicilio renta");
             mensaje.AppendLine(@"            5 = Descarga datos fiscales renta");
-            mensaje.AppendLine(@"            6 = Obtener datos de certificados instalados en el equipo (salida en .json)");
-            mensaje.AppendLine(@"            7 = Envio de facturas al SII");
-            mensaje.AppendLine(@"            8 = Grabar datos certificado desde fichero (salida en .json)");
+            mensaje.AppendLine(@"            6 = Envio de facturas al SII");
             mensaje.AppendLine(@"        ENTRADA= Nombre del fichero con los datos a enviar");
             mensaje.AppendLine(@"        SALIDA= Nombre del fichero donde se grabara la salida");
             mensaje.AppendLine(@"        INDICESII= En el envio de facturas al sii indica el indice del fichero sii_urls.txt para hacer el envio");
@@ -516,19 +520,13 @@ namespace gestionesAEAT
             mensaje.AppendLine(@"        REFRENTA=referenciaRenta");
             mensaje.AppendLine(@"        DPRENTA=S");
             mensaje.AppendLine(@"        URLRENTA=https://www9.agenciatributaria.gob.es/wlpl/DFPA-D182/SvDesDF23Pei");
-            mensaje.AppendLine(@"    Relacion certificados:");
-            mensaje.AppendLine(@"        TIPO=6");
-            mensaje.AppendLine(@"        SALIDA=salida.json");
             mensaje.AppendLine(@"    Envio facturas al SII con nombre del titular del certificado:");
-            mensaje.AppendLine(@"        TIPO=7");
+            mensaje.AppendLine(@"        TIPO=6");
             mensaje.AppendLine(@"        ENTERADA=facturaEmitida.xml");
             mensaje.AppendLine(@"        SALIDA=respuesta.xml");
             mensaje.AppendLine(@"        INDICESII=0");
             mensaje.AppendLine(@"        OBLIGADO=SI");
             mensaje.AppendLine(@"        BUSQUEDA=nombreCertificado");
-            mensaje.AppendLine(@"    Grabar datos certificado desde fichero:");
-            mensaje.AppendLine(@"        TIPO=8");
-            mensaje.AppendLine(@"        SALIDA=salida.json");
             mensaje.AppendLine("\nNotas:");
             mensaje.AppendLine(@"    - Si no se pasan los datos del certificado y el proceso lo requerire, se mostrara el formulario de seleccion");
             mensaje.AppendLine(@"    - Los ficheros deben venir con la ruta completa, incluido el de opciones");

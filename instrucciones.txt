@@ -11,9 +11,7 @@
 				3 = Consulta de modelos presentados
 				4 = Ratificacion domicilio renta
 				5 = Descarga de datos fiscales de la renta
-				6 = Obtener relacion de certificados y sus datos (salida en .json).
-				7 = Envio facturas al Sii
-				8 = Grabar datos certificado desde fichero (salida en .json)
+				6 = Envio facturas al Sii
 			* ENTRADA= Nombre del fichero que contiene los datos a enviar en txt
 			* SALIDA= Nombre del fichero en el que se dejara la respuesta
 			* INDICESII= En el envio de facturas al sii indica el indice del fichero sii_urls.txt para hacer el envio
@@ -121,21 +119,16 @@
 			DPRENTA=S
 			URLRENTA=https://www9.agenciatributaria.gob.es/wlpl/DFPA-D182/SvDesDF23Pei
 		
-    Relacion certificados: gestionesAEAT dsclave opciones.txt
-		Fichero de opciones
-			TIPO=6
-			SALIDA=salida.txt
-		
 	Envio facturas al sii: gestionesAEAT dsclave opciones.txt
 		Fichero de opciones con solicitu de certificado por pantalla
-			TIPO=7
+			TIPO=6
 			ENTRADA=facturaEmitida.xml
 			SALIDA=respuesta-xml
 			INDICESII=0
 			OBLIGADO=SI
 
 		Fichero de opciones con numero de serie del certificado
-			TIPO=7
+			TIPO=6
 			ENTRADA=facturaEmitida.xml
 			SALIDA=respuesta-xml
 			INDICESII=0
@@ -143,19 +136,14 @@
 			BUSQUEDA=numeroSerie
 
 		Fichero de opciones con fichero y password del certificado
-			TIPO=7
+			TIPO=6
 			ENTRADA=facturaEmitida.xml
 			SALIDA=respuesta-xml
 			INDICESII=0
 			OBLIGADO=SI
 			CERTIFICADO=certificado.pfx
 			PASSWORD=contraseña
-			
-	Grabar datos de certificado desde fichero
-		Fichero opciones
-			TIPO=8
-			SALIDA=datosCertificado.txt
-    
+			    
 Notas:
 	- Si no se pasan los datos del certificado y el proceso lo requerire, se mostrara el formulario de seleccion
 	- Con la validacion de modelos (tipo 2) el parametro 5 debe ser un NO

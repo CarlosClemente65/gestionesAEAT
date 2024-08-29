@@ -54,12 +54,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Formularios\fmrCarga.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Formularios\fmrCarga.Designer.cs">
-      <DependentUpon>fmrCarga.cs</DependentUpon>
-    </Compile>
     <Compile Include="Metodos\EnvioSii.cs" />
     <Compile Include="Metodos\presentacionDirecta.cs" />
     <Compile Include="Metodos\envioAeat.cs" />
@@ -100,9 +94,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Formularios\fmrCarga.resx">
-      <DependentUpon>fmrCarga.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Formularios\frmSeleccion.resx">
       <DependentUpon>frmSeleccion.cs</DependentUpon>
     </EmbeddedResource>

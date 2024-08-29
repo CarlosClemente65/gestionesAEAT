@@ -32,7 +32,7 @@ namespace gestionesAEAT
             {   
                 if (argumentos.Length < 2)
                 {
-                    if (argumentos.Length > 1 && (argumentos[1] == "-h" || argumentos[1] == "?"))
+                    if (argumentos.Length > 0 && (argumentos[0] == "-h" || argumentos[0] == "?"))
                     {
                         utilidad.SalirAplicacion(log);
                     }
@@ -63,9 +63,6 @@ namespace gestionesAEAT
                     {
                         //Procesa el fichero de opciones
                         Parametros.Configuracion.Inicializar(ficheroOpciones);
-
-
-                        //CargarOpciones();
 
                         //Controla si las opciones pasadas son correctas.
                         string controlTipo = Parametros.Configuracion.Parametros.tipo;
@@ -140,11 +137,6 @@ namespace gestionesAEAT
                     break;
 
                 case "6":
-                    //Obtener datos certificados instalados. No necesita certificado
-                    instanciaCertificado.exportarDatosCertificados(parametros.ficheroSalida);
-                    break;
-
-                case "7":
                     //Presentacion facturas SII. Necesita certificado
                     //El fichero 'sii_urls.txt' debe estar en la misma ruta que el fichero de entrada
                     string ficheroUrls = Path.Combine(Path.GetDirectoryName(parametros.ficheroEntrada), "sii_urls.txt");
@@ -158,20 +150,6 @@ namespace gestionesAEAT
 
                     EnvioSii nuevoEnvio = new EnvioSii(ficheroUrls);//Instanciacion de la clase que carga las urls
                     nuevoEnvio.envioFacturas(parametros.ficheroEntrada, parametros.ficheroSalida, parametros.serieCertificado, instanciaCertificado, parametros.indiceUrl);
-                    break;
-
-                case "8":
-                    //Grabar datos de certificado desde fichero (para certbase)
-
-                    // Inicializa la aplicación de Windows Forms
-                    Application.EnableVisualStyles();
-                    Application.SetCompatibleTextRenderingDefault(false);
-
-                    using (frmCarga frmCarga = new frmCarga())
-                    {
-                        frmCarga.ShowDialog();
-                    }
-
                     break;
             }
         }
@@ -198,11 +176,6 @@ namespace gestionesAEAT
                     break;
 
                 case "6":
-                case "8":
-                    if (string.IsNullOrEmpty(parametros.ficheroSalida)) mensaje.AppendLine("No se ha pasado el fichero de salida");
-                    break;
-
-                case "7":
                     if (string.IsNullOrEmpty(parametros.ficheroEntrada)) mensaje.AppendLine("No se ha pasado el fichero de entrada");
                     if (string.IsNullOrEmpty(parametros.ficheroSalida)) mensaje.AppendLine("No se ha pasado el fichero de salida");
                     if (parametros.indiceUrl < 0) mensaje.AppendLine("No se ha pasado el indice de la url a la que enviar las facturas");
@@ -239,7 +212,7 @@ namespace gestionesAEAT
                 //Si se ha pasado un texto de busqueda, localiza el numero de serie del certificado por ese texto.
                 if (!string.IsNullOrEmpty(parametros.textoBusqueda))
                 {
-                    parametros.serieCertificado = instanciaCertificado.buscarSerieCertificado(parametros.textoBusqueda);
+                    parametros.serieCertificado = instanciaCertificado.buscarCertificado(parametros.textoBusqueda);
                 }
                 else
                 {

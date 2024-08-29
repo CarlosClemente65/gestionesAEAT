@@ -3,6 +3,7 @@ Temas pendientes:
 	- Envio para solicitar un nrc (dsenvionrc) el guion creo que es un json
 	- Validar NIF (ds_sii con xml - documentos/nif y tambien usa el fichero de urls)
 	- Poner mensaje segun opcion en la ventana del certificado (para saber que se esta haciendo)
+	- Quitar los metodos para grabar datos de certificados (realizado con dse_certificados)
 	
 	
 	
@@ -14,4 +15,5 @@ Temas terminados:
 	- Envio de modelos
 	- Descarga de datos fiscales
 	- Envio facturas al SII
+	- Grabar datos certificado desde fichero
 	

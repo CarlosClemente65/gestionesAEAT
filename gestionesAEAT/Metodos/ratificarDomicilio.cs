@@ -157,8 +157,11 @@ namespace gestionesAEAT.Metodos
             try
             {
                 parte = cadena.ToString().Split('=');
-                atributo = parte[0].ToString().Trim();
-                valor = parte[1].ToString().Trim();
+                if (parte.Length == 2)
+                {
+                    atributo = parte[0].ToString().Trim();
+                    valor = parte[1].ToString().Trim();
+                }
             }
 
             catch (Exception ex)

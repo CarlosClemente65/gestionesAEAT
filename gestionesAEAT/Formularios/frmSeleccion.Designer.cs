@@ -39,7 +39,7 @@
             this.btnBorrar = new System.Windows.Forms.Button();
             this.txtBusqueda = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btnCancelar = new System.Windows.Forms.Button();
             this.btnSeleccion = new System.Windows.Forms.Button();
             this.panelCertificados.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCertificados)).BeginInit();
@@ -135,7 +135,7 @@
             this.panelBotones.Controls.Add(this.btnBorrar);
             this.panelBotones.Controls.Add(this.txtBusqueda);
             this.panelBotones.Controls.Add(this.label2);
-            this.panelBotones.Controls.Add(this.button2);
+            this.panelBotones.Controls.Add(this.btnCancelar);
             this.panelBotones.Controls.Add(this.btnSeleccion);
             this.panelBotones.Location = new System.Drawing.Point(0, 339);
             this.panelBotones.Margin = new System.Windows.Forms.Padding(0);
@@ -181,21 +181,21 @@
             this.label2.TabIndex = 2;
             this.label2.Text = "Buscar certificado";
             // 
-            // button2
+            // btnCancelar
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.btnCancelar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.button2.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.ForeColor = System.Drawing.Color.Black;
-            this.button2.Location = new System.Drawing.Point(780, 10);
-            this.button2.Margin = new System.Windows.Forms.Padding(5);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(100, 48);
-            this.button2.TabIndex = 4;
-            this.button2.Text = "Cancelar seleccion";
-            this.button2.UseVisualStyleBackColor = false;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnCancelar.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.btnCancelar.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCancelar.ForeColor = System.Drawing.Color.Black;
+            this.btnCancelar.Location = new System.Drawing.Point(780, 10);
+            this.btnCancelar.Margin = new System.Windows.Forms.Padding(5);
+            this.btnCancelar.Name = "btnCancelar";
+            this.btnCancelar.Size = new System.Drawing.Size(100, 48);
+            this.btnCancelar.TabIndex = 4;
+            this.btnCancelar.Text = "Cancelar seleccion";
+            this.btnCancelar.UseVisualStyleBackColor = false;
+            this.btnCancelar.Click += new System.EventHandler(this.btnCancelar_Click);
             // 
             // btnSeleccion
             // 
@@ -244,7 +244,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnSeleccion;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnCancelar;
         private System.Windows.Forms.TextBox txtBusqueda;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btnBorrar;

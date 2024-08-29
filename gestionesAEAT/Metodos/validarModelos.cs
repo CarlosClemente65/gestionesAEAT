@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 
 namespace gestionesAEAT.Metodos
 {
@@ -76,8 +75,11 @@ namespace gestionesAEAT.Metodos
                 foreach (var elemento in utilidad.cabecera)
                 {
                     string[] partes = elemento.Split('=');
-                    atributo = partes[0].Trim();
-                    valor = partes[1].Trim();
+                    if (partes.Length == 2)
+                    {
+                        atributo = partes[0].Trim();
+                        valor = partes[1].Trim();
+                    }
 
                     // Verificar si el nombre coincide con alguna propiedad de la clase servaliDos y asignar el valor correspondiente
                     switch (atributo)
@@ -89,23 +91,23 @@ namespace gestionesAEAT.Metodos
                         case "EJERCICIO":
                             dato.Ejercicio = valor;
                             break;
-                        
+
                         case "PERIODO":
                             dato.Periodo = valor;
                             break;
-                        
+
                         case "F01":
                             dato.F01 = valor;
                             break;
-                        
+
                         case "IDI":
                             dato.Idioma = valor;
                             break;
-                        
+
                         case "SINVL":
                             dato.SinValidar = valor;
                             break;
-                        
+
                         default:
                             break;
                     }

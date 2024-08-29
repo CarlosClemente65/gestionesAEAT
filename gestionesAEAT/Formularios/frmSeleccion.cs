@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace gestionesAEAT.Formularios
@@ -91,7 +90,7 @@ namespace gestionesAEAT.Formularios
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnCancelar_Click(object sender, EventArgs e)
         {
             Environment.Exit(0);
         }

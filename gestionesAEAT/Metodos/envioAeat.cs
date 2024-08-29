@@ -20,7 +20,7 @@ namespace gestionesAEAT
         {
             try
             {
-                certificado = instanciaCertificados.buscarCertificado(serieCertificado);
+                certificado = instanciaCertificados.seleccionaCertificado(serieCertificado);
 
                 if (certificado != null)
                 {

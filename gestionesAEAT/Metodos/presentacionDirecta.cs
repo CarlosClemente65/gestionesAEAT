@@ -85,8 +85,11 @@ namespace gestionesAEAT.Metodos
                 foreach (var elemento in utilidad.cabecera)
                 {
                     string[] partes = elemento.Split('=');
-                    atributo = partes[0].Trim();
-                    valor = partes[1].Trim();
+                    if (partes.Length == 2)
+                    {
+                        atributo = partes[0].Trim();
+                        valor = partes[1].Trim();
+                    }
 
                     // Verificar si el nombre coincide con alguna propiedad de la clase servaliDos y asignar el valor correspondiente
                     switch (atributo)
