@@ -110,7 +110,11 @@ namespace gestionesAEAT
         public void borrarFicheros(string fichero)
         {
             //Borra ficheros anteriores antes de algunas ejecuciones
-            string rutaSalida = Path.GetDirectoryName(fichero);
+            string rutaSalida = string.Empty;
+            if (!string.IsNullOrEmpty(fichero))
+            {
+                rutaSalida = Path.GetDirectoryName(fichero);
+            }
             if (string.IsNullOrEmpty(rutaSalida))
             {
                 rutaSalida = Directory.GetCurrentDirectory();

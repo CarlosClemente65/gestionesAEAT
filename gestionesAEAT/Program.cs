@@ -21,6 +21,7 @@ namespace gestionesAEAT
         static string ficheroOpciones = string.Empty;
         static string respuestaAeat = string.Empty;
         static Parametros parametros = Parametros.Configuracion.Parametros;
+        public static string tituloVentana = string.Empty;
 
         public static string ficheroErrores = "errores.txt";
 
@@ -29,7 +30,7 @@ namespace gestionesAEAT
         static void Main(string[] argumentos)
         {
             try
-            {   
+            {
                 if (argumentos.Length < 2)
                 {
                     if (argumentos.Length > 0 && (argumentos[0] == "-h" || argumentos[0] == "?"))
@@ -157,28 +158,72 @@ namespace gestionesAEAT
         private static string ControlOpciones(string tipo)
         {
             var parametros = Parametros.Configuracion.Parametros;
+            string mensajeControl = string.Empty;
             StringBuilder mensaje = new StringBuilder();
             switch (tipo)
             {
                 case "1":
+                    tituloVentana = "Envio modelos AEAT";
+                    mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
+                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
+                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+
+                    break;
+
                 case "2":
+                    tituloVentana = "Validacion de modelos";
+                    mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
+                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
+                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+
+                    break;
+
                 case "3":
+                    tituloVentana = "Consulta modelos presentados AEAT";
+                    mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
+                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
+                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+
+                    break;
+
                 case "4":
-                    if (string.IsNullOrEmpty(parametros.ficheroEntrada)) mensaje.AppendLine("No se ha pasado el fichero de entrada");
-                    if (string.IsNullOrEmpty(parametros.ficheroSalida)) mensaje.AppendLine("No se ha pasado el fichero de salida");
+                    tituloVentana = "Ratificar domicilio renta";
+                    mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
+                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
+                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+
                     break;
 
                 case "5":
-                    if (string.IsNullOrEmpty(parametros.ficheroSalida)) mensaje.AppendLine("No se ha pasado el fichero de salida");
-                    if (string.IsNullOrEmpty(parametros.nifDf)) mensaje.AppendLine("No se ha pasado el NIF del contribuyente");
-                    if (string.IsNullOrEmpty(parametros.refRenta)) mensaje.AppendLine("No se ha pasado la referencia de la renta");
-                    if (string.IsNullOrEmpty(parametros.urlDescargaDf)) mensaje.AppendLine("No se ha pasado la url de descarga de datos fiscales");
+                    tituloVentana = "Descarga datos fiscales renta";
+                    mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
+                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    mensajeControl = Parametros.ControlDatosParametros("nifDf");
+                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    mensajeControl = Parametros.ControlDatosParametros("refRenta");
+                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    mensajeControl = Parametros.ControlDatosParametros("urlDescargaDf");
+                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+
                     break;
 
                 case "6":
-                    if (string.IsNullOrEmpty(parametros.ficheroEntrada)) mensaje.AppendLine("No se ha pasado el fichero de entrada");
-                    if (string.IsNullOrEmpty(parametros.ficheroSalida)) mensaje.AppendLine("No se ha pasado el fichero de salida");
-                    if (parametros.indiceUrl < 0) mensaje.AppendLine("No se ha pasado el indice de la url a la que enviar las facturas");
+                    tituloVentana = "Envio facturas al SII";
+                    mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
+                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
+                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    mensajeControl = Parametros.ControlDatosParametros("indiceUrl");
+                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+
+                    break;
+
+                default:
+                    mensaje.AppendLine("Opcion de ejecucion invalida");
                     break;
             }
 

@@ -1,4 +1,7 @@
 ﻿using System.IO;
+using System.Reflection;
+using System.Security.Cryptography;
+using System.Windows.Forms;
 
 namespace gestionesAEAT.Utilidades
 {
@@ -30,6 +33,57 @@ namespace gestionesAEAT.Utilidades
             this.ficheroOpciones = rutaFichero;
             CargarOpciones();
         }
+
+        static public string ControlDatosParametros(string propiedad)
+        {
+            string mensaje = string.Empty;
+            Parametros parametros = Configuracion.Parametros;
+            PropertyInfo tipoPropiedad = typeof(Parametros).GetProperty(propiedad);
+            object valorPropiedad = tipoPropiedad.GetValue(parametros);
+            if (tipoPropiedad.PropertyType == typeof(string))
+            {
+                if (string.IsNullOrEmpty((string)valorPropiedad))
+                {
+                    switch (propiedad)
+                    {
+                        case "ficheroEntrada":
+                            mensaje = "No se ha pasado el fichero de entrada";
+                            break;
+
+                        case "ficheroSalida":
+                            mensaje = "No se ha pasado el fichero de salida";
+                            break;
+
+                        case "nifDf":
+                            mensaje = "No se ha pasado el NIF del contribuyente";
+                            break;
+
+                        case "refRenta":
+                            mensaje = "No se ha pasado la referencia de la renta";
+                            break;
+
+                        case "urlDescargaDf":
+                            mensaje = "No se ha pasado la url de descarga de datos fiscales";
+                            break;
+                    }
+                }
+            }
+
+            else if (tipoPropiedad.PropertyType == typeof(int))
+            {
+                if (propiedad == "indiceUrl")
+                {
+                    if ((int)valorPropiedad < 0)
+                    {
+                        mensaje = "No se ha pasado el indice de la url a la que enviar las facturas";
+                    }
+                }
+            }
+
+            return mensaje;
+
+        }
+
 
         private void CargarOpciones()
         {
@@ -66,13 +120,13 @@ namespace gestionesAEAT.Utilidades
 
                     case "SALIDA":
                         //Se controla si se pasa el fichero de salida para evitar una excepcion al asignarlo a la variable
-                        //if (!string.IsNullOrEmpty(valor))
-                        //{
-                        //Como el fichero de salida siempre tiene que estar presente, se carga la ruta de los ficheros
-                        pathFicheros = Path.GetDirectoryName(valor);
+                        if (!string.IsNullOrEmpty(valor))
+                        {
+                            //Como el fichero de salida siempre tiene que estar presente, se carga la ruta de los ficheros
+                            pathFicheros = Path.GetDirectoryName(valor);
+                        }
                         ficheroErrores = Path.Combine(pathFicheros, "errores.txt");
                         ficheroSalida = valor;
-                        //}
                         break;
 
                     case "INDICESII":

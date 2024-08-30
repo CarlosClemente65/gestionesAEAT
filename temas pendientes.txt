@@ -2,18 +2,14 @@ Temas pendientes:
 	- Envio de modelos anuales por TGVIOnline (dsenviohacienda) - se envia la cabecera y se obtiene un id, y se vuelve a enviar los tipo 2 con ese id
 	- Envio para solicitar un nrc (dsenvionrc) el guion creo que es un json
 	- Validar NIF (ds_sii con xml - documentos/nif y tambien usa el fichero de urls)
-	- Poner mensaje segun opcion en la ventana del certificado (para saber que se esta haciendo)
-	- Quitar los metodos para grabar datos de certificados (realizado con dse_certificados)
 	
 	
 	
 Temas terminados:
-	- Obtener datos de certificados instalados
 	- Ratificar domicilio (ver el punto pendiente).
 	- Consulta modelos presentados.
 	- Validar modelos (probado con renta y sociedades)
 	- Envio de modelos
 	- Descarga de datos fiscales
 	- Envio facturas al SII
-	- Grabar datos certificado desde fichero
 	

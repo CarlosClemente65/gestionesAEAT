@@ -21,6 +21,10 @@ namespace gestionesAEAT.Formularios
             certificadoSeleccionado = new ElementosCertificado();
             certificados = instanciaCertificado.relacionCertificados();
             rellenarDGV(certificados);
+            if (!string.IsNullOrEmpty(Program.tituloVentana))
+            {
+                this.Text = Program.tituloVentana;
+            }
             this.Load += frmSeleccion_Load;
         }
 
@@ -92,6 +96,8 @@ namespace gestionesAEAT.Formularios
 
         private void btnCancelar_Click(object sender, EventArgs e)
         {
+            Utiles utilidad = new Utiles();
+            utilidad.SalirAplicacion("El usuario a cancelado la operacion");
             Environment.Exit(0);
         }
 
@@ -112,6 +118,7 @@ namespace gestionesAEAT.Formularios
         private void btnBorrar_Click(object sender, EventArgs e)
         {
             txtBusqueda.Text = string.Empty;
+            txtBusqueda.Focus();
         }
 
         private void dgvCertificados_KeyPress(object sender, KeyPressEventArgs e)
