@@ -43,12 +43,12 @@ namespace gestionesAEAT.Formularios
             dgvCertificados.Columns["fechaEmision"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dgvCertificados.Columns["fechaEmision"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dgvCertificados.Columns["fechaEmision"].HeaderText = "Valido desde";
-            dgvCertificados.Columns["fechaEmision"].Width = 85;
+            dgvCertificados.Columns["fechaEmision"].Width = 80;
             dgvCertificados.Columns["fechaEmision"].DisplayIndex = 2;
             dgvCertificados.Columns["fechaValidez"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dgvCertificados.Columns["fechaValidez"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dgvCertificados.Columns["fechaValidez"].HeaderText = "Valido hasta";
-            dgvCertificados.Columns["fechaValidez"].Width = 85;
+            dgvCertificados.Columns["fechaValidez"].Width = 80;
             dgvCertificados.Columns["fechaValidez"].DisplayIndex = 3;
             dgvCertificados.Columns["nifRepresentante"].HeaderText = "NIF representante";
             dgvCertificados.Columns["nifRepresentante"].Width = 110;
