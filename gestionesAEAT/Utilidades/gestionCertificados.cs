@@ -31,14 +31,14 @@ namespace gestionesAEAT
         public string serieCertificado { get; set; }
 
         private DateTime _fechaEmision;
-        [JsonProperty("D")] 
+        [JsonProperty("D")]
         public DateTime fechaEmision
         {
             get => _fechaEmision.Date;
             set => _fechaEmision = value.Date;
         }
 
-        private DateTime _fechaValidez; 
+        private DateTime _fechaValidez;
         [JsonProperty("E")]
         public DateTime fechaValidez
         {
@@ -101,7 +101,10 @@ namespace gestionesAEAT
                 almacen.Open(OpenFlags.ReadOnly);
                 foreach (X509Certificate2 elemento in almacen.Certificates)
                 {
-                    certificados.Add(elemento);
+                    if (elemento.NotAfter >= DateTime.Now)
+                    {
+                        certificados.Add(elemento);
+                    }
                 }
                 almacen.Close();
 
