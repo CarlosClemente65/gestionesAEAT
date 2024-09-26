@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 
 namespace gestionesAEAT
 {
@@ -29,6 +30,9 @@ namespace gestionesAEAT
         [STAThread] //Atributo necesario para que la aplicacion pueda abrir el formulario de carga de certificado
         static void Main(string[] argumentos)
         {
+            //Configurar la carga de las bibliotecas necesarias
+            AppDomain.CurrentDomain.AssemblyResolve += CargarDlls;
+
             try
             {
                 if (argumentos.Length < 2)
@@ -290,6 +294,24 @@ namespace gestionesAEAT
                 //Si no se ha podido leer el certificado se solicita por pantalla
                 if (string.IsNullOrEmpty(parametros.serieCertificado)) parametros.serieCertificado = seleccionCertificados();
             }
+        }
+
+        private static Assembly CargarDlls(object sender, ResolveEventArgs argumentos)
+        {
+            // Obtiene la carpeta donde están las DLLs
+            string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "dse_dlls");
+
+            // Construye el nombre del archivo de la librería que se está buscando
+            string assemblyPath = Path.Combine(folderPath, new AssemblyName(argumentos.Name).Name + ".dll");
+
+            if (File.Exists(assemblyPath))
+            {
+                // Carga el ensamblado desde la ruta especificada
+                return Assembly.LoadFrom(assemblyPath);
+            }
+
+            // Si no encuentra el ensamblado, retorna null
+            return null;
         }
     }
 }
