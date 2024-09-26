@@ -56,10 +56,10 @@ namespace gestionesAEAT
         public string datosRepresentante { get; set; }
 
         [JsonProperty("I")]
-        public string passwordCertificado { get; set; }
+        public string huellaCertificado { get; set; }
 
         [JsonProperty("J")]
-        public string huellaCertificado { get; set; }
+        public string passwordCertificado { get; set; }
 
         public ElementosCertificado()
         {
