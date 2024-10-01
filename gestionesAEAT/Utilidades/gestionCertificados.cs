@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using Newtonsoft.Json;
+using System.Text.RegularExpressions;
+//using Newtonsoft.Json;
 
 
 namespace gestionesAEAT
 {
     public class ListaInfoCertificados
     {
-        [JsonProperty("certificados")]
+        //[JsonProperty("certificados")]
         public List<ElementosCertificado> certificadosInfo { get; set; }
 
         public ListaInfoCertificados()
@@ -21,17 +22,17 @@ namespace gestionesAEAT
     {
         //Clase que representa las propiedades de los certificados que necesitamos
         //Se ponen esas propiedades para mantener el mismo sistema de lectura que hacemos desde el basico
-        [JsonProperty("A")]
+        //[JsonProperty("A")]
         public string nifCertificado { get; set; }
 
-        [JsonProperty("B")]
+        //[JsonProperty("B")]
         public string titularCertificado { get; set; }
 
-        [JsonProperty("C")]
+        //[JsonProperty("C")]
         public string serieCertificado { get; set; }
 
         private DateTime _fechaEmision;
-        [JsonProperty("D")]
+        //[JsonProperty("D")]
         public DateTime fechaEmision
         {
             get => _fechaEmision.Date;
@@ -39,26 +40,26 @@ namespace gestionesAEAT
         }
 
         private DateTime _fechaValidez;
-        [JsonProperty("E")]
+        //[JsonProperty("E")]
         public DateTime fechaValidez
         {
             get => _fechaValidez.Date;
             set => _fechaValidez = value.Date;
         }
 
-        [JsonProperty("F")]
+        //[JsonProperty("F")]
         public string nifRepresentante { get; set; }
 
-        [JsonProperty("G")]
+        //[JsonProperty("G")]
         public string nombreRepresentante { get; set; }
 
-        [JsonProperty("H")]
+        //[JsonProperty("H")]
         public string datosRepresentante { get; set; }
 
-        [JsonProperty("I")]
+        //[JsonProperty("I")]
         public string huellaCertificado { get; set; }
 
-        [JsonProperty("J")]
+        //[JsonProperty("J")]
         public string passwordCertificado { get; set; }
 
         public ElementosCertificado()
@@ -99,11 +100,11 @@ namespace gestionesAEAT
                 //Metodo para cargar los certificados del almacen de windows
                 X509Store almacen = new X509Store(StoreLocation.CurrentUser);
                 almacen.Open(OpenFlags.ReadOnly);
-                foreach (X509Certificate2 elemento in almacen.Certificates)
+                foreach (X509Certificate2 certificado in almacen.Certificates)
                 {
-                    if (elemento.NotAfter >= DateTime.Now)
+                    if (certificado.NotAfter >= DateTime.Now)
                     {
-                        certificados.Add(elemento);
+                        certificados.Add(certificado);
                     }
                 }
                 almacen.Close();
@@ -339,13 +340,20 @@ namespace gestionesAEAT
                         break;
 
                     case "SERIALNUMBER": //NIF del titular del certificado o del representante si es juridica
-                        if (juridica)
+                        //Patron de NIF
+                        string patron = @"\b(?=(?:\w*[A-Z]){1,2})(?=(?:\w*\d){2,})\w{9}\b";
+                        Match match = Regex.Match(valor, patron);
+                        if (match.Success)
                         {
-                            info.nifRepresentante = valor.Substring(6);
-                        }
-                        else
-                        {
-                            nifCertificado = valor.Substring(6);
+                            string valorExtraido = match.Value;
+                            if (juridica)
+                            {
+                                info.nifRepresentante = valorExtraido;
+                            }
+                            else
+                            {
+                                nifCertificado = valorExtraido;
+                            }
                         }
                         break;
 

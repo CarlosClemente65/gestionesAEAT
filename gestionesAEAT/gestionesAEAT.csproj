@@ -8,7 +8,6 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>gestionesAEAT</RootNamespace>
     <AssemblyName>gestiones_aeat</AssemblyName>
-    <OutputFileName>gestiones_aeat</OutputFileName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
