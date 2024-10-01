@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 using gestionesAEAT.Metodos;
 using gestionesAEAT.Utilidades;
 
@@ -539,6 +541,31 @@ namespace gestionesAEAT
             string texto = mensaje.ToString();
             Console.WriteLine(mensaje.ToString());
             Console.ReadLine();
+        }
+
+        public string formateaXML(string xmlRespuesta)
+        {
+            // Crear un objeto XmlDocument y cargar el XML de la respuesta
+            XmlDocument documento = new XmlDocument();
+            documento.LoadXml(xmlRespuesta);
+
+            // Configurar el objeto XmlWriterSettings para evitar las sangrías
+            XmlWriterSettings settings = new XmlWriterSettings
+            {
+                Indent = true, // Sin sangrías
+                IndentChars = "",
+                NewLineHandling = NewLineHandling.Replace, // Asegurar nuevas líneas
+                NewLineChars = "\n", // Definir que las nuevas líneas sean con \n
+                //OmitXmlDeclaration = true // Omitir la declaración <?xml version="1.0" ?>
+            };
+
+            // Escribir el XML en un StringWriter usando los settings configurados
+            using (var stringWriter = new System.IO.StringWriter())
+            using (XmlWriter writer = XmlWriter.Create(stringWriter, settings))
+            {
+                documento.Save(writer);
+                return stringWriter.ToString();
+            }
         }
     }
 }

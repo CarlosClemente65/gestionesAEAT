@@ -10,11 +10,11 @@
 				2 = Validacion de modelos (no necesita certificado)
 				3 = Consulta de modelos presentados
 				4 = Ratificacion domicilio renta
-				5 = Descarga de datos fiscales de la renta
+				5 = Descarga de datos fiscales de la renta (no necesita certificado)
 				6 = Envio facturas al Sii
 			* ENTRADA= Nombre del fichero que contiene los datos a enviar en txt
 			* SALIDA= Nombre del fichero en el que se dejara la respuesta
-			* INDICESII= En el envio de facturas al sii indica el indice del fichero sii_urls.txt para hacer el envio
+			* URLSII= En el envio de facturas al sii indica la direccion a la que hacer el envio.
 			* OBLIGADO= Indica si el proceso necesita usar certificado (valores SI/NO). Si no se indica, los procesos
 						que lo necesiten pediran seleccionar un certificado
 			* BUSQUEDA= Cadena a buscar en los certificados instalados en la maquina a utilizar en el proceso (puede ser
@@ -124,14 +124,14 @@
 			TIPO=6
 			ENTRADA=facturaEmitida.xml
 			SALIDA=respuesta-xml
-			INDICESII=0
+			URLSII=https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fe/SiiFactFEV1SOAP
 			OBLIGADO=SI
 
 		Fichero de opciones con numero de serie del certificado
 			TIPO=6
 			ENTRADA=facturaEmitida.xml
 			SALIDA=respuesta-xml
-			INDICESII=0
+			URLSII=https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fe/SiiFactFEV1SOAP
 			OBLIGADO=SI
 			BUSQUEDA=numeroSerie
 
@@ -139,7 +139,7 @@
 			TIPO=6
 			ENTRADA=facturaEmitida.xml
 			SALIDA=respuesta-xml
-			INDICESII=0
+			URLSII=https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fe/SiiFactFEV1SOAP
 			OBLIGADO=SI
 			CERTIFICADO=certificado.pfx
 			PASSWORD=contraseña

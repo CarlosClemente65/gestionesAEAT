@@ -23,7 +23,7 @@ namespace gestionesAEAT.Utilidades
         public string refRenta { get; set; } = string.Empty;
         public string datosPersonales { get; set; } = "S";
         public string urlDescargaDf { get; set; } = string.Empty;
-        public int indiceUrl { get; set; } = -1;
+        public string UrlSii { get; set; } = string.Empty;
 
         public string cliente { get; set; } = string.Empty;
 
@@ -65,23 +65,15 @@ namespace gestionesAEAT.Utilidades
                         case "urlDescargaDf":
                             mensaje = "No se ha pasado la url de descarga de datos fiscales";
                             break;
-                    }
-                }
-            }
 
-            else if (tipoPropiedad.PropertyType == typeof(int))
-            {
-                if (propiedad == "indiceUrl")
-                {
-                    if ((int)valorPropiedad < 0)
-                    {
-                        mensaje = "No se ha pasado el indice de la url a la que enviar las facturas";
+                        case "UrlSii":
+                            mensaje = "No se ha pasado la url a la que enviar las facturas";
+                            break;
                     }
                 }
             }
 
             return mensaje;
-
         }
 
 
@@ -129,8 +121,8 @@ namespace gestionesAEAT.Utilidades
                         ficheroSalida = valor;
                         break;
 
-                    case "INDICESII":
-                        if (int.TryParse(valor, out int valorUrl)) indiceUrl = valorUrl;
+                    case "URLSII":
+                        UrlSii = valor;
                         break;
 
                     case "OBLIGADO":

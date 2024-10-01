@@ -2,11 +2,9 @@
 using gestionesAEAT.Metodos;
 using gestionesAEAT.Utilidades;
 using System;
-using System.Windows.Forms;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Reflection;
 
 namespace gestionesAEAT
 {
@@ -140,18 +138,9 @@ namespace gestionesAEAT
 
                 case "6":
                     //Presentacion facturas SII. Necesita certificado
-                    //El fichero 'sii_urls.txt' debe estar en la misma ruta que el fichero de entrada
-                    string ficheroUrls = Path.Combine(Path.GetDirectoryName(parametros.ficheroEntrada), "sii_urls.txt");
 
-                    //Controla que exista el fichero de urls
-                    if (!File.Exists(ficheroUrls))
-                    {
-                        log += "El fichero de urls no exite en la ruta de ejecucion";
-                        utilidad.SalirAplicacion(log);
-                    }
-
-                    EnvioSii nuevoEnvio = new EnvioSii(ficheroUrls);//Instanciacion de la clase que carga las urls
-                    nuevoEnvio.envioFacturas(parametros.ficheroEntrada, parametros.ficheroSalida, parametros.serieCertificado, instanciaCertificado, parametros.indiceUrl);
+                    EnvioSii nuevoEnvio = new EnvioSii();//Instanciacion de la clase 
+                    nuevoEnvio.envioFacturas(parametros.ficheroEntrada, parametros.ficheroSalida, parametros.serieCertificado, instanciaCertificado, parametros.UrlSii);
                     break;
             }
         }
@@ -165,6 +154,7 @@ namespace gestionesAEAT
             {
                 case "1":
                     tituloVentana = "Envio modelos AEAT";
+                    if (parametros.conCertificado == false) parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
@@ -183,6 +173,7 @@ namespace gestionesAEAT
 
                 case "3":
                     tituloVentana = "Consulta modelos presentados AEAT";
+                    if (parametros.conCertificado == false) parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
@@ -192,6 +183,7 @@ namespace gestionesAEAT
 
                 case "4":
                     tituloVentana = "Ratificar domicilio renta";
+                    if (parametros.conCertificado == false) parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
@@ -214,11 +206,12 @@ namespace gestionesAEAT
 
                 case "6":
                     tituloVentana = "Envio facturas al SII";
+                    if (parametros.conCertificado == false) parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
                     if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
-                    mensajeControl = Parametros.ControlDatosParametros("indiceUrl");
+                    mensajeControl = Parametros.ControlDatosParametros("UrlSii");
                     if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
 
                     break;
