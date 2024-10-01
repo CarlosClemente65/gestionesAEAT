@@ -126,7 +126,15 @@ namespace gestionesAEAT
 
             foreach (string elemento in elementos)
             {
-                File.Delete(elemento);
+                string extensionFichero = Path.GetExtension(elemento);
+                string tipo = Parametros.Configuracion.Parametros.tipo;
+                
+                //En el tipo 6 el nombre del fichero es igual el de entrada y salida, solo cambia la extension por lo que se excluye del borrado el .xml
+                if (tipo != "6")
+                {
+                    if (extensionFichero != ".xml") File.Delete(elemento);
+                }
+                else File.Delete(elemento);
             }
         }
 
