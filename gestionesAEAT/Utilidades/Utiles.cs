@@ -128,7 +128,7 @@ namespace gestionesAEAT
             {
                 //Evitamos borrar el fichero de entrada por si tienen el mismo nombre
                 bool controlEntrada = Path.GetFileName(Parametros.Configuracion.Parametros.ficheroEntrada) == Path.GetFileName(elemento);
-                
+
                 if (!controlEntrada)
                 {
                     File.Delete(elemento);
@@ -551,27 +551,31 @@ namespace gestionesAEAT
 
         public string formateaXML(string xmlRespuesta)
         {
-            // Crear un objeto XmlDocument y cargar el XML de la respuesta
+            // Crea un objeto XmlDocument y carga el XML de la respuesta
             XmlDocument documento = new XmlDocument();
             documento.LoadXml(xmlRespuesta);
 
-            // Configurar el objeto XmlWriterSettings para evitar las sangrías
-            XmlWriterSettings settings = new XmlWriterSettings
-            {
-                Indent = true, // Sin sangrías
-                IndentChars = "",
-                NewLineHandling = NewLineHandling.Replace, // Asegurar nuevas líneas
-                NewLineChars = "\n", // Definir que las nuevas líneas sean con \n
-                //OmitXmlDeclaration = true // Omitir la declaración <?xml version="1.0" ?>
-            };
+            //Procesar el XML para almacenar las respuestas pasadas como parametro
+            StringBuilder respuestaFormateada = new StringBuilder();
+            string[] etiquetas = Parametros.Configuracion.Parametros.respuesta;
 
-            // Escribir el XML en un StringWriter usando los settings configurados
-            using (var stringWriter = new System.IO.StringWriter())
-            using (XmlWriter writer = XmlWriter.Create(stringWriter, settings))
+            foreach (string etiqueta in etiquetas)
             {
-                documento.Save(writer);
-                return stringWriter.ToString();
+                string apertura = $"<{etiqueta}>";
+                string cierre = $"</{etiqueta}>";
+
+                int inicio = xmlRespuesta.IndexOf(apertura);
+                int final = xmlRespuesta.IndexOf(cierre);
+
+                if (inicio != -1 && final != -1) 
+                {
+                    inicio += apertura.Length;
+                    string contenido = xmlRespuesta.Substring(inicio, final - inicio);
+                    respuestaFormateada.AppendLine($"{etiqueta}={contenido}");
+                }
             }
+
+            return respuestaFormateada.ToString();
         }
 
         public void GrabarSalida(string mensajeSalida, string ficheroSalida)

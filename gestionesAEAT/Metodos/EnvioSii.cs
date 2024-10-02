@@ -27,8 +27,6 @@ namespace gestionesAEAT.Metodos
                 string respuestaXML = utilidad.formateaXML(envio.respuestaEnvioAEAT); 
                 File.WriteAllText(ficheroSalida, respuestaXML);
                 utilidad.GrabarSalida("OK", Parametros.Configuracion.Parametros.ficheroResultado);
-                
-
             }
             else
             {

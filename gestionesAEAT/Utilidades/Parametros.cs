@@ -7,6 +7,7 @@ namespace gestionesAEAT.Utilidades
 {
     public class Parametros
     {
+
         public string dsclave { get; set; } = string.Empty;
         public string tipo { get; set; } = string.Empty;
         public string pathFicheros { get; set; } = string.Empty;
@@ -14,7 +15,7 @@ namespace gestionesAEAT.Utilidades
         public string ficheroEntrada { get; set; } = string.Empty;
         public string ficheroSalida { get; set; } = string.Empty;
         public string ficheroErrores { get; set; } = string.Empty;
-        public string ficheroResultado {  get; set; } = string.Empty;
+        public string ficheroResultado { get; set; } = string.Empty;
         public string textoBusqueda { get; set; } = string.Empty;
         public string serieCertificado { get; set; } = string.Empty;
         public string ficheroCertificado { get; set; } = string.Empty;
@@ -25,7 +26,7 @@ namespace gestionesAEAT.Utilidades
         public string datosPersonales { get; set; } = "S";
         public string urlDescargaDf { get; set; } = string.Empty;
         public string UrlSii { get; set; } = string.Empty;
-
+        public string[] respuesta { get; set; } = new string[0];
         public string cliente { get; set; } = string.Empty;
 
 
@@ -126,6 +127,12 @@ namespace gestionesAEAT.Utilidades
                     case "URLSII":
                         UrlSii = valor;
                         break;
+
+                    case "RESPUESTA":
+                        //Almacena las etiquetas de las respuestas que queremos procesar
+                        respuesta = valor.Trim('[', ']').Split(',');
+                        break;
+
 
                     case "OBLIGADO":
                         if (valor.ToUpper() == "SI") conCertificado = true;
