@@ -555,27 +555,21 @@ namespace gestionesAEAT
             XmlDocument documento = new XmlDocument();
             documento.LoadXml(xmlRespuesta);
 
-            //Procesar el XML para almacenar las respuestas pasadas como parametro
-            StringBuilder respuestaFormateada = new StringBuilder();
-            string[] etiquetas = Parametros.Configuracion.Parametros.respuesta;
-
-            foreach (string etiqueta in etiquetas)
+            XmlWriterSettings settings = new XmlWriterSettings
             {
-                string apertura = $"<{etiqueta}>";
-                string cierre = $"</{etiqueta}>";
+                Indent = true,
+                IndentChars = "\t",
+                NewLineHandling = NewLineHandling.Replace,
+                NewLineChars = "\n",
+                OmitXmlDeclaration = false
+            };
 
-                int inicio = xmlRespuesta.IndexOf(apertura);
-                int final = xmlRespuesta.IndexOf(cierre);
-
-                if (inicio != -1 && final != -1) 
-                {
-                    inicio += apertura.Length;
-                    string contenido = xmlRespuesta.Substring(inicio, final - inicio);
-                    respuestaFormateada.AppendLine($"{etiqueta}={contenido}");
-                }
+            using (var stringWriter = new StringWriter())
+            using (var xmlWriter = XmlWriter.Create(stringWriter,settings))
+            {
+                documento.Save(xmlWriter);
+                return stringWriter.ToString();
             }
-
-            return respuestaFormateada.ToString();
         }
 
         public void GrabarSalida(string mensajeSalida, string ficheroSalida)
