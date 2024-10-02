@@ -126,15 +126,13 @@ namespace gestionesAEAT
 
             foreach (string elemento in elementos)
             {
-                string extensionFichero = Path.GetExtension(elemento);
-                string tipo = Parametros.Configuracion.Parametros.tipo;
+                //Evitamos borrar el fichero de entrada por si tienen el mismo nombre
+                bool controlEntrada = Path.GetFileName(Parametros.Configuracion.Parametros.ficheroEntrada) == Path.GetFileName(elemento);
                 
-                //En el tipo 6 el nombre del fichero es igual el de entrada y salida, solo cambia la extension por lo que se excluye del borrado el .xml
-                if (tipo != "6")
+                if (!controlEntrada)
                 {
-                    if (extensionFichero != ".xml") File.Delete(elemento);
+                    File.Delete(elemento);
                 }
-                else File.Delete(elemento);
             }
         }
 
@@ -574,6 +572,11 @@ namespace gestionesAEAT
                 documento.Save(writer);
                 return stringWriter.ToString();
             }
+        }
+
+        public void GrabarSalida(string mensajeSalida, string ficheroSalida)
+        {
+            File.WriteAllText(ficheroSalida, mensajeSalida);
         }
     }
 }
