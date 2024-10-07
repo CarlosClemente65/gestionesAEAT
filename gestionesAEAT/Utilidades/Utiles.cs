@@ -30,10 +30,10 @@ namespace gestionesAEAT
         public RespuestaValidarModelos respuestaValidarModelos; //Varible que almacena la respuesta completa de la AEAT en la validacion de modelos
         public RespuestaPresBasicaDos respuestaEnvioModelos; //Variable que almacena la respuesta completa de la AEAT en la presentacion directa
 
-        ////Permite controlar si la aplicacion se ejecuta por consola
-        [DllImport("kernel32.dll")]
-        private static extern bool AttachConsole(int dwProcessId);
-        private const int ATTACH_PARENT_PROCESS = -1;
+        //////Permite controlar si la aplicacion se ejecuta por consola
+        //[DllImport("kernel32.dll")]
+        //private static extern bool AttachConsole(int dwProcessId);
+        //private const int ATTACH_PARENT_PROCESS = -1;
 
         private static readonly Parametros parametros = Parametros.Configuracion.Parametros;
 
@@ -457,12 +457,12 @@ namespace gestionesAEAT
 
         public void SalirAplicacion(string mensaje)
         {
-            //Controla si se esta ejecutando la aplicacion desde la consola para poder mostrar un mensaje de uso
-            if (Environment.UserInteractive)
-            {
-                AttachConsole(ATTACH_PARENT_PROCESS);
-                MostrarAyuda();
-            }
+            ////Controla si se esta ejecutando la aplicacion desde la consola para poder mostrar un mensaje de uso
+            //if (Environment.UserInteractive)
+            //{
+            //    AttachConsole(ATTACH_PARENT_PROCESS);
+            //    MostrarAyuda();
+            //}
 
             //Si hay algun texto de error en el log, lo graba en un fichero
             if (!string.IsNullOrEmpty(mensaje))
