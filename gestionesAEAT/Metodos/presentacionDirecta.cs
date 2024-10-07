@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using gestionesAEAT.Utilidades;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -67,6 +68,8 @@ namespace gestionesAEAT.Metodos
         string textoSalida = string.Empty; //Texto que se grabara en el fichero de salida
 
         Utiles utilidad = Program.utilidad; //Instanciacion de las utilidades para poder usarlas
+        private static readonly Parametros parametros = Parametros.Configuracion.Parametros;
+
 
         public void envioPeticion(string ficheroEntrada, string ficheroSalida, string serieCertificado, GestionCertificados instanciaCertificado)
         {
@@ -220,7 +223,8 @@ namespace gestionesAEAT.Metodos
             {
                 //Si se ha producido algun error en el envio
                 string mensaje = $"MENSAJE = Proceso cancelado o error en el envio. {ex.Message}";
-                File.WriteAllText(Program.ficheroErrores, mensaje);
+                utilidad.GrabarSalida(mensaje, Program.ficheroResultado);
+                utilidad.grabadaSalida = true;
             }
         }
     }

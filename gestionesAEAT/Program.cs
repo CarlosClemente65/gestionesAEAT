@@ -19,10 +19,9 @@ namespace gestionesAEAT
         static string dsclave = string.Empty; //Unicamente servira como medida de seguridad de ejecucion y debe pasarse 'ds123456'
         static string ficheroOpciones = string.Empty;
         static string respuestaAeat = string.Empty;
-        static Parametros parametros = Parametros.Configuracion.Parametros;
+        public static string ficheroResultado = "errores.sal";
+        public static Parametros parametros = Parametros.Configuracion.Parametros;
         public static string tituloVentana = string.Empty;
-
-        public static string ficheroErrores = "errores.txt";
 
 
         [STAThread] //Atributo necesario para que la aplicacion pueda abrir el formulario de carga de certificado
@@ -88,7 +87,8 @@ namespace gestionesAEAT
             catch (Exception ex)
             {
                 string mensaje = $"Error en el proceso {ex.Message}";
-                File.WriteAllText(ficheroErrores, mensaje);
+                utilidad.GrabarSalida(mensaje, ficheroResultado);
+                utilidad.grabadaSalida = true;
             }
         }
 
@@ -140,7 +140,7 @@ namespace gestionesAEAT
                     //Presentacion facturas SII. Necesita certificado
 
                     EnvioSii nuevoEnvio = new EnvioSii();//Instanciacion de la clase 
-                    nuevoEnvio.envioFacturas(parametros.ficheroEntrada, parametros.ficheroSalida, parametros.serieCertificado, instanciaCertificado, parametros.UrlSii);
+                    nuevoEnvio.envioFacturas(instanciaCertificado);
                     break;
             }
         }
@@ -223,7 +223,7 @@ namespace gestionesAEAT
 
             //Borrado de ficheros de salida y errores si existen de una ejecucion anterior.
             utilidad.borrarFicheros(parametros.ficheroSalida);
-            utilidad.borrarFicheros(parametros.ficheroErrores);
+            utilidad.borrarFicheros(ficheroResultado);
 
             return mensaje.ToString();
         }

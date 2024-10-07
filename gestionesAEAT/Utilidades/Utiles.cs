@@ -35,6 +35,9 @@ namespace gestionesAEAT
         private static extern bool AttachConsole(int dwProcessId);
         private const int ATTACH_PARENT_PROCESS = -1;
 
+        private static readonly Parametros parametros = Parametros.Configuracion.Parametros;
+
+        public bool grabadaSalida = false;
 
         public string quitaRaros(string cadena)
         {
@@ -464,7 +467,8 @@ namespace gestionesAEAT
             //Si hay algun texto de error en el log, lo graba en un fichero
             if (!string.IsNullOrEmpty(mensaje))
             {
-                File.WriteAllText(Program.ficheroErrores, mensaje);
+                GrabarSalida(mensaje, Program.ficheroResultado);
+                grabadaSalida = true;
             }
             Environment.Exit(0);
         }
@@ -574,7 +578,7 @@ namespace gestionesAEAT
 
         public void GrabarSalida(string mensajeSalida, string ficheroSalida)
         {
-            File.WriteAllText(ficheroSalida, mensajeSalida);
+            if (!grabadaSalida) File.WriteAllText(ficheroSalida, mensajeSalida);
         }
     }
 }

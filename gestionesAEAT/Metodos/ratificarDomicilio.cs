@@ -1,4 +1,5 @@
-﻿using System;
+﻿using gestionesAEAT.Utilidades;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -20,6 +21,8 @@ namespace gestionesAEAT.Metodos
 
         Utiles utilidad = Program.utilidad; //Instanciacion de las utilidades para poder usarlas
         envioAeat envio = new envioAeat();
+        private static readonly Parametros parametros = Parametros.Configuracion.Parametros;
+
 
 
         public void envioPeticion(string serieCertificado, string ficheroEntrada, string ficheroSalida, int paso, GestionCertificados instanciaCertificado)
@@ -63,7 +66,8 @@ namespace gestionesAEAT.Metodos
             {
                 //Si se ha producido algun error en el envio
                 mensaje = $"MENSAJE = Proceso cancelado o error en el envio. {ex.Message}";
-                File.WriteAllText(Program.ficheroErrores, mensaje);
+                utilidad.GrabarSalida(mensaje, Program.ficheroResultado);
+                utilidad.grabadaSalida = true;
             }
 
             try
@@ -76,7 +80,8 @@ namespace gestionesAEAT.Metodos
             catch (Exception ex)
             {
                 mensaje = $"MENSAJE = Se ha producido un error al grabar los ficheros de respuesta. {ex.Message}";
-                File.WriteAllText(Program.ficheroErrores,mensaje);
+                utilidad.GrabarSalida(mensaje, Program.ficheroResultado);
+                utilidad.grabadaSalida = true;
             }
         }
 
@@ -167,7 +172,8 @@ namespace gestionesAEAT.Metodos
             catch (Exception ex)
             {
                 mensaje = $"Se ha producido un error al procesar el guion. {ex.Message}";
-                File.WriteAllText(Program.ficheroErrores, mensaje);
+                utilidad.GrabarSalida(mensaje, Program.ficheroResultado);
+                utilidad.grabadaSalida = true;
             }
         }
     }

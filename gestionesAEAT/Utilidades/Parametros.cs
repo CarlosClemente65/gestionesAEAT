@@ -14,8 +14,6 @@ namespace gestionesAEAT.Utilidades
         public string ficheroOpciones { get; set; } = string.Empty;
         public string ficheroEntrada { get; set; } = string.Empty;
         public string ficheroSalida { get; set; } = string.Empty;
-        public string ficheroErrores { get; set; } = string.Empty;
-        public string ficheroResultado { get; set; } = string.Empty;
         public string textoBusqueda { get; set; } = string.Empty;
         public string serieCertificado { get; set; } = string.Empty;
         public string ficheroCertificado { get; set; } = string.Empty;
@@ -119,9 +117,8 @@ namespace gestionesAEAT.Utilidades
                             //Como el fichero de salida siempre tiene que estar presente, se carga la ruta de los ficheros
                             pathFicheros = Path.GetDirectoryName(valor);
                         }
-                        ficheroErrores = Path.Combine(pathFicheros, "errores.txt");
                         ficheroSalida = valor;
-                        ficheroResultado = Path.ChangeExtension(ficheroSalida, "sal");
+                        Program.ficheroResultado = Path.ChangeExtension(ficheroSalida, "sal");
                         break;
 
                     case "URLSII":
