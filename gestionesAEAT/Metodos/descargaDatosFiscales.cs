@@ -6,6 +6,7 @@ using System.IO;
 using System.Xml.Serialization;
 using System.Xml;
 using System.Text.RegularExpressions;
+using gestionesAEAT.Utilidades;
 
 namespace gestionesAEAT.Metodos
 {
@@ -38,6 +39,10 @@ namespace gestionesAEAT.Metodos
         string refRenta = string.Empty;
         string datosPersonales = string.Empty;
         string ficheroSalida = string.Empty;
+        private static readonly Parametros parametros = Parametros.Configuracion.Parametros;
+
+        Utiles utilidad = new Utiles();
+
 
         public void descargaDF(string _urlDescarga, string _nifDf, string _refRenta, string _datosPersonales, string _ficheroSalida)
         {
@@ -109,13 +114,20 @@ namespace gestionesAEAT.Metodos
                     }
                 }
 
-                if (!string.IsNullOrEmpty(mensajeError)) File.WriteAllText(Program.ficheroErrores, mensajeError);
-                if (string.IsNullOrEmpty(mensajeError) && !string.IsNullOrEmpty(respuestaAEAT)) File.WriteAllText(ficheroSalida, respuestaAEAT);
+                //Si se ha producido un error se graba la salida y no se procesan mas veces la salida (grabarSalida = true)
+                if (!string.IsNullOrEmpty(mensajeError))
+                {
+                    utilidad.GrabarSalida(mensajeError, Program.ficheroResultado);
+                    utilidad.grabadaSalida = true;
+                }
+
+                if (string.IsNullOrEmpty(mensajeError) && !string.IsNullOrEmpty(respuestaAEAT)) utilidad.GrabarSalida(respuestaAEAT, ficheroSalida);
             }
 
             catch (Exception ex)
             {
-                File.WriteAllText(Program.ficheroErrores, $"Error al descargar datos fiscales. {ex.Message}");
+                utilidad.GrabarSalida($"Error al descargar datos fiscales. {ex.Message}", Program.ficheroResultado);
+                utilidad.grabadaSalida = true;
             }
         }
 
@@ -193,7 +205,8 @@ namespace gestionesAEAT.Metodos
             }
             catch (Exception ex)
             {
-                File.WriteAllText(Program.ficheroErrores, $"Error en la conexion con el servidor. {ex.Message}");
+                utilidad.GrabarSalida($"Error en la conexion con el servidor. {ex.Message}", Program.ficheroResultado);
+                utilidad.grabadaSalida = true;
             }
 
             return contenidoRespuesta;

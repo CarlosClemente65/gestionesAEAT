@@ -15,8 +15,12 @@ namespace gestionesAEAT.Metodos
         private static readonly Parametros parametros = Parametros.Configuracion.Parametros;
 
 
-        public void envioFacturas(string ficheroFacturas, string ficheroSalida, string serieCertificado, GestionCertificados instanciaCertificado, string UrlSii)
+        public void envioFacturas(GestionCertificados instanciaCertificado)
         {
+            string ficheroFacturas = parametros.ficheroEntrada;
+            string ficheroSalida = parametros.ficheroSalida;
+            string UrlSii = parametros.UrlSii;
+            string serieCertificado = parametros.serieCertificado;
             //Metodo para hacer el envio a la AEAT de las facturas del lote
 
             //Carga los datos a enviar desde el ficheroFacturas
@@ -28,14 +32,15 @@ namespace gestionesAEAT.Metodos
                 string respuestaAEAT = utilidad.formateaXML(envio.respuestaEnvioAEAT);
                 string pathRespuestaAEAT = Path.ChangeExtension(parametros.ficheroSalida, "aeat");
                 string respuestaDiagram = formateaXML(respuestaAEAT);
-                File.WriteAllText(ficheroSalida, respuestaDiagram);
-                File.WriteAllText(pathRespuestaAEAT, respuestaAEAT);
-                utilidad.GrabarSalida("OK", parametros.ficheroResultado);
+                utilidad.GrabarSalida(respuestaDiagram, ficheroSalida);
+                utilidad.GrabarSalida(respuestaAEAT, pathRespuestaAEAT);
+                utilidad.GrabarSalida("OK",Program.ficheroResultado);
             }
             else
             {
-                File.WriteAllText(ficheroSalida, envio.respuestaEnvioAEAT);
-                utilidad.GrabarSalida("Problemas al conectar con el servidor de la AEAT", parametros.ficheroResultado);
+                if (!string.IsNullOrEmpty(envio.respuestaEnvioAEAT)) utilidad.GrabarSalida(envio.respuestaEnvioAEAT, ficheroSalida);
+                utilidad.GrabarSalida("Problemas al conectar con el servidor de la AEAT", Program.ficheroResultado);
+                utilidad.grabadaSalida = true;
             }
         }
 
