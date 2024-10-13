@@ -14,7 +14,7 @@
 				6 = Envio facturas al Sii
 			* ENTRADA= Nombre del fichero que contiene los datos a enviar en txt
 			* SALIDA= Nombre del fichero en el que se dejara la respuesta
-			* URLSII= En el envio de facturas al sii indica la direccion a la que hacer el envio.
+			* URLSII= Url a la que hacer el envio de facturas al SII.
 			* OBLIGADO= Indica si el proceso necesita usar certificado (valores SI/NO). Si no se indica, los procesos
 						que lo necesiten pediran seleccionar un certificado
 			* BUSQUEDA= Cadena a buscar en los certificados instalados en la maquina a utilizar en el proceso (puede ser
@@ -25,6 +25,7 @@
 			* REFRENTA= Codigo de 5 caracteres de la referencia de renta para la descarga de datos fiscales
 			* DPRENTA= En la descarga de datos fiscales, indica si se quieren tambien los datos personales (opciones 'S' o 'N')
 			* URLRENTA= Direccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año)
+			* RESPUESTA= Etiquetas del xml de respuesta en el envio al SII de las que se quiere obtener los resultados
 
 /* Ejemplos de uso:
 	Envio modelos: gestionesAEAT dsclave opciones.txt 
@@ -126,6 +127,7 @@
 			SALIDA=respuesta-xml
 			URLSII=https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fe/SiiFactFEV1SOAP
 			OBLIGADO=SI
+			RESPUESTA=[siiR:CSV,sii:TimestampPresentacion,sii:NIF,sii:IDOtro,sii:ID,sii:NumSerieFacturaEmisor,sii:FechaExpedicionFacturaEmisor,siiR:EstadoRegistro,siiR:CodigoErrorRegistro,siiR:DescripcionErrorRegistro,faultstring]
 
 		Fichero de opciones con numero de serie del certificado
 			TIPO=6
@@ -134,6 +136,7 @@
 			URLSII=https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fe/SiiFactFEV1SOAP
 			OBLIGADO=SI
 			BUSQUEDA=numeroSerie
+			RESPUESTA=[siiR:CSV,sii:TimestampPresentacion,sii:NIF,sii:IDOtro,sii:ID,sii:NumSerieFacturaEmisor,sii:FechaExpedicionFacturaEmisor,siiR:EstadoRegistro,siiR:CodigoErrorRegistro,siiR:DescripcionErrorRegistro,faultstring]
 
 		Fichero de opciones con fichero y password del certificado
 			TIPO=6
@@ -143,6 +146,7 @@
 			OBLIGADO=SI
 			CERTIFICADO=certificado.pfx
 			PASSWORD=contraseña
+			RESPUESTA=[siiR:CSV,sii:TimestampPresentacion,sii:NIF,sii:IDOtro,sii:ID,sii:NumSerieFacturaEmisor,sii:FechaExpedicionFacturaEmisor,siiR:EstadoRegistro,siiR:CodigoErrorRegistro,siiR:DescripcionErrorRegistro,faultstring]
 			    
 Notas:
 	- Si no se pasan los datos del certificado y el proceso lo requerire, se mostrara el formulario de seleccion

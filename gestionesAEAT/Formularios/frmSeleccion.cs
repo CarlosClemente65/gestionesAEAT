@@ -18,6 +18,8 @@ namespace gestionesAEAT.Formularios
         public PropiedadesCertificados certificadoSeleccionado { get; set; }
         private List<PropiedadesCertificados> certificados;
 
+        public static string tituloVentana = string.Empty;
+
         //Variables necesarias para mover el formulario
         private bool mouseDown;
         private Point startPoint;
@@ -29,9 +31,9 @@ namespace gestionesAEAT.Formularios
             //Carga la relacion de certificados en el lineal del formulario
             certificados = Program.gestionCertificados.relacionCertificados();
             rellenarDGV();
-            if (!string.IsNullOrEmpty(Program.tituloVentana))
+            if (!string.IsNullOrEmpty(tituloVentana))
             {
-                Text = Program.tituloVentana;
+               Titulo.Text = $"Seleccion certificado - {tituloVentana}";
             }
             Load += frmSeleccion_Load;
         }
@@ -187,7 +189,7 @@ namespace gestionesAEAT.Formularios
         private void btnCerrar_Click(object sender, EventArgs e)
         {
             string mensaje = $"Proceso cancelado por el usuario.";
-            utilidad.GrabarSalida(mensaje, Program.ficheroResultado);
+            utilidad.GrabarSalida(mensaje, Parametros.ficheroResultado);
             Environment.Exit(0);
         }
 

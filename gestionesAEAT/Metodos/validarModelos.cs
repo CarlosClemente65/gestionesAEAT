@@ -61,8 +61,10 @@ namespace gestionesAEAT.Metodos
         Utiles utilidad = Program.utilidad; //Instanciacion de las utilidades para poder usarlas
         envioAeat envio = new envioAeat();
 
-        public void envioPeticion(string ficheroEntrada, string ficheroSalida)
+        public void envioPeticion()
         {
+            string ficheroEntrada = Parametros.ficheroEntrada;
+            string ficheroSalida = Parametros.ficheroSalida;
             textoEnvio = utilidad.prepararGuion(ficheroEntrada); //Se procesa el guion para formar una lista que se pueda pasar al resto de metodos
 
             try
@@ -156,7 +158,7 @@ namespace gestionesAEAT.Metodos
             {
                 //Si se ha producido algun error en el envio
                 string mensaje = $"MENSAJE = Proceso cancelado o error en el envio. {ex.Message}";
-                utilidad.GrabarSalida(mensaje, Program.ficheroResultado);
+                utilidad.GrabarSalida(mensaje, Parametros.ficheroResultado);
                 utilidad.grabadaSalida = true;
             }
         }

@@ -3,6 +3,7 @@ using System.Text;
 using System.Security.Cryptography.X509Certificates;
 using System.Net;
 using System;
+using gestionesAEAT.Utilidades;
 
 namespace gestionesAEAT
 {
@@ -99,7 +100,7 @@ namespace gestionesAEAT
 
             catch (Exception ex)
             {
-                utilidad.GrabarSalida($"Error en la conexion con el servidor. {ex.Message}", Program.ficheroResultado);
+                utilidad.GrabarSalida($"Error en la conexion con el servidor. {ex.Message}", Parametros.ficheroResultado);
                 utilidad.grabadaSalida = true;
             }
         }
@@ -164,7 +165,7 @@ namespace gestionesAEAT
             }
             catch (Exception ex)
             {
-                utilidad.GrabarSalida($"Error en la conexion con el servidor. {ex.Message}", Program.ficheroResultado);
+                utilidad.GrabarSalida($"Error en la conexion con el servidor. {ex.Message}", Parametros.ficheroResultado);
                 utilidad.grabadaSalida = true;
             }
         }

@@ -451,7 +451,7 @@ namespace gestionesAEAT
             //Si hay algun texto de error en el log, lo graba en un fichero
             if (!string.IsNullOrEmpty(mensaje))
             {
-                GrabarSalida(mensaje, Program.ficheroResultado);
+                GrabarSalida(mensaje, Parametros.ficheroResultado);
                 grabadaSalida = true;
             }
             Environment.Exit(0);
@@ -475,7 +475,7 @@ namespace gestionesAEAT
             mensaje.AppendLine(@"            6 = Envio de facturas al SII");
             mensaje.AppendLine(@"        ENTRADA= Nombre del fichero con los datos a enviar");
             mensaje.AppendLine(@"        SALIDA= Nombre del fichero donde se grabara la salida");
-            mensaje.AppendLine(@"        INDICESII= En el envio de facturas al sii indica el indice del fichero sii_urls.txt para hacer el envio");
+            mensaje.AppendLine(@"        URLSII= Url a la que hacer el envio de facturas al SII");
             mensaje.AppendLine(@"        OBLIGADO= Indica si el proceso necesita usar certificado (valores SI/NO)");
             mensaje.AppendLine(@"        BUSQUEDA= Cadena a buscar en los certificados (numero serie, NIF o nombre del titular del certificado");
             mensaje.AppendLine(@"        CERTIFICADO= Nombre del fichero.pfx que contiene el certificado digital");
@@ -484,6 +484,7 @@ namespace gestionesAEAT
             mensaje.AppendLine(@"        REFRENTA= Codigo de 5 caracteres de la referencia de renta para la descarga de datos fiscales");
             mensaje.AppendLine(@"        DPRENTA= En la descarga de datos fiscales indica si se quieren tambien los datos personales (valor 'S' o 'N')");
             mensaje.AppendLine(@"        URLRENTA= Direccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año)");
+            mensaje.AppendLine(@"        RESPUESTA= Etiquetas del xml de respuesta en el envio al SII de las que se quiere obtener los resultados");
             mensaje.AppendLine("\nEjemplos de fichero de opciones:");
             mensaje.AppendLine(@"    Envio modelos con numero de serie:");
             mensaje.AppendLine(@"        CLIENTE=00001");
@@ -524,7 +525,7 @@ namespace gestionesAEAT
             mensaje.AppendLine(@"        TIPO=6");
             mensaje.AppendLine(@"        ENTERADA=facturaEmitida.xml");
             mensaje.AppendLine(@"        SALIDA=respuesta.xml");
-            mensaje.AppendLine(@"        INDICESII=0");
+            mensaje.AppendLine(@"        URLSII=https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fe/SiiFactFEV1SOAP");
             mensaje.AppendLine(@"        OBLIGADO=SI");
             mensaje.AppendLine(@"        BUSQUEDA=nombreCertificado");
             mensaje.AppendLine("\nNotas:");

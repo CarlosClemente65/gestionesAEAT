@@ -50,8 +50,11 @@ namespace gestionesAEAT.Metodos
         Utiles utilidad = Program.utilidad;
 
 
-        public void obtenerModelos(string guion, string ficheroSalida, string serieCertificado)
+        public void obtenerModelos()
         {
+            string guion = Parametros.ficheroEntrada;
+            string ficheroSalida = Parametros.ficheroSalida;
+            string serieCertificado = Parametros.serieCertificado;
             //El parametro 'guion' es el texto que viene en el fichero que luego se formatea para poder hacer el envio al metodo 'envioAEAT.envioPOST'
             //El parametro 'serieCertificado' es necesario para luego pasarlo al metodo de envio
 
@@ -129,7 +132,6 @@ namespace gestionesAEAT.Metodos
                 {
                     //Forma el nombre del fichero PDF que se grabara para ponerlo en el fichero de respuestas.
                     respuesta.nombreFicheroPDF = $"{respuesta.nif}_{respuesta.modelo}_{respuesta.ejercicio}_{respuesta.periodo}_{respuesta.justificante}.pdf";
-                    textoSalida.AppendLine($"Modelo nº {elemento}");
                     textoSalida.AppendLine($"NIF: {respuesta.nif}");
                     textoSalida.AppendLine($"Modelo: {respuesta.modelo}");
                     textoSalida.AppendLine($"Ejercicio: {respuesta.ejercicio}");
@@ -139,7 +141,7 @@ namespace gestionesAEAT.Metodos
                     textoSalida.AppendLine($"Expediente: {respuesta.expediente}");
                     textoSalida.AppendLine($"Fecha presentacion: {respuesta.fechaYHoraPresentacion}");
                     textoSalida.AppendLine($"Fichero PDF: {respuesta.nombreFicheroPDF}");
-                    textoSalida.AppendLine();
+                    //textoSalida.AppendLine();
                     elemento++;
                 }
             }

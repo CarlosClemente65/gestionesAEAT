@@ -19,9 +19,6 @@ namespace gestionesAEAT
         //Nota. Revisar la asingacion de variables porque pueden estar en parametros todas.
         static string log = string.Empty; //Sirve para grabar un log de los posibles errores que se hayan producido en el proceso.
         static string dsclave = string.Empty; //Unicamente servira como medida de seguridad de ejecucion y debe pasarse 'ds123456'
-        static string respuestaAeat = string.Empty;
-        public static string ficheroResultado = "errores.sal";
-        public static string tituloVentana = string.Empty;
 
 
         [STAThread] //Atributo necesario para que la aplicacion pueda abrir el formulario de carga de certificado
@@ -85,7 +82,7 @@ namespace gestionesAEAT
             catch (Exception ex)
             {
                 string mensaje = $"Error en el proceso {ex.Message}";
-                utilidad.GrabarSalida(mensaje, ficheroResultado);
+                utilidad.GrabarSalida(mensaje, Parametros.ficheroResultado);
                 utilidad.grabadaSalida = true;
             }
         }
@@ -97,32 +94,34 @@ namespace gestionesAEAT
                 case "1":
                     //Envio de modelos. Necesita certificado 
                     presentacionDirecta envioDirecto = new presentacionDirecta();
-                    envioDirecto.envioPeticion(Parametros.ficheroEntrada, Parametros.ficheroSalida, Parametros.serieCertificado);
+                    envioDirecto.envioPeticion();
                     break;
 
                 case "2":
                     //Validacion de modelos. No necesita certificado
                     validarModelos valida = new validarModelos();
-                    valida.envioPeticion(Parametros.ficheroEntrada, Parametros.ficheroSalida);
+                    valida.envioPeticion();
                     break;
 
                 case "3":
                     //Consulta de modelos presentados. Necesita certificado
                     descargaModelos descarga = new descargaModelos();
-                    descarga.obtenerModelos(Parametros.ficheroEntrada, Parametros.ficheroSalida, Parametros.serieCertificado);
+                    descarga.obtenerModelos();
                     break;
 
                 case "4":
                     //Ratificacion de domicilio. Necesita certificado
                     ratificarDomicilio ratifica = new ratificarDomicilio();
 
+                    int paso = 1;
                     //Se procesa para el titular primero
-                    ratifica.envioPeticion(Parametros.serieCertificado, Parametros.ficheroEntrada, Parametros.ficheroSalida, 1);
+                    ratifica.envioPeticion(paso);
 
                     //Si se ha pasado el nif del conyuge se procesa de nuevo
                     if (ratifica.nifConyuge)
                     {
-                        ratifica.envioPeticion(Parametros.serieCertificado, Parametros.ficheroEntrada, Parametros.ficheroSalida, 2);
+                        paso = 2;
+                        ratifica.envioPeticion(paso);
                     }
                     break;
 
@@ -130,7 +129,7 @@ namespace gestionesAEAT
                     //Descarga datos fiscales renta. No necesita certificado
                     //Se puede hacer con certificado, pero esta preparado para hacerlo con la referencia de renta.
                     descargaDatosFiscales descargaDF = new descargaDatosFiscales();
-                    descargaDF.descargaDF(Parametros.urlDescargaDf, Parametros.nifDf, Parametros.refRenta, Parametros.datosPersonales, Parametros.ficheroSalida);
+                    descargaDF.descargaDF();
                     break;
 
                 case "6":
@@ -148,7 +147,7 @@ namespace gestionesAEAT
             switch (tipo)
             {
                 case "1":
-                    tituloVentana = "Envio modelos AEAT";
+                   frmSeleccion.tituloVentana = "Envio modelos AEAT";
                     if (Parametros.conCertificado == false) Parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
@@ -158,7 +157,7 @@ namespace gestionesAEAT
                     break;
 
                 case "2":
-                    tituloVentana = "Validacion de modelos";
+                    frmSeleccion.tituloVentana = "Validacion de modelos";
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
@@ -167,7 +166,7 @@ namespace gestionesAEAT
                     break;
 
                 case "3":
-                    tituloVentana = "Consulta modelos presentados AEAT";
+                    frmSeleccion.tituloVentana = "Consulta modelos presentados AEAT";
                     if (Parametros.conCertificado == false) Parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
@@ -177,7 +176,7 @@ namespace gestionesAEAT
                     break;
 
                 case "4":
-                    tituloVentana = "Ratificar domicilio renta";
+                    frmSeleccion.tituloVentana = "Ratificar domicilio renta";
                     if (Parametros.conCertificado == false) Parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
@@ -187,7 +186,7 @@ namespace gestionesAEAT
                     break;
 
                 case "5":
-                    tituloVentana = "Descarga datos fiscales renta";
+                    frmSeleccion.tituloVentana = "Descarga datos fiscales renta";
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
                     if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
                     mensajeControl = Parametros.ControlDatosParametros("nifDf");
@@ -200,7 +199,7 @@ namespace gestionesAEAT
                     break;
 
                 case "6":
-                    tituloVentana = "Envio facturas al SII";
+                    frmSeleccion.tituloVentana = "Envio facturas al SII";
                     if (Parametros.conCertificado == false) Parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
@@ -218,7 +217,7 @@ namespace gestionesAEAT
 
             //Borrado de ficheros de salida y errores si existen de una ejecucion anterior.
             utilidad.borrarFicheros(Parametros.ficheroSalida);
-            utilidad.borrarFicheros(ficheroResultado);
+            utilidad.borrarFicheros(Parametros.ficheroResultado);
 
             return mensaje.ToString();
         }

@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace gestionesAEAT.Utilidades
 {
@@ -26,11 +25,6 @@ namespace gestionesAEAT.Utilidades
         public static string[] respuesta { get; set; } = new string[0];
         public static string cliente { get; set; } = string.Empty;
 
-
-        public Parametros()
-        {
-            //CargarOpciones();
-        }
         public static void CargarOpciones(string _ficheroOpciones)
         {
             ficheroOpciones = _ficheroOpciones;
@@ -73,7 +67,7 @@ namespace gestionesAEAT.Utilidades
                             pathFicheros = Path.GetDirectoryName(valor);
                         }
                         ficheroSalida = valor;
-                        Parametros.ficheroResultado = Path.ChangeExtension(ficheroSalida, "sal");
+                        ficheroResultado = Path.ChangeExtension(ficheroSalida, "sal");
                         break;
 
                     case "URLSII":

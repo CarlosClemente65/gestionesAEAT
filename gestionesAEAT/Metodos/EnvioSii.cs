@@ -36,13 +36,14 @@ namespace gestionesAEAT.Metodos
             else
             {
                 if (!string.IsNullOrEmpty(envio.respuestaEnvioAEAT)) utilidad.GrabarSalida(envio.respuestaEnvioAEAT, ficheroSalida);
-                utilidad.GrabarSalida("Problemas al conectar con el servidor de la AEAT", Program.ficheroResultado);
+                utilidad.GrabarSalida("Problemas al conectar con el servidor de la AEAT", Parametros.ficheroResultado);
                 utilidad.grabadaSalida = true;
             }
         }
 
         public string formateaXML(string xmlRespuesta)
         {
+            //Metodo para obtener las respuestas del XML de respuesta de Hacienda segun la relacion de respuestas que se pasan en el guion.
             string[] etiquetas = Parametros.respuesta;
             StringBuilder respuestaFormateada = new StringBuilder();
 
@@ -56,7 +57,9 @@ namespace gestionesAEAT.Metodos
             namespaceManager.AddNamespace("sii", "https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/SuministroInformacion.xsd");
             namespaceManager.AddNamespace("siiR", "https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/RespuestaSuministro.xsd");
 
+            //Se carga la 'listaRespuestas' dentro del nodo 'siiR:RespuestaLinea'
             XmlNodeList listaRespuestas = documento.SelectNodes("//siiR:RespuestaLinea", namespaceManager);
+            //Solo se procesan las respuestas dentro del nodo 'env:Body'
             XmlNode bodyNode = documento.SelectSingleNode("//env:Body", namespaceManager);
 
             //Iterar sobre cada nodo de respuesta

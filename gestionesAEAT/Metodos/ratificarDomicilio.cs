@@ -23,8 +23,11 @@ namespace gestionesAEAT.Metodos
         envioAeat envio = new envioAeat();
 
 
-        public void envioPeticion(string serieCertificado, string ficheroEntrada, string ficheroSalida, int paso)
+        public void envioPeticion(int paso)
         {
+            string serieCertificado = Parametros.serieCertificado;
+            string ficheroEntrada = Parametros.ficheroEntrada;
+            string ficheroSalida = Parametros.ficheroSalida;
 
             string rutaSalida = Path.GetDirectoryName(ficheroEntrada);
             string ficheroSalidaConyuge = Path.Combine(rutaSalida, Path.GetFileNameWithoutExtension(ficheroSalida) + "2" + Path.GetExtension(ficheroSalida));
@@ -64,7 +67,7 @@ namespace gestionesAEAT.Metodos
             {
                 //Si se ha producido algun error en el envio
                 mensaje = $"MENSAJE = Proceso cancelado o error en el envio. {ex.Message}";
-                utilidad.GrabarSalida(mensaje, Program.ficheroResultado);
+                utilidad.GrabarSalida(mensaje, Parametros.ficheroResultado);
                 utilidad.grabadaSalida = true;
             }
 
@@ -79,7 +82,7 @@ namespace gestionesAEAT.Metodos
             catch (Exception ex)
             {
                 mensaje = $"MENSAJE = Se ha producido un error al grabar los ficheros de respuesta. {ex.Message}";
-                utilidad.GrabarSalida(mensaje, Program.ficheroResultado);
+                utilidad.GrabarSalida(mensaje, Parametros.ficheroResultado);
                 utilidad.grabadaSalida = true;
             }
         }
@@ -93,7 +96,7 @@ namespace gestionesAEAT.Metodos
             string car;
             string valor;
             string cadena = string.Empty;
-             var respuesta = utilidad.respuesta;
+            var respuesta = utilidad.respuesta;
             for (int i = 0; i < respuesta.Count; i++)
             {
                 //Busca la posicion de la palabra que se pasa en el bloque 'respuesta' del fichero de entrada
@@ -171,7 +174,7 @@ namespace gestionesAEAT.Metodos
             catch (Exception ex)
             {
                 mensaje = $"Se ha producido un error al procesar el guion. {ex.Message}";
-                utilidad.GrabarSalida(mensaje, Program.ficheroResultado);
+                utilidad.GrabarSalida(mensaje, Parametros.ficheroResultado);
                 utilidad.grabadaSalida = true;
             }
         }

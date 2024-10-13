@@ -43,14 +43,14 @@ namespace gestionesAEAT.Metodos
         Utiles utilidad = new Utiles();
 
 
-        public void descargaDF(string _urlDescarga, string _nifDf, string _refRenta, string _datosPersonales, string _ficheroSalida)
+        public void descargaDF()
         {
             //Metodo para descargar los datos fiscales
-            this.urlDescarga = _urlDescarga;
-            this.nifDf = _nifDf;
-            this.refRenta = _refRenta;
-            this.datosPersonales = _datosPersonales;
-            this.ficheroSalida = _ficheroSalida;
+            urlDescarga = Parametros.urlDescargaDf;
+            nifDf = Parametros.nifDf;
+            refRenta = Parametros.refRenta;
+            datosPersonales = Parametros.datosPersonales;
+            ficheroSalida = Parametros.ficheroSalida;
             string respuestaAEAT = string.Empty;
             byte[] datosEnvio = null;
 
@@ -117,7 +117,7 @@ namespace gestionesAEAT.Metodos
                 //Si se ha producido un error se graba la salida y no se procesan mas veces la salida (grabarSalida = true)
                 if (!string.IsNullOrEmpty(mensajeError))
                 {
-                    utilidad.GrabarSalida(mensajeError, Program.ficheroResultado);
+                    utilidad.GrabarSalida(mensajeError, Parametros.ficheroResultado);
                     utilidad.grabadaSalida = true;
                 }
 
@@ -126,7 +126,7 @@ namespace gestionesAEAT.Metodos
 
             catch (Exception ex)
             {
-                utilidad.GrabarSalida($"Error al descargar datos fiscales. {ex.Message}", Program.ficheroResultado);
+                utilidad.GrabarSalida($"Error al descargar datos fiscales. {ex.Message}", Parametros.ficheroResultado);
                 utilidad.grabadaSalida = true;
             }
         }
@@ -206,7 +206,7 @@ namespace gestionesAEAT.Metodos
             }
             catch (Exception ex)
             {
-                utilidad.GrabarSalida($"Error en la conexion con el servidor. {ex.Message}", Program.ficheroResultado);
+                utilidad.GrabarSalida($"Error en la conexion con el servidor. {ex.Message}", Parametros.ficheroResultado);
                 utilidad.grabadaSalida = true;
             }
 

@@ -61,7 +61,6 @@ namespace gestionesAEAT.Metodos
         string valor = string.Empty; //Valor del atributo que se pasa a la AEAT
 
         string respuestaAEAT; //Contenido de la respuesta de la AEAT a la solicitud enviada
-        //string estadoRespuesta; //Devuelve OK si la respuesta es correcta
 
         List<string> textoEnvio = new List<string>(); //Prepara una lista con los datos del guion
 
@@ -70,8 +69,12 @@ namespace gestionesAEAT.Metodos
         Utiles utilidad = Program.utilidad; //Instanciacion de las utilidades para poder usarlas
         
 
-        public void envioPeticion(string ficheroEntrada, string ficheroSalida, string serieCertificado)
+        public void envioPeticion()
         {
+            string ficheroEntrada = Parametros.ficheroEntrada;
+            string ficheroSalida = Parametros.ficheroSalida;
+            string serieCertificado = Parametros.serieCertificado;
+
             envioAeat envio = new envioAeat();
 
             textoEnvio = utilidad.prepararGuion(ficheroEntrada); //Se procesa el guion para formar una lista que se pueda pasar al resto de metodos
@@ -225,7 +228,7 @@ namespace gestionesAEAT.Metodos
             {
                 //Si se ha producido algun error en el envio
                 string mensaje = $"MENSAJE = Proceso cancelado o error en el envio. {ex.Message}";
-                utilidad.GrabarSalida(mensaje, Program.ficheroResultado);
+                utilidad.GrabarSalida(mensaje, Parametros.ficheroResultado);
                 utilidad.grabadaSalida = true;
             }
         }
