@@ -12,6 +12,7 @@ namespace gestionesAEAT.Utilidades
         public static string ficheroOpciones { get; set; } = string.Empty;
         public static string ficheroEntrada { get; set; } = string.Empty;
         public static string ficheroSalida { get; set; } = string.Empty;
+        public static string ficheroResultado { get; set; } = "errores.sal";
         public static string textoBusqueda { get; set; } = string.Empty;
         public static string serieCertificado { get; set; } = string.Empty;
         public static string ficheroCertificado { get; set; } = string.Empty;
@@ -72,7 +73,7 @@ namespace gestionesAEAT.Utilidades
                             pathFicheros = Path.GetDirectoryName(valor);
                         }
                         ficheroSalida = valor;
-                        Program.ficheroResultado = Path.ChangeExtension(ficheroSalida, "sal");
+                        Parametros.ficheroResultado = Path.ChangeExtension(ficheroSalida, "sal");
                         break;
 
                     case "URLSII":

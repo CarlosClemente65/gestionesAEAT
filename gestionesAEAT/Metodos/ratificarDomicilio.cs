@@ -44,7 +44,7 @@ namespace gestionesAEAT.Metodos
 
                 datosEnvio = formateoCabecera(paso); //Genera los datos a enviar (paso 1 para el titular y paso 2 para el conyuge)
 
-                envio.envioPost(utilidad.url, datosEnvio, serieCertificado);//Metodo con certificado
+                envio.envioPost(utilidad.url, datosEnvio, serieCertificado, "form");//Metodo con certificado
                 respuestaAEAT = envio.respuestaEnvioAEAT;
 
                 if (envio.estadoRespuestaAEAT == "OK")
@@ -73,6 +73,7 @@ namespace gestionesAEAT.Metodos
                 //Graba el fichero con la respuesta del titular
                 if (paso == 1) File.WriteAllText(ficheroSalida, mensaje, Encoding.Default);
                 if (paso == 2 && nifConyuge) File.WriteAllText(ficheroSalidaConyuge, mensaje, Encoding.Default);
+                File.WriteAllText(Parametros.ficheroResultado, "OK");
             }
 
             catch (Exception ex)

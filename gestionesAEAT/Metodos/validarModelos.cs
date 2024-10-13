@@ -146,6 +146,9 @@ namespace gestionesAEAT.Metodos
                         byte[] contenidoPDF = Convert.FromBase64String(respuestaPDF);
                         File.WriteAllBytes(ficheroPdf, contenidoPDF);
                     }
+
+                    //Graba el ficheroResultado
+                    File.WriteAllText(Parametros.ficheroResultado, "OK");
                 }
             }
 

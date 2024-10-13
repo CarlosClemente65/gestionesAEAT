@@ -31,7 +31,7 @@ namespace gestionesAEAT.Metodos
                 string respuestaDiagram = formateaXML(respuestaAEAT);
                 utilidad.GrabarSalida(respuestaDiagram, ficheroSalida);
                 utilidad.GrabarSalida(respuestaAEAT, pathRespuestaAEAT);
-                utilidad.GrabarSalida("OK",Program.ficheroResultado);
+                utilidad.GrabarSalida("OK",Parametros.ficheroResultado);
             }
             else
             {

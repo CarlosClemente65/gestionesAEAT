@@ -215,6 +215,9 @@ namespace gestionesAEAT.Metodos
                         string rutaHtml = Path.ChangeExtension(ficheroSalida, "html");
                         File.WriteAllText(rutaHtml, textoSalida);
                     }
+
+                    //Grabar el fichero de respuesta
+                    File.WriteAllText(Parametros.ficheroResultado,"OK");
                 }
             }
 

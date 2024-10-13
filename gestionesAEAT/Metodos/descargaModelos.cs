@@ -59,12 +59,22 @@ namespace gestionesAEAT.Metodos
             string datosEnvio = string.Empty;
 
             datosEnvio = utilidad.procesarGuionHtml(guion); //Formatea el guion para poder pasarlo al servidor
-            envio.envioPost(utilidad.url, datosEnvio, serieCertificado);
+            envio.envioPost(utilidad.url, datosEnvio, serieCertificado, "form");
 
             if (envio.estadoRespuestaAEAT == "OK") //Si no ha habido error en la comunicacion
             {
-                respuestaXML = formateaRespuesta(envio.respuestaEnvioAEAT); //Se recibe un XML con la relacion de modelos presentados
-                File.WriteAllText(ficheroSalida, respuestaXML);
+                File.WriteAllText(Parametros.ficheroResultado, "OK");
+                if (envio.respuestaEnvioAEAT.Contains("<!DOCTYPE html>"))
+                {
+                    //Puede llegar un html con algun tipo de error
+                    string path = Path.ChangeExtension(Parametros.ficheroResultado, "html");
+                    File.WriteAllText(path, envio.respuestaEnvioAEAT);
+                }
+                else
+                {
+                    respuestaXML = formateaRespuesta(envio.respuestaEnvioAEAT); //Se recibe un XML con la relacion de modelos presentados
+                    File.WriteAllText(ficheroSalida, respuestaXML);
+                }
             }
             else
             {
@@ -85,7 +95,7 @@ namespace gestionesAEAT.Metodos
             foreach (var respuesta in respuestasCorrectas)
             {
                 datosEnvio = $"COMPLETA=SI&ORIGEN=E&NIF={respuesta.nif}&CSV={respuesta.csv}";
-                envio.envioPost(url, datosEnvio,"form");//Metodo sin certificado
+                envio.envioPost(url, datosEnvio, "form");//Metodo sin certificado
                 if (envio.estadoRespuestaAEAT == "OK")
                 {
                     string ficheroPDF = Path.Combine(pathSalida, respuesta.nombreFicheroPDF);

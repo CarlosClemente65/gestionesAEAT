@@ -111,6 +111,7 @@ namespace gestionesAEAT.Metodos
 
                             break;
                     }
+                    File.WriteAllText(Parametros.ficheroResultado, "OK");
                 }
 
                 //Si se ha producido un error se graba la salida y no se procesan mas veces la salida (grabarSalida = true)
@@ -200,6 +201,7 @@ namespace gestionesAEAT.Metodos
                         string estadoRespuestaAEAT1 = respuesta1.StatusDescription;
                         if (estadoRespuestaAEAT1 == "OK") contenidoRespuesta = reader1.ReadToEnd();
                     }
+                    File.WriteAllText(Parametros.ficheroResultado, "OK");
                 }
             }
             catch (Exception ex)

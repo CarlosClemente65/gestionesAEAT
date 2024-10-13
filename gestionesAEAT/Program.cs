@@ -234,6 +234,8 @@ namespace gestionesAEAT
 
         private static void ControlCertificado()
         {
+            //Carga los certificados del almacen
+            Program.gestionCertificados.cargarCertificadosAlmacen();
             string mensaje = string.Empty;
             //Metodo para controlar si no se ha seleccionado un certificado y solicitarlo por pantalla
             if (Parametros.conCertificado)
