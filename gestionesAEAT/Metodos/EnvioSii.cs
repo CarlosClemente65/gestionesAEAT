@@ -1,7 +1,5 @@
 ﻿using gestionesAEAT.Utilidades;
-using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using System.Xml;
 
@@ -12,25 +10,24 @@ namespace gestionesAEAT.Metodos
         //Instanciacion de las clases de envio y utilidades
         envioAeat envio = new envioAeat();
         Utiles utilidad = Program.utilidad;
-        private static readonly Parametros parametros = Parametros.Configuracion.Parametros;
 
 
-        public void envioFacturas(GestionCertificados instanciaCertificado)
+        public void envioFacturas()
         {
-            string ficheroFacturas = parametros.ficheroEntrada;
-            string ficheroSalida = parametros.ficheroSalida;
-            string UrlSii = parametros.UrlSii;
-            string serieCertificado = parametros.serieCertificado;
+            string ficheroFacturas = Parametros.ficheroEntrada;
+            string ficheroSalida = Parametros.ficheroSalida;
+            string UrlSii = Parametros.UrlSii;
+            string serieCertificado = Parametros.serieCertificado;
             //Metodo para hacer el envio a la AEAT de las facturas del lote
 
             //Carga los datos a enviar desde el ficheroFacturas
             string datosEnvio = File.ReadAllText(ficheroFacturas);
-            envio.envioPost(UrlSii, datosEnvio, serieCertificado, instanciaCertificado, "xml");
+            envio.envioPost(UrlSii, datosEnvio, serieCertificado, "xml");
 
             if (envio.estadoRespuestaAEAT == "OK") //Si no ha habido error en la comunicacion
             {
                 string respuestaAEAT = utilidad.formateaXML(envio.respuestaEnvioAEAT);
-                string pathRespuestaAEAT = Path.ChangeExtension(parametros.ficheroSalida, "aeat");
+                string pathRespuestaAEAT = Path.ChangeExtension(Parametros.ficheroSalida, "aeat");
                 string respuestaDiagram = formateaXML(respuestaAEAT);
                 utilidad.GrabarSalida(respuestaDiagram, ficheroSalida);
                 utilidad.GrabarSalida(respuestaAEAT, pathRespuestaAEAT);
@@ -46,7 +43,7 @@ namespace gestionesAEAT.Metodos
 
         public string formateaXML(string xmlRespuesta)
         {
-            string[] etiquetas = Parametros.Configuracion.Parametros.respuesta;
+            string[] etiquetas = Parametros.respuesta;
             StringBuilder respuestaFormateada = new StringBuilder();
 
             // Crea un objeto XmlDocument y carga el XML de la respuesta

@@ -60,8 +60,6 @@ namespace gestionesAEAT.Metodos
 
         Utiles utilidad = Program.utilidad; //Instanciacion de las utilidades para poder usarlas
         envioAeat envio = new envioAeat();
-        private static readonly Parametros parametros = Parametros.Configuracion.Parametros;
-
 
         public void envioPeticion(string ficheroEntrada, string ficheroSalida)
         {

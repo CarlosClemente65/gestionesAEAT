@@ -50,7 +50,7 @@ namespace gestionesAEAT.Metodos
         Utiles utilidad = Program.utilidad;
 
 
-        public void obtenerModelos(string guion, string ficheroSalida, string serieCertificado, GestionCertificados instanciaCertificado)
+        public void obtenerModelos(string guion, string ficheroSalida, string serieCertificado)
         {
             //El parametro 'guion' es el texto que viene en el fichero que luego se formatea para poder hacer el envio al metodo 'envioAEAT.envioPOST'
             //El parametro 'serieCertificado' es necesario para luego pasarlo al metodo de envio
@@ -59,7 +59,7 @@ namespace gestionesAEAT.Metodos
             string datosEnvio = string.Empty;
 
             datosEnvio = utilidad.procesarGuionHtml(guion); //Formatea el guion para poder pasarlo al servidor
-            envio.envioPost(utilidad.url, datosEnvio, serieCertificado, instanciaCertificado);
+            envio.envioPost(utilidad.url, datosEnvio, serieCertificado);
 
             if (envio.estadoRespuestaAEAT == "OK") //Si no ha habido error en la comunicacion
             {
@@ -72,7 +72,7 @@ namespace gestionesAEAT.Metodos
             }
             if (respuestasCorrectas.Count > 0)
             {
-                descargaPDF(Parametros.Configuracion.Parametros.pathFicheros);
+                descargaPDF(Parametros.pathFicheros);
             }
         }
 

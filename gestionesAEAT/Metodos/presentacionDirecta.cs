@@ -68,10 +68,9 @@ namespace gestionesAEAT.Metodos
         string textoSalida = string.Empty; //Texto que se grabara en el fichero de salida
 
         Utiles utilidad = Program.utilidad; //Instanciacion de las utilidades para poder usarlas
-        private static readonly Parametros parametros = Parametros.Configuracion.Parametros;
+        
 
-
-        public void envioPeticion(string ficheroEntrada, string ficheroSalida, string serieCertificado, GestionCertificados instanciaCertificado)
+        public void envioPeticion(string ficheroEntrada, string ficheroSalida, string serieCertificado)
         {
             envioAeat envio = new envioAeat();
 
@@ -145,7 +144,7 @@ namespace gestionesAEAT.Metodos
                     Formatting = Formatting.Indented
                 });
 
-                envio.envioPost(utilidad.url, jsonEnvio, serieCertificado, instanciaCertificado, "json");
+                envio.envioPost(utilidad.url, jsonEnvio, serieCertificado, "json");
                 respuestaAEAT = envio.respuestaEnvioAEAT;
 
                 if (envio.estadoRespuestaAEAT == "OK")

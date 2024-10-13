@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml;
-using System.Xml.Linq;
 using gestionesAEAT.Metodos;
 using gestionesAEAT.Utilidades;
 
@@ -29,8 +27,6 @@ namespace gestionesAEAT
 
         public RespuestaValidarModelos respuestaValidarModelos; //Varible que almacena la respuesta completa de la AEAT en la validacion de modelos
         public RespuestaPresBasicaDos respuestaEnvioModelos; //Variable que almacena la respuesta completa de la AEAT en la presentacion directa
-
-        private static readonly Parametros parametros = Parametros.Configuracion.Parametros;
 
         public bool grabadaSalida = false;
 
@@ -125,7 +121,7 @@ namespace gestionesAEAT
             foreach (string elemento in elementos)
             {
                 //Evitamos borrar el fichero de entrada por si tienen el mismo nombre
-                bool controlEntrada = Path.GetFileName(Parametros.Configuracion.Parametros.ficheroEntrada) == Path.GetFileName(elemento);
+                bool controlEntrada = Path.GetFileName(Parametros.ficheroEntrada) == Path.GetFileName(elemento);
 
                 if (!controlEntrada)
                 {
@@ -320,7 +316,7 @@ namespace gestionesAEAT
                     }
 
                 }
-                cliente = Parametros.Configuracion.Parametros.cliente;
+                cliente = Parametros.cliente;
 
                 respuestaHtml = generarHtml(modelo, ejercicio, periodo, cliente);
             }

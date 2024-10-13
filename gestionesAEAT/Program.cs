@@ -1,10 +1,11 @@
-﻿using gestionesAEAT.Formularios;
+﻿using GestionCertificadosDigitales;
+using gestionesAEAT.Formularios;
 using gestionesAEAT.Metodos;
 using gestionesAEAT.Utilidades;
 using System;
 using System.IO;
-using System.Linq;
 using System.Text;
+
 
 namespace gestionesAEAT
 {
@@ -12,15 +13,14 @@ namespace gestionesAEAT
     {
         //Instanciacion de las clases a nivel de clase para hacerlas accesibles a toda la clase
         public static Utiles utilidad = new Utiles();
-        static GestionCertificados instanciaCertificado = new GestionCertificados();
-        static string log = string.Empty; //Sirve para grabar un log de los posibles errores que se hayan producido en el proceso.
+        public static GestionarCertificados gestionCertificados = new GestionarCertificados(); //Instanciacion de la clase que gestiona los certificados
 
         //Declaracion de variables a nivel de clase para hacerlas accesibles al resto.
+        //Nota. Revisar la asingacion de variables porque pueden estar en parametros todas.
+        static string log = string.Empty; //Sirve para grabar un log de los posibles errores que se hayan producido en el proceso.
         static string dsclave = string.Empty; //Unicamente servira como medida de seguridad de ejecucion y debe pasarse 'ds123456'
-        static string ficheroOpciones = string.Empty;
         static string respuestaAeat = string.Empty;
         public static string ficheroResultado = "errores.sal";
-        public static Parametros parametros = Parametros.Configuracion.Parametros;
         public static string tituloVentana = string.Empty;
 
 
@@ -51,20 +51,18 @@ namespace gestionesAEAT
                         utilidad.SalirAplicacion(log);
                     }
 
-                    ficheroOpciones = argumentos[1];
+                    Parametros.Configuracion.Inicializar();
+                    Parametros.CargarOpciones(argumentos[1]);
 
-                    if (!File.Exists(ficheroOpciones))
+                    if (!File.Exists(Parametros.ficheroOpciones))
                     {
                         log += "No existe el fichero de opciones";
                         utilidad.SalirAplicacion(log);
                     }
                     else
                     {
-                        //Procesa el fichero de opciones
-                        Parametros.Configuracion.Inicializar(ficheroOpciones);
-
                         //Controla si las opciones pasadas son correctas.
-                        string controlTipo = Parametros.Configuracion.Parametros.tipo;
+                        string controlTipo = Parametros.tipo;
                         log += ControlOpciones(controlTipo);
                         if (!string.IsNullOrEmpty(log)) utilidad.SalirAplicacion(log);
 
@@ -94,25 +92,24 @@ namespace gestionesAEAT
 
         private static void EjecutaProceso()
         {
-            var parametros = Parametros.Configuracion.Parametros;
-            switch (parametros.tipo)
+            switch (Parametros.tipo)
             {
                 case "1":
                     //Envio de modelos. Necesita certificado 
                     presentacionDirecta envioDirecto = new presentacionDirecta();
-                    envioDirecto.envioPeticion(parametros.ficheroEntrada, parametros.ficheroSalida, parametros.serieCertificado, instanciaCertificado);
+                    envioDirecto.envioPeticion(Parametros.ficheroEntrada, Parametros.ficheroSalida, Parametros.serieCertificado);
                     break;
 
                 case "2":
                     //Validacion de modelos. No necesita certificado
                     validarModelos valida = new validarModelos();
-                    valida.envioPeticion(parametros.ficheroEntrada, parametros.ficheroSalida);
+                    valida.envioPeticion(Parametros.ficheroEntrada, Parametros.ficheroSalida);
                     break;
 
                 case "3":
                     //Consulta de modelos presentados. Necesita certificado
                     descargaModelos descarga = new descargaModelos();
-                    descarga.obtenerModelos(parametros.ficheroEntrada, parametros.ficheroSalida, parametros.serieCertificado, instanciaCertificado);
+                    descarga.obtenerModelos(Parametros.ficheroEntrada, Parametros.ficheroSalida, Parametros.serieCertificado);
                     break;
 
                 case "4":
@@ -120,12 +117,12 @@ namespace gestionesAEAT
                     ratificarDomicilio ratifica = new ratificarDomicilio();
 
                     //Se procesa para el titular primero
-                    ratifica.envioPeticion(parametros.serieCertificado, parametros.ficheroEntrada, parametros.ficheroSalida, 1, instanciaCertificado);
+                    ratifica.envioPeticion(Parametros.serieCertificado, Parametros.ficheroEntrada, Parametros.ficheroSalida, 1);
 
                     //Si se ha pasado el nif del conyuge se procesa de nuevo
                     if (ratifica.nifConyuge)
                     {
-                        ratifica.envioPeticion(parametros.serieCertificado, parametros.ficheroEntrada, parametros.ficheroSalida, 2, instanciaCertificado);
+                        ratifica.envioPeticion(Parametros.serieCertificado, Parametros.ficheroEntrada, Parametros.ficheroSalida, 2);
                     }
                     break;
 
@@ -133,28 +130,26 @@ namespace gestionesAEAT
                     //Descarga datos fiscales renta. No necesita certificado
                     //Se puede hacer con certificado, pero esta preparado para hacerlo con la referencia de renta.
                     descargaDatosFiscales descargaDF = new descargaDatosFiscales();
-                    descargaDF.descargaDF(parametros.urlDescargaDf, parametros.nifDf, parametros.refRenta, parametros.datosPersonales, parametros.ficheroSalida);
+                    descargaDF.descargaDF(Parametros.urlDescargaDf, Parametros.nifDf, Parametros.refRenta, Parametros.datosPersonales, Parametros.ficheroSalida);
                     break;
 
                 case "6":
                     //Presentacion facturas SII. Necesita certificado
-
                     EnvioSii nuevoEnvio = new EnvioSii();//Instanciacion de la clase 
-                    nuevoEnvio.envioFacturas(instanciaCertificado);
+                    nuevoEnvio.envioFacturas();
                     break;
             }
         }
 
         private static string ControlOpciones(string tipo)
         {
-            var parametros = Parametros.Configuracion.Parametros;
             string mensajeControl = string.Empty;
             StringBuilder mensaje = new StringBuilder();
             switch (tipo)
             {
                 case "1":
                     tituloVentana = "Envio modelos AEAT";
-                    if (parametros.conCertificado == false) parametros.conCertificado = true;
+                    if (Parametros.conCertificado == false) Parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
@@ -173,7 +168,7 @@ namespace gestionesAEAT
 
                 case "3":
                     tituloVentana = "Consulta modelos presentados AEAT";
-                    if (parametros.conCertificado == false) parametros.conCertificado = true;
+                    if (Parametros.conCertificado == false) Parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
@@ -183,7 +178,7 @@ namespace gestionesAEAT
 
                 case "4":
                     tituloVentana = "Ratificar domicilio renta";
-                    if (parametros.conCertificado == false) parametros.conCertificado = true;
+                    if (Parametros.conCertificado == false) Parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
@@ -206,7 +201,7 @@ namespace gestionesAEAT
 
                 case "6":
                     tituloVentana = "Envio facturas al SII";
-                    if (parametros.conCertificado == false) parametros.conCertificado = true;
+                    if (Parametros.conCertificado == false) Parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
@@ -222,67 +217,65 @@ namespace gestionesAEAT
             }
 
             //Borrado de ficheros de salida y errores si existen de una ejecucion anterior.
-            utilidad.borrarFicheros(parametros.ficheroSalida);
+            utilidad.borrarFicheros(Parametros.ficheroSalida);
             utilidad.borrarFicheros(ficheroResultado);
 
             return mensaje.ToString();
         }
 
-        private static string seleccionCertificados()
+        private static void seleccionCertificados()
         {
             //Muestra el formulario de seleccion de certificados
-            string serieCertificado;
-            instanciaCertificado.cargarCertificados();
+            gestionCertificados.cargarCertificadosAlmacen();
 
-            frmSeleccion frmSeleccion = new frmSeleccion(instanciaCertificado);
+            frmSeleccion frmSeleccion = new frmSeleccion();
             frmSeleccion.ShowDialog();
-
-            serieCertificado = frmSeleccion.certificadoSeleccionado.serieCertificado;
-            return serieCertificado;
         }
 
         private static void ControlCertificado()
         {
-            var parametros = Parametros.Configuracion.Parametros;
             string mensaje = string.Empty;
             //Metodo para controlar si no se ha seleccionado un certificado y solicitarlo por pantalla
-            if (parametros.conCertificado)
+            if (Parametros.conCertificado)
             {
                 //Si se ha pasado un texto de busqueda, localiza el numero de serie del certificado por ese texto.
-                if (!string.IsNullOrEmpty(parametros.textoBusqueda))
+                if (!string.IsNullOrEmpty(Parametros.textoBusqueda))
                 {
-                    parametros.serieCertificado = instanciaCertificado.buscarCertificado(parametros.textoBusqueda);
+                    Parametros.serieCertificado = gestionCertificados.buscarCertificado(Parametros.textoBusqueda);
                 }
                 else
                 {
                     //Si se ha pasado un fichero con el certificado
-                    if (!string.IsNullOrEmpty(parametros.ficheroCertificado))
+                    if (!string.IsNullOrEmpty(Parametros.ficheroCertificado))
                     {
                         //Controla si existe el fichero y se ha pasado la contraseña
-                        if (!File.Exists(parametros.ficheroCertificado))
+                        if (!File.Exists(Parametros.ficheroCertificado))
                         {
-                            mensaje = $"El fichero del certificado {parametros.ficheroCertificado} no existe";
+                            mensaje = $"El fichero del certificado {Parametros.ficheroCertificado} no existe";
                             utilidad.SalirAplicacion(mensaje);
                         }
-                        if (string.IsNullOrEmpty(parametros.passwordCertificado))
+                        if (string.IsNullOrEmpty(Parametros.passwordCertificado))
                         {
                             mensaje = "No se ha pasado la contraseña del certificado";
                             utilidad.SalirAplicacion(mensaje);
                         }
 
-                        string resultadoLectura = instanciaCertificado.leerCertificado(parametros.ficheroCertificado, parametros.passwordCertificado);
-                        if (!string.IsNullOrEmpty(resultadoLectura))
+                        (string resultadoLectura, bool resultado) = gestionCertificados.leerCertificado(Parametros.ficheroCertificado, Parametros.passwordCertificado);
+                        if (resultadoLectura != "OK")
                         {
                             mensaje = $"Error al leer el certificado. {resultadoLectura}";
                             utilidad.SalirAplicacion(mensaje);
                         }
-                        var certificadosInfo = instanciaCertificado.relacionCertificados();
-                        parametros.serieCertificado = certificadosInfo.LastOrDefault()?.serieCertificado;
+                        
+                        Parametros.serieCertificado = gestionCertificados.consultaPropiedades(GestionarCertificados.nombresPropiedades.serieCertificado);
                     }
                 }
 
                 //Si no se ha podido leer el certificado se solicita por pantalla
-                if (string.IsNullOrEmpty(parametros.serieCertificado)) parametros.serieCertificado = seleccionCertificados();
+                if (string.IsNullOrEmpty(Parametros.serieCertificado))
+                {
+                    seleccionCertificados();
+                }
             }
         }
     }
