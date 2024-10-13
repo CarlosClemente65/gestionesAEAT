@@ -3,7 +3,6 @@ using System.Text;
 using System.Security.Cryptography.X509Certificates;
 using System.Net;
 using System;
-using gestionesAEAT.Utilidades;
 
 namespace gestionesAEAT
 {
@@ -16,13 +15,14 @@ namespace gestionesAEAT
         X509Certificate2 certificado = null;
 
         Utiles utilidad = Program.utilidad;
-        private static readonly Parametros parametros = Parametros.Configuracion.Parametros;
 
-        public void envioPost(string url, string datosEnvio, string serieCertificado, GestionCertificados instanciaCertificados, string tipoEnvio = "form") //Se pone el tipo de envio opcional como formulario y si es de tipo json se debe pasar en la llamada al metodo
+        public void envioPost(string url, string datosEnvio, string serieCertificado, string tipoEnvio = "form") //Se pone el tipo de envio opcional como formulario y si es de tipo json se debe pasar en la llamada al metodo
         {
             try
             {
-                certificado = instanciaCertificados.seleccionaCertificado(serieCertificado);
+                bool resultado = false;
+               (certificado, resultado) = Program.gestionCertificados.exportaCertificadoDigital(serieCertificado);
+                ////certificado = instanciaCertificados.seleccionaCertificado(serieCertificado);
 
                 if (certificado != null)
                 {

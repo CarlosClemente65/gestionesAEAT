@@ -39,7 +39,6 @@ namespace gestionesAEAT.Metodos
         string refRenta = string.Empty;
         string datosPersonales = string.Empty;
         string ficheroSalida = string.Empty;
-        private static readonly Parametros parametros = Parametros.Configuracion.Parametros;
 
         Utiles utilidad = new Utiles();
 

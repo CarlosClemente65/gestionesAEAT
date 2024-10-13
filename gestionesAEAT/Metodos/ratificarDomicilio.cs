@@ -21,11 +21,9 @@ namespace gestionesAEAT.Metodos
 
         Utiles utilidad = Program.utilidad; //Instanciacion de las utilidades para poder usarlas
         envioAeat envio = new envioAeat();
-        private static readonly Parametros parametros = Parametros.Configuracion.Parametros;
 
 
-
-        public void envioPeticion(string serieCertificado, string ficheroEntrada, string ficheroSalida, int paso, GestionCertificados instanciaCertificado)
+        public void envioPeticion(string serieCertificado, string ficheroEntrada, string ficheroSalida, int paso)
         {
 
             string rutaSalida = Path.GetDirectoryName(ficheroEntrada);
@@ -46,7 +44,7 @@ namespace gestionesAEAT.Metodos
 
                 datosEnvio = formateoCabecera(paso); //Genera los datos a enviar (paso 1 para el titular y paso 2 para el conyuge)
 
-                envio.envioPost(utilidad.url, datosEnvio, serieCertificado, instanciaCertificado);//Metodo con certificado
+                envio.envioPost(utilidad.url, datosEnvio, serieCertificado);//Metodo con certificado
                 respuestaAEAT = envio.respuestaEnvioAEAT;
 
                 if (envio.estadoRespuestaAEAT == "OK")

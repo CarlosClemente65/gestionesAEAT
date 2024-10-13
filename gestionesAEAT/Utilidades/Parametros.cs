@@ -1,84 +1,38 @@
 ﻿using System.IO;
 using System.Reflection;
-using System.Security.Cryptography;
-using System.Windows.Forms;
+using System.Runtime.CompilerServices;
 
 namespace gestionesAEAT.Utilidades
 {
     public class Parametros
     {
+        public static string dsclave { get; set; } = string.Empty;
+        public static string tipo { get; set; } = string.Empty;
+        public static string pathFicheros { get; set; } = string.Empty;
+        public static string ficheroOpciones { get; set; } = string.Empty;
+        public static string ficheroEntrada { get; set; } = string.Empty;
+        public static string ficheroSalida { get; set; } = string.Empty;
+        public static string textoBusqueda { get; set; } = string.Empty;
+        public static string serieCertificado { get; set; } = string.Empty;
+        public static string ficheroCertificado { get; set; } = string.Empty;
+        public static string passwordCertificado { get; set; } = string.Empty;
+        public static bool conCertificado { get; set; } = false;
+        public static string nifDf { get; set; } = string.Empty;
+        public static string refRenta { get; set; } = string.Empty;
+        public static string datosPersonales { get; set; } = "S";
+        public static string urlDescargaDf { get; set; } = string.Empty;
+        public static string UrlSii { get; set; } = string.Empty;
+        public static string[] respuesta { get; set; } = new string[0];
+        public static string cliente { get; set; } = string.Empty;
 
-        public string dsclave { get; set; } = string.Empty;
-        public string tipo { get; set; } = string.Empty;
-        public string pathFicheros { get; set; } = string.Empty;
-        public string ficheroOpciones { get; set; } = string.Empty;
-        public string ficheroEntrada { get; set; } = string.Empty;
-        public string ficheroSalida { get; set; } = string.Empty;
-        public string textoBusqueda { get; set; } = string.Empty;
-        public string serieCertificado { get; set; } = string.Empty;
-        public string ficheroCertificado { get; set; } = string.Empty;
-        public string passwordCertificado { get; set; } = string.Empty;
-        public bool conCertificado { get; set; } = false;
-        public string nifDf { get; set; } = string.Empty;
-        public string refRenta { get; set; } = string.Empty;
-        public string datosPersonales { get; set; } = "S";
-        public string urlDescargaDf { get; set; } = string.Empty;
-        public string UrlSii { get; set; } = string.Empty;
-        public string[] respuesta { get; set; } = new string[0];
-        public string cliente { get; set; } = string.Empty;
 
-
-        public Parametros(string rutaFichero)
+        public Parametros()
         {
-            this.ficheroOpciones = rutaFichero;
-            CargarOpciones();
+            //CargarOpciones();
         }
-
-        static public string ControlDatosParametros(string propiedad)
+        public static void CargarOpciones(string _ficheroOpciones)
         {
-            string mensaje = string.Empty;
-            Parametros parametros = Configuracion.Parametros;
-            PropertyInfo tipoPropiedad = typeof(Parametros).GetProperty(propiedad);
-            object valorPropiedad = tipoPropiedad.GetValue(parametros);
-            if (tipoPropiedad.PropertyType == typeof(string))
-            {
-                if (string.IsNullOrEmpty((string)valorPropiedad))
-                {
-                    switch (propiedad)
-                    {
-                        case "ficheroEntrada":
-                            mensaje = "No se ha pasado el fichero de entrada";
-                            break;
-
-                        case "ficheroSalida":
-                            mensaje = "No se ha pasado el fichero de salida";
-                            break;
-
-                        case "nifDf":
-                            mensaje = "No se ha pasado el NIF del contribuyente";
-                            break;
-
-                        case "refRenta":
-                            mensaje = "No se ha pasado la referencia de la renta";
-                            break;
-
-                        case "urlDescargaDf":
-                            mensaje = "No se ha pasado la url de descarga de datos fiscales";
-                            break;
-
-                        case "UrlSii":
-                            mensaje = "No se ha pasado la url a la que enviar las facturas";
-                            break;
-                    }
-                }
-            }
-
-            return mensaje;
-        }
-
-
-        private void CargarOpciones()
-        {
+            ficheroOpciones = _ficheroOpciones;
             //Metodo para procesar el fichero de opciones
             string[] lineas = File.ReadAllLines(ficheroOpciones);
             foreach (string linea in lineas)
@@ -130,7 +84,6 @@ namespace gestionesAEAT.Utilidades
                         respuesta = valor.Trim('[', ']').Split(',');
                         break;
 
-
                     case "OBLIGADO":
                         if (valor.ToUpper() == "SI") conCertificado = true;
                         break;
@@ -167,13 +120,57 @@ namespace gestionesAEAT.Utilidades
             }
         }
 
+
+        static public string ControlDatosParametros(string propiedad)
+        {
+            string mensaje = string.Empty;
+            Parametros parametros = Configuracion.Parametros;
+            PropertyInfo tipoPropiedad = typeof(Parametros).GetProperty(propiedad);
+            object valorPropiedad = tipoPropiedad.GetValue(parametros);
+            if (tipoPropiedad.PropertyType == typeof(string))
+            {
+                if (string.IsNullOrEmpty((string)valorPropiedad))
+                {
+                    switch (propiedad)
+                    {
+                        case "ficheroEntrada":
+                            mensaje = "No se ha pasado el fichero de entrada";
+                            break;
+
+                        case "ficheroSalida":
+                            mensaje = "No se ha pasado el fichero de salida";
+                            break;
+
+                        case "nifDf":
+                            mensaje = "No se ha pasado el NIF del contribuyente";
+                            break;
+
+                        case "refRenta":
+                            mensaje = "No se ha pasado la referencia de la renta";
+                            break;
+
+                        case "urlDescargaDf":
+                            mensaje = "No se ha pasado la url de descarga de datos fiscales";
+                            break;
+
+                        case "UrlSii":
+                            mensaje = "No se ha pasado la url a la que enviar las facturas";
+                            break;
+                    }
+                }
+            }
+
+            return mensaje;
+        }
+
+
         public static class Configuracion
         {
             public static Parametros Parametros { get; private set; }
 
-            public static void Inicializar(string RutaFichero)
+            public static void Inicializar()
             {
-                Parametros = new Parametros(RutaFichero);
+                Parametros = new Parametros();
             }
         }
     }

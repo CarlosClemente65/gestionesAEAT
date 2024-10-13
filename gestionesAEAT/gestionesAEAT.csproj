@@ -39,6 +39,9 @@
     <ApplicationIcon>dse.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="dse_utilescert">
+      <HintPath>..\..\Librerias\dse_utilescert.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -74,7 +77,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Utilidades\GestionCertificados.cs" />
     <Compile Include="Metodos\descargaDatosFiscales.cs" />
     <Compile Include="Metodos\descargaModelos.cs" />
     <Compile Include="Metodos\ratificarDomicilio.cs" />
