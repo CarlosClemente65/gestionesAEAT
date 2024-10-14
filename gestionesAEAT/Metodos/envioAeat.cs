@@ -23,8 +23,7 @@ namespace gestionesAEAT
             {
                 bool resultado = false;
                (certificado, resultado) = Program.gestionCertificados.exportaCertificadoDigital(serieCertificado);
-                ////certificado = instanciaCertificados.seleccionaCertificado(serieCertificado);
-
+                
                 if (certificado != null)
                 {
                     //Protocolo de seguridad

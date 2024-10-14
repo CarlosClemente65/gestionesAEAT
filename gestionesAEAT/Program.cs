@@ -28,8 +28,9 @@ namespace gestionesAEAT
             {
                 if (argumentos.Length < 2)
                 {
-                    if (argumentos.Length > 0 && (argumentos[0] == "-h" || argumentos[0] == "?"))
+                    if (argumentos.Length > 0 && (argumentos[0].ToUpper() == "-H" || argumentos[0] == "?"))
                     {
+                        utilidad.MostrarAyuda();
                         utilidad.SalirAplicacion(log);
                     }
                     else

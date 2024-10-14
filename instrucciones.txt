@@ -18,7 +18,7 @@
 			* OBLIGADO= Indica si el proceso necesita usar certificado (valores SI/NO). Si no se indica, los procesos
 						que lo necesiten pediran seleccionar un certificado
 			* BUSQUEDA= Cadena a buscar en los certificados instalados en la maquina a utilizar en el proceso (puede ser
-						el numero de serie, el NIF o el nombre del titular del certificado)
+						el numero de serie, el NIF o el nombre del titular o del representante del certificado)
 			* CERTIFICADO= Nombre del fichero.pfx que contiene el certificado digital.
 			* PASSWORD= Contraseña del certificado que se pasa por fichero
 			* NIFRENTA= Para la descarga de datos fiscales es necesario pasar el NIF del contribuyente

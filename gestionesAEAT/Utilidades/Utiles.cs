@@ -457,7 +457,7 @@ namespace gestionesAEAT
             Environment.Exit(0);
         }
 
-        private void MostrarAyuda()
+        public void MostrarAyuda()
         {
             StringBuilder mensaje = new StringBuilder();
             mensaje.AppendLine("");
@@ -477,7 +477,7 @@ namespace gestionesAEAT
             mensaje.AppendLine(@"        SALIDA= Nombre del fichero donde se grabara la salida");
             mensaje.AppendLine(@"        URLSII= Url a la que hacer el envio de facturas al SII");
             mensaje.AppendLine(@"        OBLIGADO= Indica si el proceso necesita usar certificado (valores SI/NO)");
-            mensaje.AppendLine(@"        BUSQUEDA= Cadena a buscar en los certificados (numero serie, NIF o nombre del titular del certificado");
+            mensaje.AppendLine(@"        BUSQUEDA= Cadena a buscar en los certificados (numero serie, NIF o nombre del titular o del representante del certificado");
             mensaje.AppendLine(@"        CERTIFICADO= Nombre del fichero.pfx que contiene el certificado digital");
             mensaje.AppendLine(@"        PASSWORD= Contraseña del certificado que se pasa por fichero");
             mensaje.AppendLine(@"        NIFRENTA= Para la descarga de datos fiscales es necesario el NIF del contribuyente");
@@ -533,7 +533,6 @@ namespace gestionesAEAT
             mensaje.AppendLine(@"    - Los ficheros deben venir con la ruta completa, incluido el de opciones");
             mensaje.AppendLine("\nPulse una tecla para continuar");
 
-            string texto = mensaje.ToString();
             Console.WriteLine(mensaje.ToString());
             Console.ReadLine();
         }
