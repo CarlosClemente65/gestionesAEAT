@@ -2,7 +2,10 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using System.Text;
+using System.Windows.Forms;
 
 namespace gestionesAEAT.Metodos
 {
@@ -141,13 +144,71 @@ namespace gestionesAEAT.Metodos
                     }
 
                     //Si hay una respuesta en pdf se graba en la ruta de salida
+                    string ficheroPdf = string.Empty;
                     if (utilidad.respuestaValidarModelos.respuesta.pdf != null)
                     {
-                        string ficheroPdf = Path.ChangeExtension(ficheroSalida, "pdf");
+                        ficheroPdf = Path.ChangeExtension(ficheroSalida, "pdf");
                         string respuestaPDF = utilidad.respuestaValidarModelos.respuesta.pdf[0];
                         byte[] contenidoPDF = Convert.FromBase64String(respuestaPDF);
                         File.WriteAllBytes(ficheroPdf, contenidoPDF);
                     }
+
+                    //Graba el fichero de salida
+                    var respuestaValidar = utilidad.respuestaValidarModelos.respuesta;
+                    StringBuilder resultadoSalida = new StringBuilder();
+
+                    //Si se ha generado el PDF lo graba en el fichero de salida
+                    if (utilidad.respuestaValidarModelos.respuesta.pdf != null)
+                    {
+                        resultadoSalida.AppendLine($"pdf = {ficheroPdf}");
+                    }
+                    else
+                    {
+                        resultadoSalida.AppendLine("pdf =");
+                    }
+
+                    //Si se han generado errores los graba en el fichero de salida
+                    if (respuestaValidar.errores != null && respuestaValidar.errores.Count > 0)
+                    {
+                        List<string> listaErrores = new List<string>();
+                        listaErrores = utilidad.erroresArray;
+                        int linea = 0;
+                        foreach (var elemento in listaErrores)
+                        {
+                            resultadoSalida.AppendLine($"E{linea.ToString("D2")} = {elemento}");
+                            linea++;
+                        }
+                    }
+
+                    //Si se han generado avisos los graba en el fichero de salida
+                    if (respuestaValidar.avisos != null && respuestaValidar.avisos.Count > 0)
+                    {
+                        List<string> listaAvisos = new List<string>();
+                        listaAvisos = utilidad.erroresArray;
+                        int linea = 0;
+                        foreach (var elemento in listaAvisos)
+                        {
+                            resultadoSalida.AppendLine($"A{linea.ToString("D2")} = {elemento}");
+                            linea++;
+                        }
+                    }
+
+
+                    //Si se han generado advertencias las graba en el fichero de salida
+                    if (respuestaValidar.advertencias != null && respuestaValidar.advertencias.Count > 0)
+                    {
+                        List<string> listaAdvertencias = new List<string>();
+                        listaAdvertencias = utilidad.erroresArray;
+                        int linea = 0;
+                        foreach (var elemento in listaAdvertencias)
+                        {
+                            resultadoSalida.AppendLine($"D{linea.ToString("D2")} = {elemento}");
+                            linea++;
+                        }
+                    }
+
+                    //Graba el fichero de salida
+                    File.WriteAllText(Parametros.ficheroSalida, resultadoSalida.ToString());
 
                     //Graba el ficheroResultado
                     File.WriteAllText(Parametros.ficheroResultado, "OK");

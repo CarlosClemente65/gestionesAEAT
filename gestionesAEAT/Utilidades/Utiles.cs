@@ -21,9 +21,9 @@ namespace gestionesAEAT
         public List<string> respuesta = new List<string>(); //Lineas de la respuesta 
 
         //Variables para almacenar las respuestas del envio
-        private List<string> erroresArray = new List<string>();
-        private List<string> avisosArray = new List<string>();
-        private List<string> advertenciasArray = new List<string>();
+        public List<string> erroresArray = new List<string>();
+        public List<string> avisosArray = new List<string>();
+        public List<string> advertenciasArray = new List<string>();
 
         public RespuestaValidarModelos respuestaValidarModelos; //Varible que almacena la respuesta completa de la AEAT en la validacion de modelos
         public RespuestaPresBasicaDos respuestaEnvioModelos; //Variable que almacena la respuesta completa de la AEAT en la presentacion directa
