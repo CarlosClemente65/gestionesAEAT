@@ -564,5 +564,112 @@ namespace gestionesAEAT
         {
             if (!grabadaSalida) File.WriteAllText(ficheroSalida, mensajeSalida);
         }
+
+        public string generaFicheroSalida<T>(T proceso, string ficheroPdf = "")
+        {
+            //Se recibe un tipo generico (T) que luego se usa para montar las respuestas segun de donde vienen
+            StringBuilder resultadoSalida = new StringBuilder();
+
+            //
+            switch (proceso)
+            {
+                case RespuestaValidarModelos respuestaValidar:
+                    //Si se ha generado el PDF lo graba en el fichero de salida
+                    if (respuestaValidar.respuesta.pdf != null && respuestaValidarModelos.respuesta.pdf.Count > 0)
+                    {
+                        resultadoSalida.AppendLine($"pdf = {ficheroPdf}");
+                    }
+                    else
+                    {
+                        resultadoSalida.AppendLine("pdf =");
+                    }
+
+                    //Si se han generado errores los graba en el fichero de salida
+                    if (respuestaValidar.respuesta.errores != null && respuestaValidar.respuesta.errores.Count > 0)
+                    {
+                        List<string> listaErrores = new List<string>();
+                        listaErrores = erroresArray;
+                        int linea = 0;
+                        foreach (var elemento in listaErrores)
+                        {
+                            resultadoSalida.AppendLine($"E{linea.ToString("D2")} = {elemento}");
+                            linea++;
+                        }
+                    }
+
+                    //Si se han generado avisos los graba en el fichero de salida
+                    if (respuestaValidar.respuesta.avisos != null && respuestaValidar.respuesta.avisos.Count > 0)
+                    {
+                        List<string> listaAvisos = new List<string>();
+                        listaAvisos = avisosArray;
+                        int linea = 0;
+                        foreach (var elemento in listaAvisos)
+                        {
+                            resultadoSalida.AppendLine($"A{linea.ToString("D2")} = {elemento}");
+                            linea++;
+                        }
+                    }
+
+                    //Si se han generado advertencias las graba en el fichero de salida
+                    if (respuestaValidar.respuesta.advertencias != null && respuestaValidar.respuesta.advertencias.Count > 0)
+                    {
+                        List<string> listaAdvertencias = new List<string>();
+                        listaAdvertencias = advertenciasArray;
+                        int linea = 0;
+                        foreach (var elemento in listaAdvertencias)
+                        {
+                            resultadoSalida.AppendLine($"D{linea.ToString("D2")} = {elemento}");
+                            linea++;
+                        }
+                    }
+                    break;
+
+                case RespuestaPresBasicaDos respuestaPresentacionDirecta:
+                    //Si se han generado errores los graba en el fichero de salida
+                    if (respuestaPresentacionDirecta.respuesta.errores != null && respuestaPresentacionDirecta.respuesta.errores.Count > 0)
+                    {
+                        List<string> listaErrores = new List<string>();
+                        listaErrores = erroresArray;
+                        int linea = 0;
+                        foreach (var elemento in listaErrores)
+                        {
+                            resultadoSalida.AppendLine($"E{linea.ToString("D2")} = {elemento}");
+                            linea++;
+                        }
+                    }
+
+                    //Si se han generado avisos los graba en el fichero de salida
+                    if (respuestaPresentacionDirecta.respuesta.correcta.avisos != null && respuestaPresentacionDirecta.respuesta.correcta.avisos.Count > 0)
+                    {
+                        List<string> listaAvisos = new List<string>();
+                        listaAvisos = avisosArray;
+                        int linea = 0;
+                        foreach (var elemento in listaAvisos)
+                        {
+                            resultadoSalida.AppendLine($"A{linea.ToString("D2")} = {elemento}");
+                            linea++;
+                        }
+                    }
+
+                    //Si se han generado advertencias las graba en el fichero de salida
+                    if (respuestaPresentacionDirecta.respuesta.correcta.advertencias != null && respuestaPresentacionDirecta.respuesta.correcta.advertencias.Count > 0)
+                    {
+                        List<string> listaAdvertencias = new List<string>();
+                        listaAdvertencias = advertenciasArray;
+                        int linea = 0;
+                        foreach (var elemento in listaAdvertencias)
+                        {
+                            resultadoSalida.AppendLine($"D{linea.ToString("D2")} = {elemento}");
+                            linea++;
+                        }
+                    }
+
+                    break;
+
+            }
+
+            return resultadoSalida.ToString();
+        }
+
     }
 }

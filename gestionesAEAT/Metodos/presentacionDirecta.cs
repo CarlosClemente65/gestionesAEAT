@@ -27,8 +27,8 @@ namespace gestionesAEAT.Metodos
 
     public class ElementosRespuestaPresBasicaDos
     {
-        public RespuestaCorrectaPresBasicaDos correcta { get; set; }
-        public List<string> errores { get; set; }
+        public RespuestaCorrectaPresBasicaDos correcta { get; set; } = new RespuestaCorrectaPresBasicaDos();
+        public List<string> errores { get; set; } = new List<string>();
     }
 
     public class RespuestaCorrectaPresBasicaDos
@@ -51,8 +51,8 @@ namespace gestionesAEAT.Metodos
         public string ImporteAIngresar { get; set; }
         public string Idioma { get; set; }
         public string urlPdf { get; set; }
-        public List<string> avisos { get; set; }
-        public List<string> advertencias { get; set; }
+        public List<string> avisos { get; set; } = new List<string>();
+        public List<string> advertencias { get; set; } = new List<string>();
     }
 
     public class presentacionDirecta
@@ -158,7 +158,7 @@ namespace gestionesAEAT.Metodos
 
                     //Procesado de los tipos de respuesta posibles
                     var respuestaEnvio = utilidad.respuestaEnvioModelos.respuesta;
-                    if (respuestaEnvio.correcta != null)
+                    if (respuestaEnvio.correcta != null && !string.IsNullOrEmpty(respuestaEnvio.correcta.CodigoSeguroVerificacion))
                     {
                         //Si hay datos en las propiedades de la respuesta correcta se graba el PDF y el fichero con los datos del modelo
                         var elementosRespuesta = respuestaEnvio.correcta;
@@ -198,7 +198,7 @@ namespace gestionesAEAT.Metodos
                             {
                                 for (int i = 0; i < elementosRespuesta.avisos.Count; i++)
                                 {
-                                    writer.WriteLine($"Aviso {i + 1}: {elementosRespuesta.avisos[i]}");
+                                    writer.WriteLine($"A{i + 1.ToString("D2")}: {elementosRespuesta.avisos[i]}");
                                 }
                             }
 
@@ -206,11 +206,22 @@ namespace gestionesAEAT.Metodos
                             {
                                 for (int i = 0; i < elementosRespuesta.advertencias.Count; i++)
                                 {
-                                    writer.WriteLine($"Advertencia {i + 1}: {elementosRespuesta.advertencias[i]}");
+                                    writer.WriteLine($"D{i + 1.ToString("D2")}: {elementosRespuesta.advertencias[i]}");
                                 }
                             }
                         }
                     }
+
+                    else
+                    {
+                        //Procesa la respuesta de la validacion para generar el fichero de salida
+                        var respuestaEnvioModelos = utilidad.respuestaEnvioModelos;
+                        string resultadoSalida = utilidad.generaFicheroSalida(respuestaEnvioModelos);
+
+                        //Graba el fichero de salida
+                        File.WriteAllText(Parametros.ficheroSalida, resultadoSalida);
+                    }
+
 
                     //Grabar un html con los errores, avisos o advertencias generados
                     if (!string.IsNullOrEmpty(textoSalida))
@@ -221,6 +232,7 @@ namespace gestionesAEAT.Metodos
 
                     //Grabar el fichero de respuesta
                     File.WriteAllText(Parametros.ficheroResultado,"OK");
+
                 }
             }
 
