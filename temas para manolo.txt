@@ -1,0 +1,5 @@
+* Para el envio de informativas (tipo 7) he añadido los siguientes parametros:
+	- PROCESOINFORMATIVAS= Tipo de proceso a ejecutar en la presentacion de informativas de los 3 que hay: inicializa, envio, presentacion
+
+* En el guion ya no hace falta el bloque [respuesta} porque esas variables ya se controlan por el programa y en la salida se pondran las que tengan contenido
+

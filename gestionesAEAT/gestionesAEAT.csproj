@@ -66,6 +66,7 @@
     <Compile Include="Formularios\frmSeleccion.Designer.cs">
       <DependentUpon>frmSeleccion.cs</DependentUpon>
     </Compile>
+    <Compile Include="Metodos\presentacionInformativas.cs" />
     <Compile Include="Metodos\validarModelos.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

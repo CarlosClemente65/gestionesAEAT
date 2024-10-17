@@ -473,6 +473,7 @@ namespace gestionesAEAT
             mensaje.AppendLine(@"            4 = Ratificacion domicilio renta");
             mensaje.AppendLine(@"            5 = Descarga datos fiscales renta");
             mensaje.AppendLine(@"            6 = Envio de facturas al SII");
+            mensaje.AppendLine(@"            7 = Prestar declaraciones informativas");
             mensaje.AppendLine(@"        ENTRADA= Nombre del fichero con los datos a enviar");
             mensaje.AppendLine(@"        SALIDA= Nombre del fichero donde se grabara la salida");
             mensaje.AppendLine(@"        URLSII= Url a la que hacer el envio de facturas al SII");

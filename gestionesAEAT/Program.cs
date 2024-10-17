@@ -138,6 +138,11 @@ namespace gestionesAEAT
                     EnvioSii nuevoEnvio = new EnvioSii();//Instanciacion de la clase 
                     nuevoEnvio.envioFacturas();
                     break;
+
+                case "7":
+                    presentacionInformativas nuevaPresentacion = new presentacionInformativas();
+                    nuevaPresentacion.envioPeticion(Parametros.procesoInformativas);
+                    break;
             }
         }
 
@@ -151,18 +156,34 @@ namespace gestionesAEAT
                    frmSeleccion.tituloVentana = "Envio modelos AEAT";
                     if (Parametros.conCertificado == false) Parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
-                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
-                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
 
                     break;
 
                 case "2":
                     frmSeleccion.tituloVentana = "Validacion de modelos";
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
-                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
-                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
 
                     break;
 
@@ -170,9 +191,17 @@ namespace gestionesAEAT
                     frmSeleccion.tituloVentana = "Consulta modelos presentados AEAT";
                     if (Parametros.conCertificado == false) Parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
-                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
-                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
 
                     break;
 
@@ -180,22 +209,46 @@ namespace gestionesAEAT
                     frmSeleccion.tituloVentana = "Ratificar domicilio renta";
                     if (Parametros.conCertificado == false) Parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
-                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
-                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
 
                     break;
 
                 case "5":
                     frmSeleccion.tituloVentana = "Descarga datos fiscales renta";
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
-                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
                     mensajeControl = Parametros.ControlDatosParametros("nifDf");
-                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
                     mensajeControl = Parametros.ControlDatosParametros("refRenta");
-                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
                     mensajeControl = Parametros.ControlDatosParametros("urlDescargaDf");
-                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
 
                     break;
 
@@ -203,12 +256,49 @@ namespace gestionesAEAT
                     frmSeleccion.tituloVentana = "Envio facturas al SII";
                     if (Parametros.conCertificado == false) Parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
-                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
-                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
                     mensajeControl = Parametros.ControlDatosParametros("UrlSii");
-                    if (!string.IsNullOrEmpty(mensajeControl)) mensaje.AppendLine(mensajeControl);
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
 
+                    break;
+
+                case "7":
+                    frmSeleccion.tituloVentana = "Presentacion declaraciones informativas";
+                    if (Parametros.conCertificado == false) Parametros.conCertificado = true;
+                    mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
+                    mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
+                    mensajeControl = Parametros.ControlDatosParametros("procesoInformativas");
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
+
+                    //Revisar si es necesario algun parametro mas.
                     break;
 
                 default:
