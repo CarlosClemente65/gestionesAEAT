@@ -160,15 +160,11 @@ namespace gestionesAEAT.Metodos
 
         private void cargaCabecera(object cadena)
         {
-            string[] parte;
             try
             {
-                parte = cadena.ToString().Split('=');
-                if (parte.Length == 2)
-                {
-                    atributo = parte[0].ToString().Trim();
-                    valor = parte[1].ToString().Trim();
-                }
+                (atributo, valor) = utilidad.divideCadena(cadena.ToString(), '=');
+                atributo = atributo.Trim();
+                valor = valor.Trim();
             }
 
             catch (Exception ex)

@@ -70,10 +70,10 @@ namespace gestionesAEAT
                 }
             }
 
-            string cadena, valor;
+            string cadena, resultado;
             int bloque = 0;
 
-            valor = "";
+            resultado = "";
 
             for (int x = 0; x < textoGuion.Count; x++)
             {
@@ -89,18 +89,18 @@ namespace gestionesAEAT
 
                     if (bloque == 2)
                     {
-                        string[] parte = cadena.ToString().Split('=');
-                        if (parte[0] == "CODIFICACION")
+                        (string atributo, string valor) = divideCadena(cadena.ToString(), '=');
+                        if (atributo == "CODIFICACION")
                         {
-                            if (parte[1].Length > 1) valor = parte[1];
+                            if (valor.Length > 1) resultado = valor;
                             break;
                         }
                     }
                 }
             }
 
-            if (valor == "") valor = "UTF-8";
-            return valor.ToUpper();
+            if (resultado == "") resultado = "UTF-8";
+            return resultado.ToUpper();
         }
 
         public void borrarFicheros(string fichero)
@@ -291,14 +291,7 @@ namespace gestionesAEAT
                 //Asigna las variables modelo, ejercicio y periodo segun los valores de la cabecera
                 foreach (string linea in cabecera)
                 {
-                    string[] partes = linea.Split('=');
-                    string atributo = string.Empty;
-                    string valor = string.Empty;
-                    if (partes.Length == 2)
-                    {
-                        atributo = partes[0];
-                        valor = partes[1];
-                    }
+                    (string atributo, string valor) = divideCadena(linea, '=');
 
                     switch (atributo)
                     {
@@ -565,5 +558,127 @@ namespace gestionesAEAT
         {
             if (!grabadaSalida) File.WriteAllText(ficheroSalida, mensajeSalida);
         }
+
+        public string generaFicheroSalida<T>(T proceso, string ficheroPdf = "")
+        {
+            //Se recibe un tipo generico (T) que luego se usa para montar las respuestas segun de donde vienen
+            StringBuilder resultadoSalida = new StringBuilder();
+
+            //
+            switch (proceso)
+            {
+                case RespuestaValidarModelos respuestaValidar:
+                    //Si se ha generado el PDF lo graba en el fichero de salida
+                    if (respuestaValidar.respuesta.pdf != null && respuestaValidarModelos.respuesta.pdf.Count > 0)
+                    {
+                        resultadoSalida.AppendLine($"pdf = {ficheroPdf}");
+                    }
+                    else
+                    {
+                        resultadoSalida.AppendLine("pdf =");
+                    }
+
+                    //Si se han generado errores los graba en el fichero de salida
+                    if (respuestaValidar.respuesta.errores != null && respuestaValidar.respuesta.errores.Count > 0)
+                    {
+                        List<string> listaErrores = new List<string>();
+                        listaErrores = erroresArray;
+                        int linea = 0;
+                        foreach (var elemento in listaErrores)
+                        {
+                            resultadoSalida.AppendLine($"E{linea.ToString("D2")} = {elemento}");
+                            linea++;
+                        }
+                    }
+
+                    //Si se han generado avisos los graba en el fichero de salida
+                    if (respuestaValidar.respuesta.avisos != null && respuestaValidar.respuesta.avisos.Count > 0)
+                    {
+                        List<string> listaAvisos = new List<string>();
+                        listaAvisos = avisosArray;
+                        int linea = 0;
+                        foreach (var elemento in listaAvisos)
+                        {
+                            resultadoSalida.AppendLine($"A{linea.ToString("D2")} = {elemento}");
+                            linea++;
+                        }
+                    }
+
+                    //Si se han generado advertencias las graba en el fichero de salida
+                    if (respuestaValidar.respuesta.advertencias != null && respuestaValidar.respuesta.advertencias.Count > 0)
+                    {
+                        List<string> listaAdvertencias = new List<string>();
+                        listaAdvertencias = advertenciasArray;
+                        int linea = 0;
+                        foreach (var elemento in listaAdvertencias)
+                        {
+                            resultadoSalida.AppendLine($"D{linea.ToString("D2")} = {elemento}");
+                            linea++;
+                        }
+                    }
+                    break;
+
+                case RespuestaPresBasicaDos respuestaPresentacionDirecta:
+                    //Si se han generado errores los graba en el fichero de salida
+                    if (respuestaPresentacionDirecta.respuesta.errores != null && respuestaPresentacionDirecta.respuesta.errores.Count > 0)
+                    {
+                        List<string> listaErrores = new List<string>();
+                        listaErrores = erroresArray;
+                        int linea = 0;
+                        foreach (var elemento in listaErrores)
+                        {
+                            resultadoSalida.AppendLine($"E{linea.ToString("D2")} = {elemento}");
+                            linea++;
+                        }
+                    }
+
+                    //Si se han generado avisos los graba en el fichero de salida
+                    if (respuestaPresentacionDirecta.respuesta.correcta.avisos != null && respuestaPresentacionDirecta.respuesta.correcta.avisos.Count > 0)
+                    {
+                        List<string> listaAvisos = new List<string>();
+                        listaAvisos = avisosArray;
+                        int linea = 0;
+                        foreach (var elemento in listaAvisos)
+                        {
+                            resultadoSalida.AppendLine($"A{linea.ToString("D2")} = {elemento}");
+                            linea++;
+                        }
+                    }
+
+                    //Si se han generado advertencias las graba en el fichero de salida
+                    if (respuestaPresentacionDirecta.respuesta.correcta.advertencias != null && respuestaPresentacionDirecta.respuesta.correcta.advertencias.Count > 0)
+                    {
+                        List<string> listaAdvertencias = new List<string>();
+                        listaAdvertencias = advertenciasArray;
+                        int linea = 0;
+                        foreach (var elemento in listaAdvertencias)
+                        {
+                            resultadoSalida.AppendLine($"D{linea.ToString("D2")} = {elemento}");
+                            linea++;
+                        }
+                    }
+
+                    break;
+
+            }
+
+            return resultadoSalida.ToString();
+        }
+
+        public (string,string) divideCadena (string cadena, char divisor)
+        {
+            //Permite dividir una cadena por el divisor pasado y solo la divide en un maximo de 2 partes (divide desde el primer divisor que encuentra)
+            string atributo = string.Empty;
+            string valor = string.Empty;
+            string[] partes = cadena.Split(new[] { divisor }, 2);
+            if (partes.Length == 2)
+            {
+                atributo = partes[0].Trim();
+                valor = partes[1].Trim();
+            }
+
+            return (atributo, valor);
+        }
+
     }
 }

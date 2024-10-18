@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+xmlns:siiLR="https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/SuministroLR.xsd"
+xmlns:sii="https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/SuministroInformacion.xsd">
+<soapenv:Header/>
+   <soapenv:Body>
+      <siiLR:SuministroLRFacturasEmitidas>
+         <sii:Cabecera>
+            <sii:IDVersionSii>1.1</sii:IDVersionSii>
+            <sii:Titular>
+               <sii:NombreRazon>DIAGRAM SOFTWARE,S.L.</sii:NombreRazon>
+               <sii:NIF>B53179768</sii:NIF>
+            </sii:Titular>
+            <sii:TipoComunicacion>A0</sii:TipoComunicacion>
+         </sii:Cabecera>
+         <siiLR:RegistroLRFacturasEmitidas>
+            <sii:PeriodoLiquidacion>
+               <sii:Ejercicio>2024</sii:Ejercicio>
+               <sii:Periodo>06</sii:Periodo>
+            </sii:PeriodoLiquidacion>
+            <siiLR:IDFactura>
+               <sii:IDEmisorFactura>
+                  <sii:NIF>B53179768</sii:NIF>
+               </sii:IDEmisorFactura>
+               <sii:NumSerieFacturaEmisor>24</sii:NumSerieFacturaEmisor>
+               <sii:FechaExpedicionFacturaEmisor>30-06-2024</sii:FechaExpedicionFacturaEmisor>
+            </siiLR:IDFactura>
+            <siiLR:FacturaExpedida>
+               <sii:TipoFactura>F1</sii:TipoFactura>
+               <sii:ClaveRegimenEspecialOTrascendencia>01</sii:ClaveRegimenEspecialOTrascendencia>
+               <sii:ImporteTotal>1331</sii:ImporteTotal>
+               <sii:DescripcionOperacion>N/FRA. 24 VENTAS</sii:DescripcionOperacion>
+               <sii:Contraparte>
+                  <sii:NombreRazon>CLEMENTE RODRIGUEZ, CARLOS</sii:NombreRazon>
+                  <sii:NIF>05196375P</sii:NIF>
+               </sii:Contraparte>
+               <sii:TipoDesglose>
+                  <sii:DesgloseFactura>
+                     <sii:Sujeta>
+                        <sii:NoExenta>
+                           <sii:TipoNoExenta>S1</sii:TipoNoExenta>
+                           <sii:DesgloseIVA>
+                              <sii:DetalleIVA>
+                                 <sii:TipoImpositivo>21</sii:TipoImpositivo>
+                                 <sii:BaseImponible>1100</sii:BaseImponible>
+                                 <sii:CuotaRepercutida>231</sii:CuotaRepercutida>
+                              </sii:DetalleIVA>
+                           </sii:DesgloseIVA>
+                        </sii:NoExenta>
+                     </sii:Sujeta>
+                  </sii:DesgloseFactura>
+               </sii:TipoDesglose>
+            </siiLR:FacturaExpedida>
+         </siiLR:RegistroLRFacturasEmitidas>
+         <siiLR:RegistroLRFacturasEmitidas>
+            <sii:PeriodoLiquidacion>
+               <sii:Ejercicio>2024</sii:Ejercicio>
+               <sii:Periodo>06</sii:Periodo>
+            </sii:PeriodoLiquidacion>
+            <siiLR:IDFactura>
+               <sii:IDEmisorFactura>
+                  <sii:NIF>B53179768</sii:NIF>
+               </sii:IDEmisorFactura>
+               <sii:NumSerieFacturaEmisor>25</sii:NumSerieFacturaEmisor>
+               <sii:FechaExpedicionFacturaEmisor>29-06-2024</sii:FechaExpedicionFacturaEmisor>
+            </siiLR:IDFactura>
+            <siiLR:FacturaExpedida>
+               <sii:TipoFactura>F1</sii:TipoFactura>
+               <sii:ClaveRegimenEspecialOTrascendencia>01</sii:ClaveRegimenEspecialOTrascendencia>
+               <sii:ImporteTotal>1452</sii:ImporteTotal>
+               <sii:DescripcionOperacion>N/FRA. 25 VENTAS</sii:DescripcionOperacion>
+               <sii:Contraparte>
+                  <sii:NombreRazon>NARANJO RUIZ, MARIA JOSE</sii:NombreRazon>
+                  <sii:NIF>05126963X</sii:NIF>
+               </sii:Contraparte>
+               <sii:TipoDesglose>
+                  <sii:DesgloseFactura>
+                     <sii:Sujeta>
+                        <sii:NoExenta>
+                           <sii:TipoNoExenta>S1</sii:TipoNoExenta>
+                           <sii:DesgloseIVA>
+                              <sii:DetalleIVA>
+                                 <sii:TipoImpositivo>21</sii:TipoImpositivo>
+                                 <sii:BaseImponible>1200</sii:BaseImponible>
+                                 <sii:CuotaRepercutida>252</sii:CuotaRepercutida>
+                              </sii:DetalleIVA>
+                           </sii:DesgloseIVA>
+                        </sii:NoExenta>
+                     </sii:Sujeta>
+                  </sii:DesgloseFactura>
+               </sii:TipoDesglose>
+            </siiLR:FacturaExpedida>
+         </siiLR:RegistroLRFacturasEmitidas>
+         <siiLR:RegistroLRFacturasEmitidas>
+            <sii:PeriodoLiquidacion>
+               <sii:Ejercicio>2024</sii:Ejercicio>
+               <sii:Periodo>06</sii:Periodo>
+            </sii:PeriodoLiquidacion>
+            <siiLR:IDFactura>
+               <sii:IDEmisorFactura>
+                  <sii:NIF>B53179768</sii:NIF>
+               </sii:IDEmisorFactura>
+               <sii:NumSerieFacturaEmisor>26</sii:NumSerieFacturaEmisor>
+               <sii:FechaExpedicionFacturaEmisor>28-06-2024</sii:FechaExpedicionFacturaEmisor>
+            </siiLR:IDFactura>
+            <siiLR:FacturaExpedida>
+               <sii:TipoFactura>F1</sii:TipoFactura>
+               <sii:ClaveRegimenEspecialOTrascendencia>01</sii:ClaveRegimenEspecialOTrascendencia>
+               <sii:ImporteTotal>2500</sii:ImporteTotal>
+               <sii:DescripcionOperacion>N/FRA. 26 VENTAS</sii:DescripcionOperacion>
+               <sii:Contraparte>
+                  <sii:NombreRazon>SERVICIOS DENTALES CLIDENTH, S.L.</sii:NombreRazon>
+                  <sii:NIF>B02484855</sii:NIF>
+               </sii:Contraparte>
+               <sii:TipoDesglose>
+                  <sii:DesgloseFactura>
+                     <sii:Sujeta>
+                        <sii:NoExenta>
+                           <sii:TipoNoExenta>S1</sii:TipoNoExenta>
+                           <sii:DesgloseIVA>
+                              <sii:DetalleIVA>
+                                 <sii:TipoImpositivo>0</sii:TipoImpositivo>
+                                 <sii:BaseImponible>2500</sii:BaseImponible>
+                                 <sii:CuotaRepercutida>0</sii:CuotaRepercutida>
+                              </sii:DetalleIVA>
+                           </sii:DesgloseIVA>
+                        </sii:NoExenta>
+                     </sii:Sujeta>
+                  </sii:DesgloseFactura>
+               </sii:TipoDesglose>
+            </siiLR:FacturaExpedida>
+         </siiLR:RegistroLRFacturasEmitidas>
+      </siiLR:SuministroLRFacturasEmitidas>
+   </soapenv:Body>
+</soapenv:Envelope>

@@ -1,0 +1,14 @@
+TIPO=2
+
+ENTRADA=C:\aeat\115\2024\03\lanza\00001_guion.txt
+
+SALIDA=C:\aeat\115\2024\03\lanza\00001_salida.txt
+
+OBLIGADO=NO
+
+BUSQUEDA=
+
+CERTIFICADO=
+
+PASSWORD=
+

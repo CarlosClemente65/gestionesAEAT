@@ -26,7 +26,7 @@ namespace gestionesAEAT.Metodos
         [JsonProperty("IDI")]
         public string Idioma { get; set; }
 
-        [JsonProperty("SINVIL")]
+        [JsonProperty("SINVL")]
         public string SinValidar { get; set; }
     }
 
@@ -38,16 +38,16 @@ namespace gestionesAEAT.Metodos
     public class elementosRespuesta
     {
         [JsonProperty("errores")]
-        public List<string> errores { get; set; }
+        public List<string> errores { get; set; } = new List<string>();
 
         [JsonProperty("pdf")]
-        public List<string> pdf { get; set; }
+        public List<string> pdf { get; set; } = new List<string>();
 
         [JsonProperty("avisos")]
-        public List<string> avisos { get; set; }
+        public List<string> avisos { get; set; } = new List<string>();
 
         [JsonProperty("advertencias")]
-        public List<string> advertencias { get; set; }
+        public List<string> advertencias { get; set; } = new List<string>();
     }
 
     public class validarModelos
@@ -80,12 +80,7 @@ namespace gestionesAEAT.Metodos
                 //Formatear datos de la cabecera
                 foreach (var elemento in utilidad.cabecera)
                 {
-                    string[] partes = elemento.Split('=');
-                    if (partes.Length == 2)
-                    {
-                        atributo = partes[0].Trim();
-                        valor = partes[1].Trim();
-                    }
+                    (atributo, valor) = utilidad.divideCadena(elemento, '=');
 
                     // Verificar si el nombre coincide con alguna propiedad de la clase servaliDos y asignar el valor correspondiente
                     switch (atributo)
@@ -145,7 +140,7 @@ namespace gestionesAEAT.Metodos
 
                     //Si hay una respuesta en pdf se graba en la ruta de salida
                     string ficheroPdf = string.Empty;
-                    if (utilidad.respuestaValidarModelos.respuesta.pdf != null)
+                    if (utilidad.respuestaValidarModelos.respuesta.pdf != null && utilidad.respuestaValidarModelos.respuesta.pdf.Count > 0)
                     {
                         ficheroPdf = Path.ChangeExtension(ficheroSalida, "pdf");
                         string respuestaPDF = utilidad.respuestaValidarModelos.respuesta.pdf[0];
@@ -153,59 +148,9 @@ namespace gestionesAEAT.Metodos
                         File.WriteAllBytes(ficheroPdf, contenidoPDF);
                     }
 
-                    //Graba el fichero de salida
-                    var respuestaValidar = utilidad.respuestaValidarModelos.respuesta;
-                    StringBuilder resultadoSalida = new StringBuilder();
-
-                    //Si se ha generado el PDF lo graba en el fichero de salida
-                    if (utilidad.respuestaValidarModelos.respuesta.pdf != null)
-                    {
-                        resultadoSalida.AppendLine($"pdf = {ficheroPdf}");
-                    }
-                    else
-                    {
-                        resultadoSalida.AppendLine("pdf =");
-                    }
-
-                    //Si se han generado errores los graba en el fichero de salida
-                    if (respuestaValidar.errores != null && respuestaValidar.errores.Count > 0)
-                    {
-                        List<string> listaErrores = new List<string>();
-                        listaErrores = utilidad.erroresArray;
-                        int linea = 0;
-                        foreach (var elemento in listaErrores)
-                        {
-                            resultadoSalida.AppendLine($"E{linea.ToString("D2")} = {elemento}");
-                            linea++;
-                        }
-                    }
-
-                    //Si se han generado avisos los graba en el fichero de salida
-                    if (respuestaValidar.avisos != null && respuestaValidar.avisos.Count > 0)
-                    {
-                        List<string> listaAvisos = new List<string>();
-                        listaAvisos = utilidad.erroresArray;
-                        int linea = 0;
-                        foreach (var elemento in listaAvisos)
-                        {
-                            resultadoSalida.AppendLine($"A{linea.ToString("D2")} = {elemento}");
-                            linea++;
-                        }
-                    }
-
-
-                    //Si se han generado advertencias las graba en el fichero de salida
-                    if (respuestaValidar.advertencias != null && respuestaValidar.advertencias.Count > 0)
-                    {
-                        List<string> listaAdvertencias = new List<string>();
-                        listaAdvertencias = utilidad.erroresArray;
-                        int linea = 0;
-                        foreach (var elemento in listaAdvertencias)
-                        {
-                            resultadoSalida.AppendLine($"D{linea.ToString("D2")} = {elemento}");
-                            linea++;
-                        }
-                    }
+                    //Procesa la respuesta de la validacion para generar el fichero de salida
+                    var respuestaValidar = utilidad.respuestaValidarModelos;
+                    string resultadoSalida = utilidad.generaFicheroSalida(respuestaValidar, ficheroPdf);
 
                     //Graba el fichero de salida
                     File.WriteAllText(Parametros.ficheroSalida, resultadoSalida.ToString());

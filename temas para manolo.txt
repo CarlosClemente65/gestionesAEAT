@@ -1,5 +1,8 @@
 * Para el envio de informativas (tipo 7) he añadido los siguientes parametros:
-	- PROCESOINFORMATIVAS= Tipo de proceso a ejecutar en la presentacion de informativas de los 3 que hay: inicializa, envio, presentacion
+	- PROCESOINFORMATIVAS= Tipo de proceso a ejecutar en la presentacion de informativas de los 3 que hay: inicializa, envia, presenta
 
 * En el guion ya no hace falta el bloque [respuesta} porque esas variables ya se controlan por el programa y en la salida se pondran las que tengan contenido
+
+* En el guion de la validacion de modelos, cuando no se quiere validar hay que mandar SINVL=SINVL (necesito el valor despues del igual); si quieres se puede cambiar la variable a VALIDACION=SINVL
+
 

@@ -29,6 +29,8 @@ namespace gestionesAEAT.Utilidades
         //public static string urlInformativas { get; set; } = string.Empty;
         //public static List<string> regInformativas { get; set; }
 
+        static Utiles utilidad = new Utiles();
+
         public static void CargarOpciones(string _ficheroOpciones)
         {
             ficheroOpciones = _ficheroOpciones;
@@ -40,14 +42,9 @@ namespace gestionesAEAT.Utilidades
                 if (string.IsNullOrWhiteSpace(linea)) continue;
 
                 //Divide la linea en clave=valor
-                string[] partes = linea.Split('=');
                 string clave = string.Empty;
                 string valor = string.Empty;
-                if (partes.Length == 2)
-                {
-                    clave = partes[0].Trim();
-                    valor = partes[1].Trim();
-                }
+                (clave, valor) = utilidad.divideCadena(linea, '=');
 
                 switch (clave)
                 {

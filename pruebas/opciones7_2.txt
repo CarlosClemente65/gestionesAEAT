@@ -1,0 +1,7 @@
+CLIENTE=00065
+TIPO=7
+ENTRADA=guion_informativas1.txt
+SALIDA=salida_informativas2.txt
+OBLIGADO=SI
+BUSQUEDA=05196375P
+PROCESOINFORMATIVAS=envia

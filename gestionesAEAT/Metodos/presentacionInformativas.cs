@@ -1,6 +1,7 @@
 ﻿using gestionesAEAT.Utilidades;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices.ComTypes;
@@ -104,7 +105,7 @@ namespace gestionesAEAT.Metodos
                 utilidad.cargaDatosGuion(textoEnvio); //Monta en la clase Utiles las listas "cabecera", "body" y "respuesta" para luego acceder a esos datos a montar el envio
 
                 // Objeto que contendrá la instancia de la clase a rellenar
-                object instanciaClase = null; 
+                object instanciaClase = null;
 
                 switch (proceso)
                 {
@@ -126,6 +127,27 @@ namespace gestionesAEAT.Metodos
 
                 // Asignación de los valores a las propiedades de la clase usando reflexión
                 AsignarValoresClase(instanciaClase, utilidad.cabecera);
+
+                //Prepara el servicio de envio
+
+                foreach (string linea in utilidad.cabecera)
+                {
+                    (string nombre, string valor) = utilidad.divideCadena(linea, '=');
+                    //Hay que añadir eso al request de envio segun el codigo anterior
+                    // request.Headers(titulo) = valor  ' ejemplo request.Headers("MODELO") = "180"
+                    /*Y añadir el body
+                        Dim bodydat As String = ""
+                        For x = 0 To body.Count - 1
+                            If x = body.Count - 1 Then
+                                bodydat = bodydat & body(x)
+                            Else
+                            bodydat = bodydat & body(x) & vbCrLf  ' para probar 
+                            End If
+                        Next 
+                     
+                     */
+
+                }
 
             }
 
@@ -150,12 +172,11 @@ namespace gestionesAEAT.Metodos
             */
             foreach (var linea in listaValores)
             {
-                string[] partes = linea.Split('=');
-                if (partes.Length == 2)
+                string nombre = string.Empty;
+                string valor = string.Empty;
+                (nombre, valor) = utilidad.divideCadena(linea, '=');
+                if (!string.IsNullOrEmpty(valor))
                 {
-                    string nombre = partes[0].Trim(); // Nombre de la propiedad
-                    string valor = partes[1].Trim();  // Valor de la propiedad
-
                     // Obtener el tipo de la clase instanciada
                     Type tipoClase = instanciaClase.GetType();
 

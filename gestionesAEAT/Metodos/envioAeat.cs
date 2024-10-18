@@ -49,7 +49,11 @@ namespace gestionesAEAT
                             break;
 
                         case "xml":
-                            solicitudHttp.ContentType = "text/xml;charset=UTF-8";
+                            solicitudHttp.ContentType = $"text/xml;charset=UTF-8";
+                            break;
+
+                        case "texto:":
+                            solicitudHttp.ContentType = "text/plain;charset=UTF-8";
                             break;
                     }
 
