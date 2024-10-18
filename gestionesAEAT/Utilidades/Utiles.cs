@@ -70,10 +70,10 @@ namespace gestionesAEAT
                 }
             }
 
-            string cadena, valor;
+            string cadena, resultado;
             int bloque = 0;
 
-            valor = "";
+            resultado = "";
 
             for (int x = 0; x < textoGuion.Count; x++)
             {
@@ -89,18 +89,18 @@ namespace gestionesAEAT
 
                     if (bloque == 2)
                     {
-                        string[] parte = cadena.ToString().Split('=');
-                        if (parte[0] == "CODIFICACION")
+                        (string atributo, string valor) = divideCadena(cadena.ToString(), '=');
+                        if (atributo == "CODIFICACION")
                         {
-                            if (parte[1].Length > 1) valor = parte[1];
+                            if (valor.Length > 1) resultado = valor;
                             break;
                         }
                     }
                 }
             }
 
-            if (valor == "") valor = "UTF-8";
-            return valor.ToUpper();
+            if (resultado == "") resultado = "UTF-8";
+            return resultado.ToUpper();
         }
 
         public void borrarFicheros(string fichero)
@@ -291,14 +291,7 @@ namespace gestionesAEAT
                 //Asigna las variables modelo, ejercicio y periodo segun los valores de la cabecera
                 foreach (string linea in cabecera)
                 {
-                    string[] partes = linea.Split('=');
-                    string atributo = string.Empty;
-                    string valor = string.Empty;
-                    if (partes.Length == 2)
-                    {
-                        atributo = partes[0];
-                        valor = partes[1];
-                    }
+                    (string atributo, string valor) = divideCadena(linea, '=');
 
                     switch (atributo)
                     {
@@ -669,6 +662,21 @@ namespace gestionesAEAT
             }
 
             return resultadoSalida.ToString();
+        }
+
+        public (string,string) divideCadena (string cadena, char divisor)
+        {
+            //Permite dividir una cadena por el divisor pasado y solo la divide en un maximo de 2 partes (divide desde el primer divisor que encuentra)
+            string atributo = string.Empty;
+            string valor = string.Empty;
+            string[] partes = cadena.Split(new[] { divisor }, 2);
+            if (partes.Length == 2)
+            {
+                atributo = partes[0].Trim();
+                valor = partes[1].Trim();
+            }
+
+            return (atributo, valor);
         }
 
     }

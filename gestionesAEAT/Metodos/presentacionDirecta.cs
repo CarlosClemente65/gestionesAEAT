@@ -89,12 +89,7 @@ namespace gestionesAEAT.Metodos
                 //Formatear datos de la cabecera
                 foreach (var elemento in utilidad.cabecera)
                 {
-                    string[] partes = elemento.Split('=');
-                    if (partes.Length == 2)
-                    {
-                        atributo = partes[0].Trim();
-                        valor = partes[1].Trim();
-                    }
+                    (atributo, valor) = utilidad.divideCadena(elemento, '=');
 
                     // Verificar si el nombre coincide con alguna propiedad de la clase servaliDos y asignar el valor correspondiente
                     switch (atributo)
