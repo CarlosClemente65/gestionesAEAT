@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 namespace gestionesAEAT.Utilidades
 {
@@ -26,8 +27,7 @@ namespace gestionesAEAT.Utilidades
         public static string[] respuesta { get; set; } = new string[0];
         public static string cliente { get; set; } = string.Empty;
         public static string procesoInformativas {  get; set; } = string.Empty;
-        //public static string urlInformativas { get; set; } = string.Empty;
-        //public static List<string> regInformativas { get; set; }
+        public static Encoding codificacion {  get; set; } = Encoding.UTF8;
 
         static Utiles utilidad = new Utiles();
 

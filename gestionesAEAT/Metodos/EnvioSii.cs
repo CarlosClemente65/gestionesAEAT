@@ -16,8 +16,9 @@ namespace gestionesAEAT.Metodos
         {
             string ficheroFacturas = Parametros.ficheroEntrada;
             string ficheroSalida = Parametros.ficheroSalida;
-            string UrlSii = Parametros.UrlSii;
             string serieCertificado = Parametros.serieCertificado;
+            string ficheroResultado = Parametros.ficheroResultado;
+            string UrlSii = Parametros.UrlSii;
             //Metodo para hacer el envio a la AEAT de las facturas del lote
 
             //Carga los datos a enviar desde el ficheroFacturas
@@ -27,16 +28,16 @@ namespace gestionesAEAT.Metodos
             if (envio.estadoRespuestaAEAT == "OK") //Si no ha habido error en la comunicacion
             {
                 string respuestaAEAT = utilidad.formateaXML(envio.respuestaEnvioAEAT);
-                string pathRespuestaAEAT = Path.ChangeExtension(Parametros.ficheroSalida, "aeat");
+                string pathRespuestaAEAT = Path.ChangeExtension(ficheroSalida, "aeat");
                 string respuestaDiagram = formateaXML(respuestaAEAT);
                 utilidad.GrabarSalida(respuestaDiagram, ficheroSalida);
                 utilidad.GrabarSalida(respuestaAEAT, pathRespuestaAEAT);
-                utilidad.GrabarSalida("OK",Parametros.ficheroResultado);
+                utilidad.GrabarSalida("OK",ficheroResultado);
             }
             else
             {
                 if (!string.IsNullOrEmpty(envio.respuestaEnvioAEAT)) utilidad.GrabarSalida(envio.respuestaEnvioAEAT, ficheroSalida);
-                utilidad.GrabarSalida("Problemas al conectar con el servidor de la AEAT", Parametros.ficheroResultado);
+                utilidad.GrabarSalida("Problemas al conectar con el servidor de la AEAT", ficheroResultado);
                 utilidad.grabadaSalida = true;
             }
         }

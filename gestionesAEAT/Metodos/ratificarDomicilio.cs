@@ -17,6 +17,11 @@ namespace gestionesAEAT.Metodos
         public bool nifConyuge = false; //Si hay que pasar tambien el NIF del conyuge
         List<string> textoEntrada = new List<string>();
 
+        string ficheroEntrada = Parametros.ficheroEntrada;
+        string ficheroSalida = Parametros.ficheroSalida;
+        string serieCertificado = Parametros.serieCertificado;
+        string ficheroResultado = Parametros.ficheroResultado;
+
         string mensaje; //Variable auxiliar para la grabacion de la respuesta
 
         Utiles utilidad = Program.utilidad; //Instanciacion de las utilidades para poder usarlas
@@ -25,9 +30,6 @@ namespace gestionesAEAT.Metodos
 
         public void envioPeticion(int paso)
         {
-            string serieCertificado = Parametros.serieCertificado;
-            string ficheroEntrada = Parametros.ficheroEntrada;
-            string ficheroSalida = Parametros.ficheroSalida;
 
             string rutaSalida = Path.GetDirectoryName(ficheroEntrada);
             string ficheroSalidaConyuge = Path.Combine(rutaSalida, Path.GetFileNameWithoutExtension(ficheroSalida) + "2" + Path.GetExtension(ficheroSalida));
@@ -35,7 +37,6 @@ namespace gestionesAEAT.Metodos
             //Borrar los ficheros si existen en la ruta pasada
             if (paso == 1)
             {
-                textoEntrada = utilidad.prepararGuion(ficheroEntrada); //Solo se procesa en el paso 1 ya que se almacena el contenido en una variable de clase
                 utilidad.borrarFicheros(ficheroSalida);
             }
 
@@ -43,7 +44,7 @@ namespace gestionesAEAT.Metodos
 
             try
             {
-                if (paso == 1) utilidad.cargaDatosGuion(textoEntrada);
+                if (paso == 1) utilidad.cargaDatosGuion(ficheroEntrada);
 
                 datosEnvio = formateoCabecera(paso); //Genera los datos a enviar (paso 1 para el titular y paso 2 para el conyuge)
 
@@ -67,7 +68,7 @@ namespace gestionesAEAT.Metodos
             {
                 //Si se ha producido algun error en el envio
                 mensaje = $"MENSAJE = Proceso cancelado o error en el envio. {ex.Message}";
-                utilidad.GrabarSalida(mensaje, Parametros.ficheroResultado);
+                utilidad.GrabarSalida(mensaje, ficheroResultado);
                 utilidad.grabadaSalida = true;
             }
 
@@ -82,7 +83,7 @@ namespace gestionesAEAT.Metodos
             catch (Exception ex)
             {
                 mensaje = $"MENSAJE = Se ha producido un error al grabar los ficheros de respuesta. {ex.Message}";
-                utilidad.GrabarSalida(mensaje, Parametros.ficheroResultado);
+                utilidad.GrabarSalida(mensaje, ficheroResultado);
                 utilidad.grabadaSalida = true;
             }
         }
@@ -170,7 +171,7 @@ namespace gestionesAEAT.Metodos
             catch (Exception ex)
             {
                 mensaje = $"Se ha producido un error al procesar el guion. {ex.Message}";
-                utilidad.GrabarSalida(mensaje, Parametros.ficheroResultado);
+                utilidad.GrabarSalida(mensaje, ficheroResultado);
                 utilidad.grabadaSalida = true;
             }
         }

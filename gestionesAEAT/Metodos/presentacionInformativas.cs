@@ -1,5 +1,4 @@
-﻿using GestionCertificadosDigitales;
-using gestionesAEAT.Utilidades;
+﻿using gestionesAEAT.Utilidades;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -79,29 +78,25 @@ namespace gestionesAEAT.Metodos
     {
         Utiles utilidad = Program.utilidad; //Instanciacion de las utilidades para poder usarlas
 
-        List<string> textoEnvio = new List<string>();//Prepara una lista con los datos del guion
+        ////List<string> textoEnvio = new List<string>();//Prepara una lista con los datos del guion
 
         string atributo = string.Empty; //Cada una de las variables que se pasan a la AEAT
         string valor = string.Empty; //Valor del atributo que se pasa a la AEAT
 
-        string respuestaAEAT; //Contenido de la respuesta de la AEAT a la solicitud enviada
+        List<string> datosCabecera = new List<string>(); //Lineas de la cabecera preparadas para el header
 
-        string textoSalida = string.Empty; //Texto que se grabara en el fichero de salida
 
         public void envioPeticion(string proceso)
         {
             //El proceso puede ser: inicializa, envio, presentacion
-            string ficheroEntrada = Parametros.ficheroEntrada;
-            string ficheroSalida = Parametros.ficheroSalida;
-            string serieCertificado = Parametros.serieCertificado;
 
             envioAeat envio = new envioAeat();
 
-            textoEnvio = utilidad.prepararGuion(ficheroEntrada); //Se procesa el guion para formar una lista que se pueda pasar al resto de metodos
+            ////textoEnvio = utilidad.prepararGuion(Parametros.ficheroEntrada); //Se procesa el guion para formar una lista que se pueda pasar al resto de metodos
 
             try
             {
-                utilidad.cargaDatosGuion(textoEnvio); //Monta en la clase Utiles las listas "cabecera", "body" y "respuesta" para luego acceder a esos datos a montar el envio
+                utilidad.cargaDatosGuion(Parametros.ficheroEntrada); //Monta en la clase Utiles las listas "cabecera", "body" y "respuesta" para luego acceder a esos datos a montar el envio
 
                 // Objeto que contendrá la instancia de la clase a rellenar
                 object instanciaClase = null;
@@ -110,51 +105,51 @@ namespace gestionesAEAT.Metodos
                 {
                     case "inicializa":
                         instanciaClase = new inicializaInformativas();
-
                         break;
 
                     case "envio":
                         instanciaClase = new envioInformativas();
-
                         break;
 
                     case "presentacion":
                         instanciaClase = new presentaInformativas();
-
                         break;
                 }
 
                 // Asignación de los valores a las propiedades de la clase usando reflexión
+                AsignarValoresClase(instanciaClase);
 
-                AsignarValoresClase(instanciaClase, utilidad.cabecera);
+                //////Prepara los datos que se debe incluir en la cabecera de request de envio a la AEAT
+                ////foreach (var propiedad in instanciaClase.GetType().GetProperties())
+                ////{
+                ////    string nombre = propiedad.Name; // Nombre de la propiedad
+                ////    string valor = propiedad.GetValue(instanciaClase)?.ToString(); // Valor de la propiedad
 
-                //Prepara la cabecera
-                foreach (var propiedad in instanciaClase.GetType().GetProperties())
-                {
-                    string nombre = propiedad.Name; // Nombre de la propiedad
-                    string valor = propiedad.GetValue(instanciaClase)?.ToString(); // Valor de la propiedad
-
-                    if (!string.IsNullOrEmpty(valor))
-                    {
-                        utilidad.datosCabecera.Add($"{nombre}={valor}"); // Formato parametro=valor
-                    }
-                }
+                ////    if (!string.IsNullOrEmpty(valor))
+                ////    {
+                ////        datosCabecera.Add($"{nombre}={valor}"); // Formato parametro=valor
+                ////    }
+                ////}
 
                 //Prepara el cuerpo del envio
                 string datosBody = string.Join("\n", utilidad.body);
 
                 //Envia los datos
-                envioInformativas(utilidad.url, datosBody, Parametros.serieCertificado);
-
+                envioInformativas(datosBody);
 
                 //Revisar esta parte
-                respuestaAEAT = envio.respuestaEnvioAEAT;
+
+                //Procesa la respuesta de la AEAT
+                string respuestaAEAT = envio.respuestaEnvioAEAT;
 
                 if (envio.estadoRespuestaAEAT == "OK")
                 {
-                    //Si se ha podido enviar, se serializa la respuesta de Hacienda
+                    //Si se ha podido enviar, se formatea la cabecera de la respuesta de Hacienda
+
+
+
                     utilidad.respuestaEnvioModelos = JsonConvert.DeserializeObject<RespuestaPresBasicaDos>(respuestaAEAT);
-                    textoSalida = utilidad.generarRespuesta(ficheroSalida, "enviar");
+                    string textoSalida = utilidad.generarRespuesta(Parametros.ficheroSalida, "enviar");
 
                     //Procesado de los tipos de respuesta posibles
                     var respuestaEnvio = utilidad.respuestaEnvioModelos.respuesta;
@@ -165,7 +160,7 @@ namespace gestionesAEAT.Metodos
                         if (elementosRespuesta.urlPdf != null)
                         {
                             //Grabar el PDF en la ruta
-                            string ficheroPdf = Path.ChangeExtension(ficheroSalida, "pdf");
+                            string ficheroPdf = Path.ChangeExtension(Parametros.ficheroSalida, "pdf");
 
                             using (WebClient clienteWeb = new WebClient())
                             {
@@ -175,7 +170,7 @@ namespace gestionesAEAT.Metodos
                         }
 
                         //Grabacion de los datos de la respuesta en el fichero de salida
-                        using (StreamWriter writer = new StreamWriter(ficheroSalida))
+                        using (StreamWriter writer = new StreamWriter(Parametros.ficheroSalida))
                         {
                             var propiedadesSeleccionadas = new List<string> //Permite buscar solo las propiedades que necesitamos grabar en el fichero
                         {
@@ -226,7 +221,7 @@ namespace gestionesAEAT.Metodos
                     //Grabar un html con los errores, avisos o advertencias generados
                     if (!string.IsNullOrEmpty(textoSalida))
                     {
-                        string rutaHtml = Path.ChangeExtension(ficheroSalida, "html");
+                        string rutaHtml = Path.ChangeExtension(Parametros.ficheroSalida, "html");
                         File.WriteAllText(rutaHtml, textoSalida);
                     }
 
@@ -243,8 +238,10 @@ namespace gestionesAEAT.Metodos
             }
         }
 
-        public void AsignarValoresClase(object instanciaClase, List<string> listaValores)
+        public void AsignarValoresClase(object instanciaClase)
         {
+            //Asigna los valores de la cabecera a las propiedades de la clase
+            List<string> listaValores = utilidad.cabecera; //Carga la lista con los valores de la cabecera
             foreach (var linea in listaValores)
             {
                 string nombre = string.Empty;
@@ -255,7 +252,7 @@ namespace gestionesAEAT.Metodos
                     // Obtener el tipo de la clase instanciada
                     Type tipoClase = instanciaClase.GetType();
 
-                    // Buscar si la clase tiene una propiedad que coincida con el nombre
+                    // Buscar si la clase tiene una propiedad que coincida con el nombre (se pone en minusculas porque asi esta definida la clase y es como se debe enviar a la AEAT y es como se recibe la respuesta.
                     var propiedad = tipoClase.GetProperty(nombre.ToLower());
 
                     // Si la propiedad existe y es escribible
@@ -266,22 +263,26 @@ namespace gestionesAEAT.Metodos
 
                         // Asignar el valor a la propiedad
                         propiedad.SetValue(instanciaClase, valorConvertido);
+
+                        //Se rellena la lista 'datosCabecera' que luego se usa para el envio a la AEAT
+                        datosCabecera.Add($"{propiedad}={valorConvertido}"); // Formato parametro=valor
                     }
                 }
             }
         }
 
-
-        public void envioInformativas(string url, string datosEnvio, string serieCertificado) //Se pone el tipo de envio opcional como formulario y si es de tipo json se debe pasar en la llamada al metodo
+        public void envioInformativas(string datosEnvio)
         {
+            string url = utilidad.url;
             try
             {
-                (X509Certificate2 certificado, bool resultado) = Program.gestionCertificados.exportaCertificadoDigital(serieCertificado);
+                //Carga el certificado digital segun el numero de serie
+                (X509Certificate2 certificado, bool resultado) = Program.gestionCertificados.exportaCertificadoDigital(Parametros.serieCertificado);
 
                 if (certificado != null)
                 {
                     //Protocolo de seguridad
-                    System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
                     //Crear datos para la solicitud HTTP
                     HttpWebRequest solicitudHttp = (HttpWebRequest)WebRequest.Create(url);
@@ -292,11 +293,10 @@ namespace gestionesAEAT.Metodos
                     //Configurar el tipo de contenido
                     solicitudHttp.ContentType = "text/plain;charset=ISO-8859-15";
 
-                    if (utilidad.datosCabecera != null)
+                    if (datosCabecera != null)
                     {
-                        foreach (var linea in utilidad.datosCabecera)
+                        foreach (var linea in datosCabecera)
                         {
-                            //solicitudHttp.Headers.Add(linea);
                             (string nombre, string valor) = utilidad.divideCadena(linea, '=');
                             if (!string.IsNullOrEmpty(nombre) && !string.IsNullOrEmpty(valor))
                             {
@@ -346,7 +346,8 @@ namespace gestionesAEAT.Metodos
                             var propiedad = tipoRespuesta.GetProperty(nombreHeader.ToLower());
                             if (propiedad != null)
                             {
-                                contenidoRespuesta.AppendLine($"{nombreHeader}= {valorHeader}"); // Añadir nombre y valor al StringBuilder
+                                nombreHeader = nombreHeader.ToUpper();
+                                contenidoRespuesta.AppendLine($"{nombreHeader} = {valorHeader}"); // Añadir nombre y valor al StringBuilder
                             }
                         }
                         utilidad.GrabarSalida(contenidoRespuesta.ToString(), Parametros.ficheroSalida);
@@ -356,7 +357,7 @@ namespace gestionesAEAT.Metodos
                 }
                 else
                 {
-                    utilidad.GrabarSalida("No se ha cargado el certificado",Parametros.ficheroResultado);
+                    utilidad.GrabarSalida("No se ha cargado el certificado", Parametros.ficheroResultado);
                 }
             }
 
