@@ -161,7 +161,7 @@ namespace gestionesAEAT.Utilidades
                             mensaje = "No se ha pasado la url a la que enviar el modelo de informativas";
                             break;
 
-                        case "ProcesoInformativas":
+                        case "procesoInformativas":
                             mensaje = "No se ha pasado el tipo de proceso a ejecutar en la presentacion de informativas";
                             break;
 

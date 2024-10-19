@@ -1,0 +1,2 @@
+mensaje= Longitud del Registro Tipo 1 incorrecta
+codigo= 1007

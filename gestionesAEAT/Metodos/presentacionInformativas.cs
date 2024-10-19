@@ -1,77 +1,76 @@
-﻿using gestionesAEAT.Utilidades;
+﻿using GestionCertificadosDigitales;
+using gestionesAEAT.Utilidades;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Runtime.InteropServices.ComTypes;
+using System.IO;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace gestionesAEAT.Metodos
 {
     public class inicializaInformativas
     {
-        public string MODELO { get; set; }
-        public string EJERCICIO { get; set; }
-        public string PERIODO { get; set; }
-        public string NDC { get; set; }
-        public string IDIOMA { get; set; }
-        public string NUMBLOQUES { get; set; }
-        public string CODIFICACION { get; set; }
+        public string modelo { get; set; }
+        public string ejercicio { get; set; }
+        public string periodo { get; set; }
+        public string ndc { get; set; }
+        public string idioma { get; set; }
+        public string numbloques { get; set; }
+        public string codificacion { get; set; }
 
     }
 
     public class respuestaInicializa
     {
-        public string IDENVIO { get; set; }
-        public string ESTADO { get; set; }
-        public string SIGBLOQUE { get; set; }
-        public string CODIGO { get; set; }
-        public string MENSAJE { get; set; }
+        public string idenvio { get; set; }
+        public string estado { get; set; }
+        public string sigbloque { get; set; }
+        public string codigo { get; set; }
+        public string mensaje { get; set; }
 
     }
 
     public class envioInformativas
     {
-        public string IDENVIO { get; set; }
-        public string NUMBLOQUE { get; set; }
-        public string CODIFICACION { get; set; }
+        public string idenvio { get; set; }
+        public string numbloque { get; set; }
+        public string codificacion { get; set; }
     }
 
     public class respuestaEnvio
     {
-        public string IDENVIO { get; set; }
-        public string ESTADO { get; set; }
-        public string SIGBLOQUE { get; set; }
-        public string CODIGO { get; set; }
-        public string MENSAJE { get; set; }
-        public string TOTALT2OK { get; set; }
-        public string TOTALT2KO { get; set; }
-        public string BLOQUET2OK { get; set; }
-        public string BLOQUET2KO { get; set; }
-        public string AVISOS { get; set; }
+        public string idenvio { get; set; }
+        public string estado { get; set; }
+        public string sigbloque { get; set; }
+        public string codigo { get; set; }
+        public string mensaje { get; set; }
+        public string totalt2ok { get; set; }
+        public string totalt2ko { get; set; }
+        public string bloquet2ok { get; set; }
+        public string bloquet2ko { get; set; }
+        public string avisos { get; set; }
     }
 
     public class presentaInformativas
     {
-        public string IDENVIO { get; set; }
-        public string FIRNIF { get; set; }
-        public string FIRNOMBRE { get; set; }
-        public string FIR { get; set; }
+        public string idenvio { get; set; }
+        public string firnif { get; set; }
+        public string firnombre { get; set; }
+        public string fir { get; set; }
 
     }
 
     public class respuestaPresenta
     {
-        public string IDENVIO { get; set; }
-        public string ESTADO { get; set; }
-        public string NUMEROREGISTROS { get; set; }
-        public string CSV { get; set; }
-        public string EXPEDIENTE { get; set; }
-        public string CODIGO { get; set; }
-        public string MENSAJE { get; set; }
+        public string idenvio { get; set; }
+        public string estado { get; set; }
+        public string numeroregistros { get; set; }
+        public string csv { get; set; }
+        public string expediente { get; set; }
+        public string codigo { get; set; }
+        public string mensaje { get; set; }
 
     }
 
@@ -115,37 +114,124 @@ namespace gestionesAEAT.Metodos
                         break;
 
                     case "envio":
-                        instanciaClase = new inicializaInformativas();
+                        instanciaClase = new envioInformativas();
 
                         break;
 
                     case "presentacion":
-                        instanciaClase = new inicializaInformativas();
+                        instanciaClase = new presentaInformativas();
 
                         break;
                 }
 
                 // Asignación de los valores a las propiedades de la clase usando reflexión
+
                 AsignarValoresClase(instanciaClase, utilidad.cabecera);
 
-                //Prepara el servicio de envio
-
-                foreach (string linea in utilidad.cabecera)
+                //Prepara la cabecera
+                foreach (var propiedad in instanciaClase.GetType().GetProperties())
                 {
-                    (string nombre, string valor) = utilidad.divideCadena(linea, '=');
-                    //Hay que añadir eso al request de envio segun el codigo anterior
-                    // request.Headers(titulo) = valor  ' ejemplo request.Headers("MODELO") = "180"
-                    /*Y añadir el body
-                        Dim bodydat As String = ""
-                        For x = 0 To body.Count - 1
-                            If x = body.Count - 1 Then
-                                bodydat = bodydat & body(x)
-                            Else
-                            bodydat = bodydat & body(x) & vbCrLf  ' para probar 
-                            End If
-                        Next 
-                     
-                     */
+                    string nombre = propiedad.Name; // Nombre de la propiedad
+                    string valor = propiedad.GetValue(instanciaClase)?.ToString(); // Valor de la propiedad
+
+                    if (!string.IsNullOrEmpty(valor))
+                    {
+                        utilidad.datosCabecera.Add($"{nombre}={valor}"); // Formato parametro=valor
+                    }
+                }
+
+                //Prepara el cuerpo del envio
+                string datosBody = string.Join("\n", utilidad.body);
+
+                //Envia los datos
+                envioInformativas(utilidad.url, datosBody, Parametros.serieCertificado);
+
+
+                //Revisar esta parte
+                respuestaAEAT = envio.respuestaEnvioAEAT;
+
+                if (envio.estadoRespuestaAEAT == "OK")
+                {
+                    //Si se ha podido enviar, se serializa la respuesta de Hacienda
+                    utilidad.respuestaEnvioModelos = JsonConvert.DeserializeObject<RespuestaPresBasicaDos>(respuestaAEAT);
+                    textoSalida = utilidad.generarRespuesta(ficheroSalida, "enviar");
+
+                    //Procesado de los tipos de respuesta posibles
+                    var respuestaEnvio = utilidad.respuestaEnvioModelos.respuesta;
+                    if (respuestaEnvio.correcta != null && !string.IsNullOrEmpty(respuestaEnvio.correcta.CodigoSeguroVerificacion))
+                    {
+                        //Si hay datos en las propiedades de la respuesta correcta se graba el PDF y el fichero con los datos del modelo
+                        var elementosRespuesta = respuestaEnvio.correcta;
+                        if (elementosRespuesta.urlPdf != null)
+                        {
+                            //Grabar el PDF en la ruta
+                            string ficheroPdf = Path.ChangeExtension(ficheroSalida, "pdf");
+
+                            using (WebClient clienteWeb = new WebClient())
+                            {
+                                byte[] contenidoPdf = clienteWeb.DownloadData(elementosRespuesta.urlPdf);
+                                File.WriteAllBytes(ficheroPdf, contenidoPdf);
+                            }
+                        }
+
+                        //Grabacion de los datos de la respuesta en el fichero de salida
+                        using (StreamWriter writer = new StreamWriter(ficheroSalida))
+                        {
+                            var propiedadesSeleccionadas = new List<string> //Permite buscar solo las propiedades que necesitamos grabar en el fichero
+                        {
+                            "Modelo", "Ejercicio", "Periodo","CodigoSeguroVerificacion", "Justificante", "Expediente"
+                        };
+
+                            Type tipo = elementosRespuesta.GetType();
+                            var propiedades = tipo.GetProperties();
+
+                            foreach (var propiedad in propiedades)
+                            {
+                                if (propiedadesSeleccionadas.Contains(propiedad.Name))
+                                {
+                                    var valor = propiedad.GetValue(elementosRespuesta);
+                                    writer.WriteLine($"{propiedad.Name}: {valor}");
+
+                                }
+                            }
+                            if (elementosRespuesta.avisos != null) //Si hay avisos tambien se graban en el fichero de salida
+                            {
+                                for (int i = 0; i < elementosRespuesta.avisos.Count; i++)
+                                {
+                                    writer.WriteLine($"A{i + 1.ToString("D2")}: {elementosRespuesta.avisos[i]}");
+                                }
+                            }
+
+                            if (elementosRespuesta.advertencias != null) //Si hay advertencias tambien se graban en el fichero de salida
+                            {
+                                for (int i = 0; i < elementosRespuesta.advertencias.Count; i++)
+                                {
+                                    writer.WriteLine($"D{i + 1.ToString("D2")}: {elementosRespuesta.advertencias[i]}");
+                                }
+                            }
+                        }
+                    }
+
+                    else
+                    {
+                        //Procesa la respuesta de la validacion para generar el fichero de salida
+                        var respuestaEnvioModelos = utilidad.respuestaEnvioModelos;
+                        string resultadoSalida = utilidad.generaFicheroSalida(respuestaEnvioModelos);
+
+                        //Graba el fichero de salida
+                        File.WriteAllText(Parametros.ficheroSalida, resultadoSalida);
+                    }
+
+
+                    //Grabar un html con los errores, avisos o advertencias generados
+                    if (!string.IsNullOrEmpty(textoSalida))
+                    {
+                        string rutaHtml = Path.ChangeExtension(ficheroSalida, "html");
+                        File.WriteAllText(rutaHtml, textoSalida);
+                    }
+
+                    //Grabar el fichero de respuesta
+                    File.WriteAllText(Parametros.ficheroResultado, "OK");
 
                 }
 
@@ -159,17 +245,6 @@ namespace gestionesAEAT.Metodos
 
         public void AsignarValoresClase(object instanciaClase, List<string> listaValores)
         {
-            /*Esta clase no tengo claro si es necesaria
-            En el programa de david recorre los elementos de la 'cabecera' y crea un request del siguiente modo
-                For x = 0 To Cabecera.Count - 1 ' preparamos los headers
-                    titulo = ""
-                    valor = ""
-                    saca_header(Cabecera(x), titulo, valor)
-                    request.Headers(titulo) = valor  ' ejemplo request.Headers("MODELO") = "180"
-                Next
-
-            Pero esto esta despues de todo el proceso de asignacion de la configuracion del envio
-            */
             foreach (var linea in listaValores)
             {
                 string nombre = string.Empty;
@@ -181,7 +256,7 @@ namespace gestionesAEAT.Metodos
                     Type tipoClase = instanciaClase.GetType();
 
                     // Buscar si la clase tiene una propiedad que coincida con el nombre
-                    var propiedad = tipoClase.GetProperty(nombre);
+                    var propiedad = tipoClase.GetProperty(nombre.ToLower());
 
                     // Si la propiedad existe y es escribible
                     if (propiedad != null && propiedad.CanWrite)
@@ -193,6 +268,102 @@ namespace gestionesAEAT.Metodos
                         propiedad.SetValue(instanciaClase, valorConvertido);
                     }
                 }
+            }
+        }
+
+
+        public void envioInformativas(string url, string datosEnvio, string serieCertificado) //Se pone el tipo de envio opcional como formulario y si es de tipo json se debe pasar en la llamada al metodo
+        {
+            try
+            {
+                (X509Certificate2 certificado, bool resultado) = Program.gestionCertificados.exportaCertificadoDigital(serieCertificado);
+
+                if (certificado != null)
+                {
+                    //Protocolo de seguridad
+                    System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+                    //Crear datos para la solicitud HTTP
+                    HttpWebRequest solicitudHttp = (HttpWebRequest)WebRequest.Create(url);
+
+                    //Configurar la solicitud
+                    solicitudHttp.Method = "POST";
+
+                    //Configurar el tipo de contenido
+                    solicitudHttp.ContentType = "text/plain;charset=ISO-8859-15";
+
+                    if (utilidad.datosCabecera != null)
+                    {
+                        foreach (var linea in utilidad.datosCabecera)
+                        {
+                            //solicitudHttp.Headers.Add(linea);
+                            (string nombre, string valor) = utilidad.divideCadena(linea, '=');
+                            if (!string.IsNullOrEmpty(nombre) && !string.IsNullOrEmpty(valor))
+                            {
+                                solicitudHttp.Headers[nombre] = valor;
+                            }
+                        }
+                    }
+
+                    solicitudHttp.ClientCertificates.Add(certificado);
+
+                    //Asigna la codificacion del envio
+                    Encoding encoding;
+
+                    string codificacion = "UTF-8"; //Tipo de codificacion a utilizar en el envio
+
+                    try
+                    {
+                        encoding = Encoding.GetEncoding(codificacion);
+                    }
+                    catch (ArgumentException)
+                    {
+                        encoding = Encoding.UTF8;
+                    }
+
+
+                    //Grabacion de los datos a enviar al servidor
+                    byte[] datosEnvioBytes = encoding.GetBytes(datosEnvio);
+                    using (var requestStream = solicitudHttp.GetRequestStream())
+                    {
+                        requestStream.Write(datosEnvioBytes, 0, datosEnvioBytes.Length);
+                    }
+
+                    HttpWebResponse respuesta = (HttpWebResponse)solicitudHttp.GetResponse();
+                    //Devuelve el estado 'OK' si todo ha ido bien
+                    string estadoRespuestaAEAT = respuesta.StatusDescription;
+
+                    StringBuilder contenidoRespuesta = new StringBuilder();
+                    if (estadoRespuestaAEAT == "OK")
+                    {
+                        Type tipoRespuesta = typeof(respuestaInicializa);
+
+                        for (int i = 0; i < respuesta.Headers.Count; i++)
+                        {
+                            string nombreHeader = respuesta.Headers.GetKey(i); // Obtener el nombre de la cabecera
+                            string valorHeader = respuesta.Headers[nombreHeader]; // Obtener el valor de la cabecera
+
+                            var propiedad = tipoRespuesta.GetProperty(nombreHeader.ToLower());
+                            if (propiedad != null)
+                            {
+                                contenidoRespuesta.AppendLine($"{nombreHeader}= {valorHeader}"); // Añadir nombre y valor al StringBuilder
+                            }
+                        }
+                        utilidad.GrabarSalida(contenidoRespuesta.ToString(), Parametros.ficheroSalida);
+                        utilidad.GrabarSalida("OK", Parametros.ficheroResultado);
+                    }
+
+                }
+                else
+                {
+                    utilidad.GrabarSalida("No se ha cargado el certificado",Parametros.ficheroResultado);
+                }
+            }
+
+            catch (Exception ex)
+            {
+                utilidad.GrabarSalida($"Error en la conexion con el servidor. {ex.Message}", Parametros.ficheroResultado);
+                utilidad.grabadaSalida = true;
             }
         }
     }

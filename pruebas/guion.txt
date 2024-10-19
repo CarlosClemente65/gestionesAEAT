@@ -1,7 +1,0 @@
-TIPO=6
-ENTRADA=C:\aeat\siibase\lanza\081000\recibidas.xml
-SALIDA=C:\aeat\siibase\lanza\081000\recibidas.res
-URLSII=https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fr/SiiFactFRV1SOAP
-OBLIGADO=SI
-BUSQUEDA=726E0DB7A17EFA04603B7F010BA43FA6
-RESPUESTA=[siiR:CSV,sii:TimestampPresentacion,sii:NIF,sii:IDOtro,sii:ID,sii:NumSerieFacturaEmisor,sii:FechaExpedicionFacturaEmisor,siiR:EstadoRegistro,siiR:CodigoErrorRegistro,siiR:DescripcionErrorRegistro,faultstring]

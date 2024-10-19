@@ -1,5 +1,5 @@
 [url]
-https://www7.aeat.es/wlpl/OVPT-NTGV/InicializarEnvio
+https://prewww1.aeat.es/wlpl/OVPT-NTGV/InicializarEnvio
 [cabecera]
 MODELO = 180
 EJERCICIO = 2019

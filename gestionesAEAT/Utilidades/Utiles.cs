@@ -19,6 +19,7 @@ namespace gestionesAEAT
         public List<string> cabecera = new List<string>(); //Lineas de la cabecera
         public List<string> body = new List<string>(); //Lineas del body 
         public List<string> respuesta = new List<string>(); //Lineas de la respuesta 
+        public List<string> datosCabecera = new List<string>(); //LIneas de la cabecera preparadas para el header
 
         //Variables para almacenar las respuestas del envio
         public List<string> erroresArray = new List<string>();
