@@ -1,0 +1,18 @@
+[url]
+https://prewww1.aeat.es/wlpl/OVPT-NTGV/EnviarDatos
+[cabecera]
+IDENVIO = 18020210A202410200000281341
+NUMBLOQUE = 1
+CODIFICACION = UTF-8
+[body]
+21802021B5317976804870613H         RODRIGUEZ SANCHEZ REMEDIOS              021 00000010000001900000000019000000004                                                                              00000                                                                                                                      000000000000                                                                                                                                                                             
+[respuesta]
+IDENVIO
+ESTADO
+SIGBLOQUE
+CODIGO
+MENSAJE
+TOTALT2OK
+TOTALT2KO
+BLOQUET2OK
+BLOQUET2KO

@@ -73,6 +73,20 @@ namespace gestionesAEAT.Metodos
 
     }
 
+    public class recuperaErroneos
+    {
+        public string idenvio { get; set; }
+        public string codificacion { get; set; }
+    }
+
+    public class respuestaRecupera
+    {
+        public string idenvio { get; set; }
+        public string estado { get; set; }
+        public string codigo { get; set; }
+        public string mensaje { get; set; }
+    }
+
 
     public class presentacionInformativas
     {
@@ -88,11 +102,10 @@ namespace gestionesAEAT.Metodos
 
         public void envioPeticion(string proceso)
         {
-            //El proceso puede ser: inicializa, envio, presentacion
+            //El proceso puede ser: inicializa, envio, presenta, recupera 
 
             envioAeat envio = new envioAeat();
-
-            ////textoEnvio = utilidad.prepararGuion(Parametros.ficheroEntrada); //Se procesa el guion para formar una lista que se pueda pasar al resto de metodos
+            Type claseRespuesta = null;
 
             try
             {
@@ -105,131 +118,44 @@ namespace gestionesAEAT.Metodos
                 {
                     case "inicializa":
                         instanciaClase = new inicializaInformativas();
+                        claseRespuesta = typeof(respuestaInicializa);
                         break;
 
                     case "envio":
                         instanciaClase = new envioInformativas();
+                        claseRespuesta = typeof(respuestaEnvio);
                         break;
 
-                    case "presentacion":
+                    case "presenta":
                         instanciaClase = new presentaInformativas();
+                        claseRespuesta = typeof(respuestaPresenta);
+                        break;
+
+                    case "recupera":
+                        instanciaClase = new recuperaErroneos();
+                        claseRespuesta = typeof (respuestaRecupera);
                         break;
                 }
 
                 // Asignación de los valores a las propiedades de la clase usando reflexión
                 AsignarValoresClase(instanciaClase);
 
-                //////Prepara los datos que se debe incluir en la cabecera de request de envio a la AEAT
-                ////foreach (var propiedad in instanciaClase.GetType().GetProperties())
-                ////{
-                ////    string nombre = propiedad.Name; // Nombre de la propiedad
-                ////    string valor = propiedad.GetValue(instanciaClase)?.ToString(); // Valor de la propiedad
-
-                ////    if (!string.IsNullOrEmpty(valor))
-                ////    {
-                ////        datosCabecera.Add($"{nombre}={valor}"); // Formato parametro=valor
-                ////    }
-                ////}
-
                 //Prepara el cuerpo del envio
-                string datosBody = string.Join("\n", utilidad.body);
-
-                //Envia los datos
-                envioInformativas(datosBody);
-
-                //Revisar esta parte
-
-                //Procesa la respuesta de la AEAT
-                string respuestaAEAT = envio.respuestaEnvioAEAT;
-
-                if (envio.estadoRespuestaAEAT == "OK")
+                string datosBody = string.Empty;
+                for (int i = 0; i < utilidad.body.Count; i++)
                 {
-                    //Si se ha podido enviar, se formatea la cabecera de la respuesta de Hacienda
-
-
-
-                    utilidad.respuestaEnvioModelos = JsonConvert.DeserializeObject<RespuestaPresBasicaDos>(respuestaAEAT);
-                    string textoSalida = utilidad.generarRespuesta(Parametros.ficheroSalida, "enviar");
-
-                    //Procesado de los tipos de respuesta posibles
-                    var respuestaEnvio = utilidad.respuestaEnvioModelos.respuesta;
-                    if (respuestaEnvio.correcta != null && !string.IsNullOrEmpty(respuestaEnvio.correcta.CodigoSeguroVerificacion))
+                    if (i == utilidad.body.Count - 1)
                     {
-                        //Si hay datos en las propiedades de la respuesta correcta se graba el PDF y el fichero con los datos del modelo
-                        var elementosRespuesta = respuestaEnvio.correcta;
-                        if (elementosRespuesta.urlPdf != null)
-                        {
-                            //Grabar el PDF en la ruta
-                            string ficheroPdf = Path.ChangeExtension(Parametros.ficheroSalida, "pdf");
-
-                            using (WebClient clienteWeb = new WebClient())
-                            {
-                                byte[] contenidoPdf = clienteWeb.DownloadData(elementosRespuesta.urlPdf);
-                                File.WriteAllBytes(ficheroPdf, contenidoPdf);
-                            }
-                        }
-
-                        //Grabacion de los datos de la respuesta en el fichero de salida
-                        using (StreamWriter writer = new StreamWriter(Parametros.ficheroSalida))
-                        {
-                            var propiedadesSeleccionadas = new List<string> //Permite buscar solo las propiedades que necesitamos grabar en el fichero
-                        {
-                            "Modelo", "Ejercicio", "Periodo","CodigoSeguroVerificacion", "Justificante", "Expediente"
-                        };
-
-                            Type tipo = elementosRespuesta.GetType();
-                            var propiedades = tipo.GetProperties();
-
-                            foreach (var propiedad in propiedades)
-                            {
-                                if (propiedadesSeleccionadas.Contains(propiedad.Name))
-                                {
-                                    var valor = propiedad.GetValue(elementosRespuesta);
-                                    writer.WriteLine($"{propiedad.Name}: {valor}");
-
-                                }
-                            }
-                            if (elementosRespuesta.avisos != null) //Si hay avisos tambien se graban en el fichero de salida
-                            {
-                                for (int i = 0; i < elementosRespuesta.avisos.Count; i++)
-                                {
-                                    writer.WriteLine($"A{i + 1.ToString("D2")}: {elementosRespuesta.avisos[i]}");
-                                }
-                            }
-
-                            if (elementosRespuesta.advertencias != null) //Si hay advertencias tambien se graban en el fichero de salida
-                            {
-                                for (int i = 0; i < elementosRespuesta.advertencias.Count; i++)
-                                {
-                                    writer.WriteLine($"D{i + 1.ToString("D2")}: {elementosRespuesta.advertencias[i]}");
-                                }
-                            }
-                        }
+                        datosBody += utilidad.body[i];
                     }
-
                     else
                     {
-                        //Procesa la respuesta de la validacion para generar el fichero de salida
-                        var respuestaEnvioModelos = utilidad.respuestaEnvioModelos;
-                        string resultadoSalida = utilidad.generaFicheroSalida(respuestaEnvioModelos);
-
-                        //Graba el fichero de salida
-                        File.WriteAllText(Parametros.ficheroSalida, resultadoSalida);
+                        datosBody += utilidad.body[i] + @"\n";
                     }
-
-
-                    //Grabar un html con los errores, avisos o advertencias generados
-                    if (!string.IsNullOrEmpty(textoSalida))
-                    {
-                        string rutaHtml = Path.ChangeExtension(Parametros.ficheroSalida, "html");
-                        File.WriteAllText(rutaHtml, textoSalida);
-                    }
-
-                    //Grabar el fichero de respuesta
-                    File.WriteAllText(Parametros.ficheroResultado, "OK");
-
                 }
 
+                //Envia los datos
+                envioInformativas(datosBody, claseRespuesta);
             }
 
             catch (Exception ex)
@@ -265,13 +191,13 @@ namespace gestionesAEAT.Metodos
                         propiedad.SetValue(instanciaClase, valorConvertido);
 
                         //Se rellena la lista 'datosCabecera' que luego se usa para el envio a la AEAT
-                        datosCabecera.Add($"{propiedad}={valorConvertido}"); // Formato parametro=valor
+                        datosCabecera.Add($"{nombre}={valorConvertido}"); // Formato parametro=valor
                     }
                 }
             }
         }
 
-        public void envioInformativas(string datosEnvio)
+        public void envioInformativas(string datosEnvio, Type claseRespuesta)
         {
             string url = utilidad.url;
             try
@@ -307,6 +233,7 @@ namespace gestionesAEAT.Metodos
 
                     solicitudHttp.ClientCertificates.Add(certificado);
 
+                    //Nota: revisar si coger la codificacion de Parametros.
                     //Asigna la codificacion del envio
                     Encoding encoding;
 
@@ -336,20 +263,32 @@ namespace gestionesAEAT.Metodos
                     StringBuilder contenidoRespuesta = new StringBuilder();
                     if (estadoRespuestaAEAT == "OK")
                     {
-                        Type tipoRespuesta = typeof(respuestaInicializa);
-
                         for (int i = 0; i < respuesta.Headers.Count; i++)
                         {
                             string nombreHeader = respuesta.Headers.GetKey(i); // Obtener el nombre de la cabecera
                             string valorHeader = respuesta.Headers[nombreHeader]; // Obtener el valor de la cabecera
 
-                            var propiedad = tipoRespuesta.GetProperty(nombreHeader.ToLower());
+                            var propiedad = claseRespuesta.GetProperty(nombreHeader.ToLower());
                             if (propiedad != null)
                             {
                                 nombreHeader = nombreHeader.ToUpper();
                                 contenidoRespuesta.AppendLine($"{nombreHeader} = {valorHeader}"); // Añadir nombre y valor al StringBuilder
                             }
                         }
+
+                        //Almacena el cuerpo si tiene contenido
+                        var cuerpoRespuesta = respuesta.GetResponseStream();
+                        if(cuerpoRespuesta != null)
+                        {
+                            using (var reader = new StreamReader(cuerpoRespuesta))
+                            {
+                                string body = reader.ReadToEnd();
+                                contenidoRespuesta.AppendLine();
+                                contenidoRespuesta.AppendLine("BODY:"); // Separador para el body
+                                contenidoRespuesta.AppendLine(body); // Añadir el body al contenido
+                            }
+                        }
+
                         utilidad.GrabarSalida(contenidoRespuesta.ToString(), Parametros.ficheroSalida);
                         utilidad.GrabarSalida("OK", Parametros.ficheroResultado);
                     }

@@ -2,14 +2,14 @@
 https://prewww1.aeat.es/wlpl/OVPT-NTGV/InicializarEnvio
 [cabecera]
 MODELO = 180
-EJERCICIO = 2019
+EJERCICIO = 2021
 PERIODO = 0A
 NDC = B53179768
 IDIOMA = ES
 NUMBLOQUES = 1
 CODIFICACION = UTF-8
 [body]
-11802019B53179768DIAGRAM SOFTWARE S L                    T666111111PERSONA CONTACTO NOMBRE                 1802097324727  0000000000000000000001 000000000100000000000000019000                                                                                                                                                                                                                                                                                                                                     
+11802021B53179768DIAGRAM SOFTWARE S L                    T967111111PERSONA CONTACTO NOMBRE                 1805088306197  0000000000000000000001 000000001000000000000000190000                                                                                                                                                                                                                                                                                                                                     
 [respuesta]
 IDENVIO
 ESTADO

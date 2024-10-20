@@ -170,7 +170,7 @@ namespace gestionesAEAT
 
             for (int x = 0; x < textoGuion.Count; x++)
             {
-                cadena = textoGuion[x].ToString().Trim();
+                cadena = textoGuion[x].ToString();
                 if (cadena != "")
                 {
                     //Control para saber que parte del fichero se va a procesar
@@ -469,6 +469,7 @@ namespace gestionesAEAT
             mensaje.AppendLine(@"        DPRENTA= En la descarga de datos fiscales indica si se quieren tambien los datos personales (valor 'S' o 'N')");
             mensaje.AppendLine(@"        URLRENTA= Direccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año)");
             mensaje.AppendLine(@"        RESPUESTA= Etiquetas del xml de respuesta en el envio al SII de las que se quiere obtener los resultados");
+            mensaje.AppendLine(@"        PROCESOINFORMATIVAS= Tipo de proceso a ejecutar en la presentacion de informativas (inicializa, envio, presenta, recupera)");
             mensaje.AppendLine("\nEjemplos de fichero de opciones:");
             mensaje.AppendLine(@"    Envio modelos con numero de serie:");
             mensaje.AppendLine(@"        CLIENTE=00001");
