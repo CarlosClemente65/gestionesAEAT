@@ -1,8 +1,10 @@
 ﻿using gestionesAEAT.Utilidades;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -73,13 +75,13 @@ namespace gestionesAEAT.Metodos
 
     }
 
-    public class recuperaErroneos
+    public class recuperarErrores
     {
         public string idenvio { get; set; }
         public string codificacion { get; set; }
     }
 
-    public class respuestaRecupera
+    public class respuestaRecuperarErrores
     {
         public string idenvio { get; set; }
         public string estado { get; set; }
@@ -87,12 +89,48 @@ namespace gestionesAEAT.Metodos
         public string mensaje { get; set; }
     }
 
+    public class bajaInformativas
+    {
+        public string firnif { get; set; }
+        public string firnombre { get; set; }
+        public string fir { get; set; }
+        public string modelo { get; set; }
+        public string ejercicio { get; set; }
+        public string periodo { get; set; }
+        public string ndc { get; set; }
+        public string expediente { get; set; }
+    }
+
+    public class respuestaBaja
+    {
+        public string expediente { get; set; }
+        public string codigo { get; set; }
+        public string mensaje { get; set; }
+    }
+
+    public class recuperarEnvio
+    {
+        public string modelo { get; set; }
+        public string ejercicio { get; set; }
+        public string periodo { get; set; }
+        public string ndc { get; set; }
+    }
+
+    public class respuestaRecuperarEnvio
+    {
+        public string idenvio { get; set; }
+        public string estado { get; set; }
+        public string numbloques { get; set; }
+        public string codigo { get; set; }
+        public string mensaje { get; set; }
+        public string enviot2ok { get; set; }
+        public string enviot2ko { get; set; }
+    }
+
 
     public class presentacionInformativas
     {
         Utiles utilidad = Program.utilidad; //Instanciacion de las utilidades para poder usarlas
-
-        ////List<string> textoEnvio = new List<string>();//Prepara una lista con los datos del guion
 
         string atributo = string.Empty; //Cada una de las variables que se pasan a la AEAT
         string valor = string.Empty; //Valor del atributo que se pasa a la AEAT
@@ -102,7 +140,7 @@ namespace gestionesAEAT.Metodos
 
         public void envioPeticion(string proceso)
         {
-            //El proceso puede ser: inicializa, envio, presenta, recupera 
+            //El proceso puede ser: inicializa, envio, presenta, recupera y baja 
 
             envioAeat envio = new envioAeat();
             Type claseRespuesta = null;
@@ -131,9 +169,19 @@ namespace gestionesAEAT.Metodos
                         claseRespuesta = typeof(respuestaPresenta);
                         break;
 
-                    case "recupera":
-                        instanciaClase = new recuperaErroneos();
-                        claseRespuesta = typeof (respuestaRecupera);
+                    case "recuperarerrores":
+                        instanciaClase = new recuperarErrores();
+                        claseRespuesta = typeof(respuestaRecuperarErrores);
+                        break;
+
+                    case "baja":
+                        instanciaClase = new bajaInformativas();
+                        claseRespuesta = typeof(respuestaBaja);
+                        break;
+
+                    case "recuperarenvio":
+                        instanciaClase = new recuperarEnvio();
+                        claseRespuesta = typeof(respuestaRecuperarEnvio);
                         break;
                 }
 
@@ -160,7 +208,10 @@ namespace gestionesAEAT.Metodos
 
             catch (Exception ex)
             {
-
+                //Si se ha producido algun error en el envio
+                string mensaje = $"MENSAJE = Proceso cancelado o error en el envio. {ex.Message}";
+                utilidad.GrabarSalida(mensaje, Parametros.ficheroResultado);
+                utilidad.grabadaSalida = true;
             }
         }
 
@@ -197,7 +248,7 @@ namespace gestionesAEAT.Metodos
             }
         }
 
-        public void envioInformativas(string datosEnvio, Type claseRespuesta)
+        public void envioInformativas(string datosBody, Type claseRespuesta)
         {
             string url = utilidad.url;
             try
@@ -233,24 +284,8 @@ namespace gestionesAEAT.Metodos
 
                     solicitudHttp.ClientCertificates.Add(certificado);
 
-                    //Nota: revisar si coger la codificacion de Parametros.
-                    //Asigna la codificacion del envio
-                    Encoding encoding;
-
-                    string codificacion = "UTF-8"; //Tipo de codificacion a utilizar en el envio
-
-                    try
-                    {
-                        encoding = Encoding.GetEncoding(codificacion);
-                    }
-                    catch (ArgumentException)
-                    {
-                        encoding = Encoding.UTF8;
-                    }
-
-
                     //Grabacion de los datos a enviar al servidor
-                    byte[] datosEnvioBytes = encoding.GetBytes(datosEnvio);
+                    byte[] datosEnvioBytes = Parametros.codificacion.GetBytes(datosBody);
                     using (var requestStream = solicitudHttp.GetRequestStream())
                     {
                         requestStream.Write(datosEnvioBytes, 0, datosEnvioBytes.Length);
@@ -260,9 +295,9 @@ namespace gestionesAEAT.Metodos
                     //Devuelve el estado 'OK' si todo ha ido bien
                     string estadoRespuestaAEAT = respuesta.StatusDescription;
 
-                    StringBuilder contenidoRespuesta = new StringBuilder();
                     if (estadoRespuestaAEAT == "OK")
                     {
+                        StringBuilder contenidoRespuesta = new StringBuilder();
                         for (int i = 0; i < respuesta.Headers.Count; i++)
                         {
                             string nombreHeader = respuesta.Headers.GetKey(i); // Obtener el nombre de la cabecera
@@ -276,24 +311,60 @@ namespace gestionesAEAT.Metodos
                             }
                         }
 
-                        //Almacena el cuerpo si tiene contenido
-                        var cuerpoRespuesta = respuesta.GetResponseStream();
-                        if(cuerpoRespuesta != null)
+                        utilidad.GrabarSalida(contenidoRespuesta.ToString(), Parametros.ficheroSalida);
+
+                        //Almacena el cuerpo si tiene contenido (siempre seran los registros con errores de la presentacion
+                        var erroresAEAT = respuesta.GetResponseStream();
+                        if (erroresAEAT != null)
                         {
-                            using (var reader = new StreamReader(cuerpoRespuesta))
+                            StringBuilder contenidoErrores = new StringBuilder();
+                            using (StreamReader reader = new StreamReader(erroresAEAT))
                             {
                                 string body = reader.ReadToEnd();
-                                contenidoRespuesta.AppendLine();
-                                contenidoRespuesta.AppendLine("BODY:"); // Separador para el body
-                                contenidoRespuesta.AppendLine(body); // Añadir el body al contenido
-                            }
-                        }
 
-                        utilidad.GrabarSalida(contenidoRespuesta.ToString(), Parametros.ficheroSalida);
-                        utilidad.GrabarSalida("OK", Parametros.ficheroResultado);
+                                //Solo añade al reader las lineas que no estan vacias.
+                                if (!string.IsNullOrWhiteSpace(body))
+                                {
+                                    contenidoErrores.AppendLine(body); // Añadir el body al contenido
+                                }
+                            }
+
+                            if (contenidoErrores.Length > 0)
+                            {
+                                string pathErrores = Path.Combine(Path.GetDirectoryName(Parametros.ficheroSalida), "errores.txt");
+
+                                //Se modifica el fichero de salida para poner primero el error y luego los datos del registro
+                                string[] lineasErrores = contenidoErrores.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+                                StringBuilder erroresSalida = new StringBuilder();
+
+                                int reg = 1;
+                                foreach (string linea in lineasErrores)
+                                {
+                                    if (!string.IsNullOrWhiteSpace(linea))
+                                    {
+                                        if (linea.Contains(";"))
+                                        {
+                                            (string registro, string error) = utilidad.divideCadena(linea, ';');
+                                            erroresSalida.AppendLine($"Error {reg.ToString("D2")} = {error} - Registro {reg.ToString("D2")} = {registro}");
+                                            reg++;
+                                        }
+                                        else
+                                        {
+                                            erroresSalida.AppendLine($"Error {reg} = {linea}");
+                                            reg++;
+                                        }
+                                    }
+                                }
+
+                                utilidad.GrabarSalida(erroresSalida.ToString(), pathErrores);
+                            }
+
+                        }
                     }
 
+                    utilidad.GrabarSalida("OK", Parametros.ficheroResultado);
                 }
+
                 else
                 {
                     utilidad.GrabarSalida("No se ha cargado el certificado", Parametros.ficheroResultado);

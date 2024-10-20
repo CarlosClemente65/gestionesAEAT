@@ -1,8 +1,10 @@
 [url]
-https://prewww1.aeat.es/wlpl/OVPT-NTGV/RecuperarErroneos
+https://prewww1.aeat.es/wlpl/OVPT-NTGV/RecuperarEnvio
 [cabecera]
-IDENVIO = 18020210A202410200000281341
-CODIFICACION = UTF-8
+MODELO = 180
+EJERCICIO = 2023
+PERIODO = 0A
+NDC = B53179768
 [body]
 [respuesta]
 IDENVIO

@@ -1,9 +1,0 @@
-ESTADO = FINALIZADO
-MENSAJE = Operación realizada correctamente
-IDENVIO = 18020210A202410200000281341
-CODIGO = 0
-
-BODY:
-11802021B53179768DIAGRAM SOFTWARE S L                    T967111111PERSONA CONTACTO NOMBRE                 1805088306198C 1805088306197000000001 000000000000000000000000000000                                                                                                                                                                                                                                                                                                                                     
-21802021B5317976804870613H         RODRIGUEZ SANCHEZ REMEDIOS              021 00000010000001900000000019000000004                                                                              00000                                                                                                                      000000000000                                                                                                                                                                             
-

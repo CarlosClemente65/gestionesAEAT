@@ -1,5 +1,7 @@
 * Para el envio de informativas (tipo 7) he añadido los siguientes parametros:
-	- PROCESOINFORMATIVAS= Tipo de proceso a ejecutar en la presentacion de informativas de los 3 que hay: inicializa, envia, presenta
+	- PROCESOINFORMATIVAS= Tipo de proceso a ejecutar en la presentacion de informativas de los 4 que hay: inicializa, envio, presenta, recuperarerrores, baja y recuperarenvio
+	- Confirmar que en el proceso de envio se controla desde modelos que hay errores y entonces se lanza el proceso 'recuperarerrores'
+	- Revisar que parametros se envian en la baja de la declaracion (no he hecho ninguna prueba)
 
 * En el guion ya no hace falta el bloque [respuesta} porque esas variables ya se controlan por el programa y en la salida se pondran las que tengan contenido
 

@@ -26,7 +26,7 @@
 			* DPRENTA= En la descarga de datos fiscales, indica si se quieren tambien los datos personales (opciones 'S' o 'N')
 			* URLRENTA= Direccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año)
 			* RESPUESTA= Etiquetas del xml de respuesta en el envio al SII de las que se quiere obtener los resultados
-			* PROCESOINFORMATIVAS= Tipo de proceso a ejecutar en la presentacion de informativas (inicializa, envio, presenta, recupera)
+			* PROCESOINFORMATIVAS= Tipo de proceso a ejecutar en la presentacion de informativas (inicializa, envio, presenta, recuperarErrores, recuperarEnvio y baja)
 
 /* Ejemplos de uso:
 	Envio modelos: gestionesAEAT dsclave opciones.txt 
