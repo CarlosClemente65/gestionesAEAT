@@ -1,0 +1,6 @@
+TIPO=5
+SALIDA=respuesta_descarga.txt
+NIFRENTA=05197043D
+REFRENTA=KEKTXP
+DPRENTA=S
+URLRENTA=https://www9.agenciatributaria.gob.es/wlpl/DFPA-D182/SvDesDF23Pei

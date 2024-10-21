@@ -68,11 +68,12 @@ namespace gestionesAEAT.Metodos
         {
             string ficheroEntrada = Parametros.ficheroEntrada;
             string ficheroSalida = Parametros.ficheroSalida;
-            textoEnvio = utilidad.prepararGuion(ficheroEntrada); //Se procesa el guion para formar una lista que se pueda pasar al resto de metodos
+            string ficheroResultado = Parametros.ficheroResultado;
 
             try
             {
-                utilidad.cargaDatosGuion(textoEnvio); //Monta en la clase Utiles las listas "cabecera", "body" y "respuesta" para luego acceder a esos datos a montar el envio
+                //Prepara los datos del guion
+                utilidad.cargaDatosGuion(ficheroEntrada); //Monta en la clase Utiles las listas "cabecera", "body" y "respuesta" para luego acceder a esos datos a montar el envio
 
                 //Instanciacion de la clase para almacenar los valores de la cabecera
                 servaliDos dato = new servaliDos();
@@ -125,6 +126,8 @@ namespace gestionesAEAT.Metodos
                 envio.envioPost(utilidad.url, jsonEnvio, "json");//Metodo sin certificado
                 respuestaAEAT = envio.respuestaEnvioAEAT;
 
+
+                //Procesa la respuesta
                 if (envio.estadoRespuestaAEAT == "OK")
                 {
                     //Deserializa la respuesta de Hacienda con la clase RespuestaValidarModelos
@@ -153,10 +156,10 @@ namespace gestionesAEAT.Metodos
                     string resultadoSalida = utilidad.generaFicheroSalida(respuestaValidar, ficheroPdf);
 
                     //Graba el fichero de salida
-                    File.WriteAllText(Parametros.ficheroSalida, resultadoSalida.ToString());
+                    File.WriteAllText(ficheroSalida, resultadoSalida.ToString());
 
                     //Graba el ficheroResultado
-                    File.WriteAllText(Parametros.ficheroResultado, "OK");
+                    File.WriteAllText(ficheroResultado, "OK");
                 }
             }
 
@@ -164,7 +167,7 @@ namespace gestionesAEAT.Metodos
             {
                 //Si se ha producido algun error en el envio
                 string mensaje = $"MENSAJE = Proceso cancelado o error en el envio. {ex.Message}";
-                utilidad.GrabarSalida(mensaje, Parametros.ficheroResultado);
+                utilidad.GrabarSalida(mensaje, ficheroResultado);
                 utilidad.grabadaSalida = true;
             }
         }

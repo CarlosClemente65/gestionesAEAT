@@ -38,7 +38,8 @@ namespace gestionesAEAT.Metodos
         string nifDf = string.Empty;
         string refRenta = string.Empty;
         string datosPersonales = string.Empty;
-        string ficheroSalida = string.Empty;
+        string ficheroSalida = Parametros.ficheroSalida;
+        string ficheroResultado = Parametros.ficheroResultado;
 
         Utiles utilidad = new Utiles();
 
@@ -50,7 +51,6 @@ namespace gestionesAEAT.Metodos
             nifDf = Parametros.nifDf;
             refRenta = Parametros.refRenta;
             datosPersonales = Parametros.datosPersonales;
-            ficheroSalida = Parametros.ficheroSalida;
             string respuestaAEAT = string.Empty;
             byte[] datosEnvio = null;
 
@@ -111,13 +111,13 @@ namespace gestionesAEAT.Metodos
 
                             break;
                     }
-                    File.WriteAllText(Parametros.ficheroResultado, "OK");
+                    File.WriteAllText(ficheroResultado, "OK");
                 }
 
                 //Si se ha producido un error se graba la salida y no se procesan mas veces la salida (grabarSalida = true)
                 if (!string.IsNullOrEmpty(mensajeError))
                 {
-                    utilidad.GrabarSalida(mensajeError, Parametros.ficheroResultado);
+                    utilidad.GrabarSalida(mensajeError, ficheroResultado);
                     utilidad.grabadaSalida = true;
                 }
 
@@ -126,7 +126,7 @@ namespace gestionesAEAT.Metodos
 
             catch (Exception ex)
             {
-                utilidad.GrabarSalida($"Error al descargar datos fiscales. {ex.Message}", Parametros.ficheroResultado);
+                utilidad.GrabarSalida($"Error al descargar datos fiscales. {ex.Message}", ficheroResultado);
                 utilidad.grabadaSalida = true;
             }
         }
@@ -201,12 +201,12 @@ namespace gestionesAEAT.Metodos
                         string estadoRespuestaAEAT1 = respuesta1.StatusDescription;
                         if (estadoRespuestaAEAT1 == "OK") contenidoRespuesta = reader1.ReadToEnd();
                     }
-                    File.WriteAllText(Parametros.ficheroResultado, "OK");
+                    File.WriteAllText(ficheroResultado, "OK");
                 }
             }
             catch (Exception ex)
             {
-                utilidad.GrabarSalida($"Error en la conexion con el servidor. {ex.Message}", Parametros.ficheroResultado);
+                utilidad.GrabarSalida($"Error en la conexion con el servidor. {ex.Message}", ficheroResultado);
                 utilidad.grabadaSalida = true;
             }
 

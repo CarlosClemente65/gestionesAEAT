@@ -9,6 +9,7 @@ namespace gestionesAEAT
 {
     public class envioAeat
     {
+        Encoding encoding; //Tipo de codificacion para el envio
         public string respuestaEnvioAEAT { get; set; } //Almacena la respuesta del servidor en formato string
         public byte[] respuestaEnvioAEATBytes { get; set; } //Almacena la respuesta del servidor en formato bytes (si es un fichero PDF).
         public string estadoRespuestaAEAT { get; set; } //Almacena si ha habido algun problema de conexion
@@ -22,8 +23,8 @@ namespace gestionesAEAT
             try
             {
                 bool resultado = false;
-               (certificado, resultado) = Program.gestionCertificados.exportaCertificadoDigital(serieCertificado);
-                
+                (certificado, resultado) = Program.gestionCertificados.exportaCertificadoDigital(serieCertificado);
+
                 if (certificado != null)
                 {
                     //Protocolo de seguridad
@@ -49,11 +50,11 @@ namespace gestionesAEAT
                             break;
 
                         case "xml":
-                            solicitudHttp.ContentType = "text/xml;charset=UTF-8";
+                            solicitudHttp.ContentType = $"text/xml;charset=UTF-8";
                             break;
+
                     }
 
-                    solicitudHttp.ContentLength = datosEnvio.Length;
                     solicitudHttp.ClientCertificates.Add(certificado);
                     //solicitudHttp.Proxy = null;
                     //Las lineas siguientes estan comentadas porque no es necesaria la identificacion del navegador que realiza la solicitud (UserAGent). Habria que poner una de ellas pero pueden cambiar con el tiempo, asi que no se usan

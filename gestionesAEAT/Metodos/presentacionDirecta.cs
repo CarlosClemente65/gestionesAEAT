@@ -67,21 +67,21 @@ namespace gestionesAEAT.Metodos
         string textoSalida = string.Empty; //Texto que se grabara en el fichero de salida
 
         Utiles utilidad = Program.utilidad; //Instanciacion de las utilidades para poder usarlas
-        
+
 
         public void envioPeticion()
         {
             string ficheroEntrada = Parametros.ficheroEntrada;
             string ficheroSalida = Parametros.ficheroSalida;
             string serieCertificado = Parametros.serieCertificado;
+            string ficheroResultado = Parametros.ficheroResultado;
 
             envioAeat envio = new envioAeat();
 
-            textoEnvio = utilidad.prepararGuion(ficheroEntrada); //Se procesa el guion para formar una lista que se pueda pasar al resto de metodos
-
             try
             {
-                utilidad.cargaDatosGuion(textoEnvio); //Monta en la clase Utiles las listas "cabecera", "body" y "respuesta" para luego acceder a esos datos a montar el envio
+                //Prepara el guion
+                utilidad.cargaDatosGuion(ficheroEntrada); //Monta en la clase Utiles las listas "cabecera", "body" y "respuesta" para luego acceder a esos datos a montar el envio
 
                 //Instanciacion de la clase para almacenar los valores de la cabecera
                 PresBasicaDos contenidoEnvio = new PresBasicaDos();
@@ -135,6 +135,8 @@ namespace gestionesAEAT.Metodos
                     }
                 }
 
+
+                //Prepara y envia los datos a la AEAT
                 string jsonEnvio = JsonConvert.SerializeObject(contenidoEnvio, new JsonSerializerSettings
                 {
                     //Serializa el json ignorando valores nulos y formateando la respuesta de forma indentada
@@ -145,6 +147,8 @@ namespace gestionesAEAT.Metodos
                 envio.envioPost(utilidad.url, jsonEnvio, serieCertificado, "json");
                 respuestaAEAT = envio.respuestaEnvioAEAT;
 
+
+                //Procesa la respuesta
                 if (envio.estadoRespuestaAEAT == "OK")
                 {
                     //Si se ha podido enviar, se serializa la respuesta de Hacienda
@@ -193,7 +197,7 @@ namespace gestionesAEAT.Metodos
                             {
                                 for (int i = 0; i < elementosRespuesta.avisos.Count; i++)
                                 {
-                                    writer.WriteLine(elementosRespuesta.avisos[i]);
+                                    writer.WriteLine($"A{i + 1.ToString("D2")}: {elementosRespuesta.avisos[i]}");
                                 }
                             }
 
@@ -201,7 +205,7 @@ namespace gestionesAEAT.Metodos
                             {
                                 for (int i = 0; i < elementosRespuesta.advertencias.Count; i++)
                                 {
-                                    writer.WriteLine(elementosRespuesta.advertencias[i]);
+                                    writer.WriteLine($"D{i + 1.ToString("D2")}: {elementosRespuesta.advertencias[i]}");
                                 }
                             }
                         }
@@ -214,7 +218,7 @@ namespace gestionesAEAT.Metodos
                         string resultadoSalida = utilidad.generaFicheroSalida(respuestaEnvioModelos);
 
                         //Graba el fichero de salida
-                        File.WriteAllText(Parametros.ficheroSalida, resultadoSalida);
+                        File.WriteAllText(ficheroSalida, resultadoSalida);
                     }
 
 
@@ -226,7 +230,7 @@ namespace gestionesAEAT.Metodos
                     }
 
                     //Grabar el fichero de respuesta
-                    File.WriteAllText(Parametros.ficheroResultado,"OK");
+                    File.WriteAllText(ficheroResultado, "OK");
 
                 }
             }

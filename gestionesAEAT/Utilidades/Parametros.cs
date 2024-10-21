@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
+using System.Text;
 
 namespace gestionesAEAT.Utilidades
 {
@@ -24,6 +26,8 @@ namespace gestionesAEAT.Utilidades
         public static string UrlSii { get; set; } = string.Empty;
         public static string[] respuesta { get; set; } = new string[0];
         public static string cliente { get; set; } = string.Empty;
+        public static string procesoInformativas {  get; set; } = string.Empty;
+        public static Encoding codificacion {  get; set; } = Encoding.UTF8;
 
         static Utiles utilidad = new Utiles();
 
@@ -108,6 +112,10 @@ namespace gestionesAEAT.Utilidades
                     case "URLRENTA":
                         urlDescargaDf = valor;
                         break;
+
+                    case "PROCESOINFORMATIVAS":
+                        procesoInformativas = valor;
+                        break;
                 }
             }
         }
@@ -148,6 +156,15 @@ namespace gestionesAEAT.Utilidades
                         case "UrlSii":
                             mensaje = "No se ha pasado la url a la que enviar las facturas";
                             break;
+
+                        case "UrlInformativas":
+                            mensaje = "No se ha pasado la url a la que enviar el modelo de informativas";
+                            break;
+
+                        case "procesoInformativas":
+                            mensaje = "No se ha pasado el tipo de proceso a ejecutar en la presentacion de informativas";
+                            break;
+
                     }
                 }
             }

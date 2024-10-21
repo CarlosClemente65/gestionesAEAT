@@ -20,6 +20,7 @@ namespace gestionesAEAT
         public List<string> cabecera = new List<string>(); //Lineas de la cabecera
         public List<string> body = new List<string>(); //Lineas del body 
         public List<string> respuesta = new List<string>(); //Lineas de la respuesta 
+        public List<string> textoGuion = new List<string>(); //Lista que almacena las lineas del guion para procesarlo
 
         //Variables para almacenar las respuestas del envio
         public List<string> erroresArray = new List<string>();
@@ -58,11 +59,12 @@ namespace gestionesAEAT
             return resultado.ToString();
         }
 
-        public string codificacionFicheroEntrada(string guion)
+        public void cargaFicheroEntrada(string ficheroEntrada)
         {
-            //Permite obtener la codificacion UTF-8 o ISO8859-1 (ascii extendido 256 bits o ansi), ya que algun guion se le pasa como parametro la codificacion
-            List<string> textoGuion = new List<string>();
-            using (StreamReader sr = new StreamReader(guion))
+            //Carga el fichero de entrada en una lista y obtiene la codificacion UTF-8 o ISO8859-1 (ascii extendido 256 bits o ansi), ya que algun guion se le pasa como parametro la codificacion
+            
+            //Carga del fichero
+            using (StreamReader sr = new StreamReader(ficheroEntrada))
             {
                 string linea;
                 while ((linea = sr.ReadLine()) != null)
@@ -71,10 +73,9 @@ namespace gestionesAEAT
                 }
             }
 
-            string cadena, resultado;
+            //Obtiene la codificacion
+            string cadena;
             int bloque = 0;
-
-            resultado = "";
 
             for (int x = 0; x < textoGuion.Count; x++)
             {
@@ -93,15 +94,23 @@ namespace gestionesAEAT
                         (string atributo, string valor) = divideCadena(cadena.ToString(), '=');
                         if (atributo == "CODIFICACION")
                         {
-                            if (valor.Length > 1) resultado = valor;
+                            if (valor.Length > 1)
+                            {
+                                try
+                                {
+                                    //Se intenta asignar el valor de la codificacion para evitar una excepcion
+                                    Parametros.codificacion = Encoding.GetEncoding(valor);
+                                }
+                                catch
+                                {
+                                    //Si no se puede asignar se deja el valor por defecto que es UTF-8
+                                }
+                            }
                             break;
                         }
                     }
                 }
             }
-
-            if (resultado == "") resultado = "UTF-8";
-            return resultado.ToUpper();
         }
 
         public void borrarFicheros(string fichero)
@@ -131,13 +140,10 @@ namespace gestionesAEAT
             }
         }
 
-        public string procesarGuionHtml(string guion)
+        public string procesarGuionHtml()
         {
             //Procesa el guion para poder hacer el envio a la AEAT
-            List<string> textoEntrada = prepararGuion(guion);
             string textoAEAT = string.Empty;
-
-            cargaDatosGuion(textoEntrada);
 
             for (int linea = 0; linea < cabecera.Count; linea++)
             {
@@ -153,15 +159,18 @@ namespace gestionesAEAT
             return textoAEAT;
         }
 
-        public void cargaDatosGuion(List<string> textoEntrada)
+        public void cargaDatosGuion(string ficheroEntrada)
         {
+            //Procesa el fichero de entrada para montar una lista con las lineas del guion
+            cargaFicheroEntrada(ficheroEntrada);
+
             //Lee el fichero de entrada y monta una lista con todas las lineas segun si son de la cabecera, body o respuesta
             string cadena;
             int bloque = 0; //Controla el tipo de dato a grabar en el fichero
 
-            for (int x = 0; x < textoEntrada.Count; x++)
+            for (int x = 0; x < textoGuion.Count; x++)
             {
-                cadena = textoEntrada[x].ToString().Trim();
+                cadena = textoGuion[x].ToString();
                 if (cadena != "")
                 {
                     //Control para saber que parte del fichero se va a procesar
@@ -206,26 +215,6 @@ namespace gestionesAEAT
             }
         }
 
-        public List<string> prepararGuion(string ficheroEntrada)
-        {
-            //Lee el fichero de entrada y lo devuelve en forma de lista
-
-            //Obtiene la codificacion del texto para procesarlo
-            Encoding codificacion = Encoding.GetEncoding(codificacionFicheroEntrada(ficheroEntrada));
-
-            //Monta una lista con el fichero de entrada para procesarlo
-            List<string> textoEntrada = new List<string>();
-            using (StreamReader sr = new StreamReader(ficheroEntrada, codificacion))
-            {
-                string linea;
-                while ((linea = sr.ReadLine()) != null)
-                {
-                    textoEntrada.Add(linea);
-                }
-            }
-            return textoEntrada;
-        }
-
         public string generarRespuesta(string ficheroRespuesta, string tipo)
         {
             //Metodo para generar un html si hay errores, avisos o advertencias. Se recibe como parametro el tipo ya que el tratamiento de la respuesta cambia si es en el envio o en la validacion
@@ -264,20 +253,20 @@ namespace gestionesAEAT
                     if (respuestaEnvio.correcta != null)
                     {
                         //Si viene la respuesta correcta mirar si hay avisos o advertencias
-                        if (respuestaEnvio.correcta.avisos != null)
+                        if (respuestaEnvio.correcta.avisos != null && respuestaEnvio.correcta.avisos.Count > 0)
                         {
                             avisosArray = respuestaEnvio.correcta.avisos;
                             control++;
                         }
 
-                        if (respuestaEnvio.correcta.advertencias != null)
+                        if (respuestaEnvio.correcta.advertencias != null && respuestaEnvio.correcta.advertencias.Count > 0)
                         {
                             advertenciasArray = respuestaEnvio.correcta.advertencias;
                             control++;
                         }
                     }
 
-                    if (respuestaEnvio.errores != null)
+                    if (respuestaEnvio.errores != null && respuestaEnvio.errores.Count > 0)
                     {
                         erroresArray = respuestaEnvio.errores;
                         control++;
@@ -467,6 +456,7 @@ namespace gestionesAEAT
             mensaje.AppendLine(@"            4 = Ratificacion domicilio renta");
             mensaje.AppendLine(@"            5 = Descarga datos fiscales renta");
             mensaje.AppendLine(@"            6 = Envio de facturas al SII");
+            mensaje.AppendLine(@"            7 = Prestar declaraciones informativas");
             mensaje.AppendLine(@"        ENTRADA= Nombre del fichero con los datos a enviar");
             mensaje.AppendLine(@"        SALIDA= Nombre del fichero donde se grabara la salida");
             mensaje.AppendLine(@"        URLSII= Url a la que hacer el envio de facturas al SII");
@@ -479,6 +469,7 @@ namespace gestionesAEAT
             mensaje.AppendLine(@"        DPRENTA= En la descarga de datos fiscales indica si se quieren tambien los datos personales (valor 'S' o 'N')");
             mensaje.AppendLine(@"        URLRENTA= Direccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año)");
             mensaje.AppendLine(@"        RESPUESTA= Etiquetas del xml de respuesta en el envio al SII de las que se quiere obtener los resultados");
+            mensaje.AppendLine(@"        PROCESOINFORMATIVAS= Tipo de proceso a ejecutar en la presentacion de informativas (inicializa, envio, presenta, recupera)");
             mensaje.AppendLine("\nEjemplos de fichero de opciones:");
             mensaje.AppendLine(@"    Envio modelos con numero de serie:");
             mensaje.AppendLine(@"        CLIENTE=00001");
@@ -547,7 +538,7 @@ namespace gestionesAEAT
             };
 
             using (var stringWriter = new StringWriter())
-            using (var xmlWriter = XmlWriter.Create(stringWriter,settings))
+            using (var xmlWriter = XmlWriter.Create(stringWriter, settings))
             {
                 documento.Save(xmlWriter);
                 return stringWriter.ToString();

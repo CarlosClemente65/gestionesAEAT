@@ -52,25 +52,33 @@ namespace gestionesAEAT.Metodos
 
         public void obtenerModelos()
         {
-            string guion = Parametros.ficheroEntrada;
+            string ficheroEntrada = Parametros.ficheroEntrada;
             string ficheroSalida = Parametros.ficheroSalida;
             string serieCertificado = Parametros.serieCertificado;
+            string ficheroResultado = Parametros.ficheroResultado;
             //El parametro 'guion' es el texto que viene en el fichero que luego se formatea para poder hacer el envio al metodo 'envioAEAT.envioPOST'
             //El parametro 'serieCertificado' es necesario para luego pasarlo al metodo de envio
 
             string respuestaXML = string.Empty;
             string datosEnvio = string.Empty;
 
-            datosEnvio = utilidad.procesarGuionHtml(guion); //Formatea el guion para poder pasarlo al servidor
+
+            //Prepara los datos del guion
+            utilidad.cargaDatosGuion(ficheroEntrada); //Monta en la clase Utiles las listas "cabecera", "body" y "respuesta" para luego acceder a esos datos a montar el envio
+
+            datosEnvio = utilidad.procesarGuionHtml(); //Formatea el guion para poder pasarlo al servidor
+
+            //Realiza el envio a la AEAT
             envio.envioPost(utilidad.url, datosEnvio, serieCertificado, "form");
 
+            //Procesa la respuesta
             if (envio.estadoRespuestaAEAT == "OK") //Si no ha habido error en la comunicacion
             {
-                File.WriteAllText(Parametros.ficheroResultado, "OK");
+                File.WriteAllText(ficheroResultado, "OK");
                 if (envio.respuestaEnvioAEAT.Contains("<!DOCTYPE html>"))
                 {
                     //Puede llegar un html con algun tipo de error
-                    string path = Path.ChangeExtension(Parametros.ficheroResultado, "html");
+                    string path = Path.ChangeExtension(ficheroResultado, "html");
                     File.WriteAllText(path, envio.respuestaEnvioAEAT);
                 }
                 else
