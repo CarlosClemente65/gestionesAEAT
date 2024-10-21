@@ -58,7 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Metodos\EnvioSii.cs" />
-    <Compile Include="Metodos\pagoNRC.cs" />
+    <Compile Include="Metodos\PagoNRC.cs" />
     <Compile Include="Metodos\presentacionDirecta.cs" />
     <Compile Include="Metodos\envioAeat.cs" />
     <Compile Include="Formularios\frmSeleccion.cs">

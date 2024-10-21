@@ -2,10 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace gestionesAEAT.Metodos
 {
@@ -13,7 +10,7 @@ namespace gestionesAEAT.Metodos
     {
         public ElementosOperacion operacion { get; set; }
         public ElementosDeclaracion declaracion { get; set; }
-        public ElementosObligado obligado { get; set; }
+        public ElementosObligado obligadoTributario { get; set; }
         public ElementosIngreso ingreso { get; set; }
     }
 
@@ -28,6 +25,8 @@ namespace gestionesAEAT.Metodos
         public string modelo { get; set; }
         public int ejercicio { get; set; }
         public string periodo { get; set; }
+        public string resultado { get; set; }
+        public string fracciona { get; set; }
     }
 
     public class ElementosObligado
@@ -54,9 +53,9 @@ namespace gestionesAEAT.Metodos
         public string descripcion { get; set; }
 
     }
-    public class pagoNRC
+    public class PagoNRC
     {
-        Utiles utilidad = new Utiles();
+        Utiles utilidad = Program.utilidad;
 
         public string atributo = string.Empty;
         public string valor = string.Empty;
@@ -68,7 +67,6 @@ namespace gestionesAEAT.Metodos
             string ficheroSalida = Parametros.ficheroSalida;
             string serieCertificado = Parametros.serieCertificado;
             string ficheroResultado = Parametros.ficheroResultado;
-            ////string url = utilidad.url;
 
             envioAeat envio = new envioAeat();
 
@@ -99,7 +97,7 @@ namespace gestionesAEAT.Metodos
                     StringBuilder textoSalida = new StringBuilder();
                     if (respuestaEnvioModelos.nrc != null)
                     {
-                        textoSalida.AppendLine($"nrc = { respuestaEnvioModelos.nrc}");
+                        textoSalida.AppendLine($"nrc = {respuestaEnvioModelos.nrc}");
                     }
                     else
                     {
@@ -109,7 +107,7 @@ namespace gestionesAEAT.Metodos
                     {
                         foreach (var elemento in respuestaEnvioModelos.error)
                         {
-                            textoSalida.AppendLine($"errores = {elemento}");
+                            textoSalida.AppendLine($"errores = {elemento.descripcion}");
                         }
                     }
                     else
@@ -122,8 +120,14 @@ namespace gestionesAEAT.Metodos
 
                 }
 
-
+                else
+                {
+                    if (!string.IsNullOrEmpty(envio.respuestaEnvioAEAT)) utilidad.GrabarSalida(envio.respuestaEnvioAEAT, ficheroSalida);
+                    utilidad.GrabarSalida("Problemas al conectar con el servidor de la AEAT", ficheroResultado);
+                    utilidad.grabadaSalida = true;
+                }
             }
+
             catch (Exception ex)
             {
                 //Si se ha producido algun error en el envio
@@ -131,10 +135,6 @@ namespace gestionesAEAT.Metodos
                 utilidad.GrabarSalida(mensaje, Parametros.ficheroResultado);
                 utilidad.grabadaSalida = true;
             }
-
-
-
-
         }
         public void cargaDatosPago(DatosPagoAutoliquidacion contenidoEnvio, string ficheroEntrada)
         {
@@ -144,7 +144,7 @@ namespace gestionesAEAT.Metodos
             //Instanciacion de la clase para almacenar los valores de la cabecera
             contenidoEnvio.operacion = new ElementosOperacion();
             contenidoEnvio.declaracion = new ElementosDeclaracion();
-            contenidoEnvio.obligado = new ElementosObligado();
+            contenidoEnvio.obligadoTributario = new ElementosObligado();
             contenidoEnvio.ingreso = new ElementosIngreso();
 
             //Formatear datos de la cabecera
@@ -171,12 +171,20 @@ namespace gestionesAEAT.Metodos
                         contenidoEnvio.declaracion.periodo = valor;
                         break;
 
+                    case "RESULTADO":
+                        contenidoEnvio.declaracion.resultado = valor;
+                        break;
+
+                    case "FRACCIONA":
+                        contenidoEnvio.declaracion.fracciona = valor;
+                        break;
+
                     case "NIF":
-                        contenidoEnvio.obligado.nif = valor;
+                        contenidoEnvio.obligadoTributario.nif = valor;
                         break;
 
                     case "NOMBRE":
-                        contenidoEnvio.obligado.nombre = valor;
+                        contenidoEnvio.obligadoTributario.nombre = valor;
                         break;
 
                     case "IMPORTE":
@@ -189,8 +197,6 @@ namespace gestionesAEAT.Metodos
 
                 }
             }
-
-
         }
     }
 }

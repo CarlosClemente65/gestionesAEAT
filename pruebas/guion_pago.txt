@@ -1,0 +1,11 @@
+[url]
+https://prewww1.aeat.es/wlpl/OVPP-PAGO/servicios/AutoliquidacionesREST/pago
+[cabecera]
+TIPO = pago
+MODELO = 115
+EJERCICIO = 2024
+PERIODO = 3T
+NIF = 05126963X
+NOMBRE = NARANJO RUIZ MARIA JOSE
+IMPORTE = 123.45
+IBAN = ES3899990000100000000000
