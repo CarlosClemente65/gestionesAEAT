@@ -193,7 +193,7 @@ namespace gestionesAEAT.Metodos
                             {
                                 for (int i = 0; i < elementosRespuesta.avisos.Count; i++)
                                 {
-                                    writer.WriteLine($"A{i + 1.ToString("D2")}: {elementosRespuesta.avisos[i]}");
+                                    writer.WriteLine(elementosRespuesta.avisos[i]);
                                 }
                             }
 
@@ -201,7 +201,7 @@ namespace gestionesAEAT.Metodos
                             {
                                 for (int i = 0; i < elementosRespuesta.advertencias.Count; i++)
                                 {
-                                    writer.WriteLine($"D{i + 1.ToString("D2")}: {elementosRespuesta.advertencias[i]}");
+                                    writer.WriteLine(elementosRespuesta.advertencias[i]);
                                 }
                             }
                         }

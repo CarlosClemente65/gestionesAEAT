@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using gestionesAEAT.Metodos;
 using gestionesAEAT.Utilidades;
@@ -583,9 +584,10 @@ namespace gestionesAEAT
                         List<string> listaErrores = new List<string>();
                         listaErrores = erroresArray;
                         int linea = 0;
-                        foreach (var elemento in listaErrores)
+                        for (int i = 0; i < listaErrores.Count - 1; i++)
                         {
-                            resultadoSalida.AppendLine($"E{linea.ToString("D2")} = {elemento}");
+                            listaErrores[i] = Regex.Replace(listaErrores[i], @"E\d{2} \- ", "");
+                            resultadoSalida.AppendLine($"E{linea.ToString("D2")} = {listaErrores[i]}");
                             linea++;
                         }
                     }
@@ -624,9 +626,10 @@ namespace gestionesAEAT
                         List<string> listaErrores = new List<string>();
                         listaErrores = erroresArray;
                         int linea = 0;
-                        foreach (var elemento in listaErrores)
+                        for (int i = 0; i < listaErrores.Count; i++)
                         {
-                            resultadoSalida.AppendLine($"E{linea.ToString("D2")} = {elemento}");
+                            listaErrores[i] = Regex.Replace(listaErrores[i], @"E\d{2} \- ", "");
+                            resultadoSalida.AppendLine($"E{linea.ToString("D2")} = {listaErrores[i]}");
                             linea++;
                         }
                     }
