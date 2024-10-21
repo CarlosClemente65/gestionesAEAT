@@ -4,4 +4,3 @@ ENTRADA=guion_informativas2_180.txt
 SALIDA=respuesta_informativas2_180.txt
 OBLIGADO=SI
 BUSQUEDA=05196375P
-PROCESOINFORMATIVAS=envio

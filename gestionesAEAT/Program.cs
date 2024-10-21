@@ -141,7 +141,7 @@ namespace gestionesAEAT
 
                 case "7":
                     presentacionInformativas nuevaPresentacion = new presentacionInformativas();
-                    nuevaPresentacion.envioPeticion(Parametros.procesoInformativas);
+                    nuevaPresentacion.envioPeticion();
                     break;
             }
         }

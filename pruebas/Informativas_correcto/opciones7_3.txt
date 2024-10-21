@@ -4,4 +4,3 @@ ENTRADA=guion_informativas3_180.txt
 SALIDA=salida_informativas3_180.txt
 OBLIGADO=SI
 BUSQUEDA=05196375P
-PROCESOINFORMATIVAS=presenta

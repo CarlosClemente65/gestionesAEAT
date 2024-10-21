@@ -138,7 +138,7 @@ namespace gestionesAEAT.Metodos
         List<string> datosCabecera = new List<string>(); //Lineas de la cabecera preparadas para el header
 
 
-        public void envioPeticion(string proceso)
+        public void envioPeticion()
         {
             //El proceso puede ser: inicializa, envio, presenta, recupera y baja 
 
@@ -149,37 +149,41 @@ namespace gestionesAEAT.Metodos
             {
                 utilidad.cargaDatosGuion(Parametros.ficheroEntrada); //Monta en la clase Utiles las listas "cabecera", "body" y "respuesta" para luego acceder a esos datos a montar el envio
 
+                //Obtenemos el tipo de proceso segun la ultima parte de la url que venga en el guion
+                int indice = utilidad.url.LastIndexOf('/');
+                string proceso = utilidad.url.Substring(indice + 1);
+
                 // Objeto que contendrá la instancia de la clase a rellenar
                 object instanciaClase = null;
 
                 switch (proceso)
                 {
-                    case "inicializa":
+                    case "InicializarEnvio":
                         instanciaClase = new inicializaInformativas();
                         claseRespuesta = typeof(respuestaInicializa);
                         break;
 
-                    case "envio":
+                    case "EnviarDatos":
                         instanciaClase = new envioInformativas();
                         claseRespuesta = typeof(respuestaEnvio);
                         break;
 
-                    case "presenta":
+                    case "PresentarEnvio":
                         instanciaClase = new presentaInformativas();
                         claseRespuesta = typeof(respuestaPresenta);
                         break;
 
-                    case "recuperarerrores":
+                    case "RecuperarErrores":
                         instanciaClase = new recuperarErrores();
                         claseRespuesta = typeof(respuestaRecuperarErrores);
                         break;
 
-                    case "baja":
+                    case "BajaDeclaracion":
                         instanciaClase = new bajaInformativas();
                         claseRespuesta = typeof(respuestaBaja);
                         break;
 
-                    case "recuperarenvio":
+                    case "RecuperarEnvio":
                         instanciaClase = new recuperarEnvio();
                         claseRespuesta = typeof(respuestaRecuperarEnvio);
                         break;
