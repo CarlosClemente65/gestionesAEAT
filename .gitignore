@@ -11,9 +11,8 @@
 *.sln.docstates
 conversionVB/
 temas pendientes.txt
-fichero_opciones.txt
-pruebas/
-ejemplos
+
+
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
