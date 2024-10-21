@@ -197,7 +197,11 @@ namespace gestionesAEAT.Metodos
                             {
                                 for (int i = 0; i < elementosRespuesta.avisos.Count; i++)
                                 {
+<<<<<<< HEAD
                                     writer.WriteLine($"A{i + 1.ToString("D2")}: {elementosRespuesta.avisos[i]}");
+=======
+                                    writer.WriteLine(elementosRespuesta.avisos[i]);
+>>>>>>> master
                                 }
                             }
 
@@ -205,7 +209,11 @@ namespace gestionesAEAT.Metodos
                             {
                                 for (int i = 0; i < elementosRespuesta.advertencias.Count; i++)
                                 {
+<<<<<<< HEAD
                                     writer.WriteLine($"D{i + 1.ToString("D2")}: {elementosRespuesta.advertencias[i]}");
+=======
+                                    writer.WriteLine(elementosRespuesta.advertencias[i]);
+>>>>>>> master
                                 }
                             }
                         }
@@ -218,7 +226,11 @@ namespace gestionesAEAT.Metodos
                         string resultadoSalida = utilidad.generaFicheroSalida(respuestaEnvioModelos);
 
                         //Graba el fichero de salida
+<<<<<<< HEAD
                         File.WriteAllText(ficheroSalida, resultadoSalida);
+=======
+                        File.WriteAllText(Parametros.ficheroSalida, resultadoSalida);
+>>>>>>> master
                     }
 
 
@@ -230,7 +242,11 @@ namespace gestionesAEAT.Metodos
                     }
 
                     //Grabar el fichero de respuesta
+<<<<<<< HEAD
                     File.WriteAllText(ficheroResultado, "OK");
+=======
+                    File.WriteAllText(Parametros.ficheroResultado,"OK");
+>>>>>>> master
 
                 }
             }

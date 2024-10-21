@@ -1,2 +1,1 @@
 pdf =
-E00 = 100S388 - Para presentar una segunda (o posterior) declaracion que modifique una declaracion presentada previamente, debe indicar si se trata de una declaracion complementaria o una solicitud de rectificacion marcando la casilla correspondiente

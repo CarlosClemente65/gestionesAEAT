@@ -575,9 +575,10 @@ namespace gestionesAEAT
                         List<string> listaErrores = new List<string>();
                         listaErrores = erroresArray;
                         int linea = 0;
-                        foreach (var elemento in listaErrores)
+                        for (int i = 0; i < listaErrores.Count - 1; i++)
                         {
-                            resultadoSalida.AppendLine($"E{linea.ToString("D2")} = {elemento}");
+                            listaErrores[i] = Regex.Replace(listaErrores[i], @"E\d{2} \- ", "");
+                            resultadoSalida.AppendLine($"E{linea.ToString("D2")} = {listaErrores[i]}");
                             linea++;
                         }
                     }
@@ -616,10 +617,10 @@ namespace gestionesAEAT
                         List<string> listaErrores = new List<string>();
                         listaErrores = erroresArray;
                         int linea = 0;
-                        foreach (var elemento in listaErrores)
+                        for (int i = 0; i < listaErrores.Count; i++)
                         {
-                            string elementoAjustado = Regex.Replace(elemento, @"\n", " "); //Elimina los saltos de linea que puedan venir en cada elemento para que cada error aparezca en una sola linea
-                            resultadoSalida.AppendLine($"E{linea.ToString("D2")} = {elementoAjustado}");
+                            listaErrores[i] = Regex.Replace(listaErrores[i], @"E\d{2} \- ", "");
+                            resultadoSalida.AppendLine($"E{linea.ToString("D2")} = {listaErrores[i]}");
                             linea++;
                         }
                     }
@@ -657,7 +658,7 @@ namespace gestionesAEAT
             return resultadoSalida.ToString();
         }
 
-        public (string, string) divideCadena(string cadena, char divisor)
+        public (string,string) divideCadena (string cadena, char divisor)
         {
             //Permite dividir una cadena por el divisor pasado y solo la divide en un maximo de 2 partes (divide desde el primer divisor que encuentra)
             string atributo = string.Empty;

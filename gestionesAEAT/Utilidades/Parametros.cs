@@ -31,6 +31,8 @@ namespace gestionesAEAT.Utilidades
 
         static Utiles utilidad = new Utiles();
 
+        static Utiles utilidad = new Utiles();
+
         public static void CargarOpciones(string _ficheroOpciones)
         {
             ficheroOpciones = _ficheroOpciones;
