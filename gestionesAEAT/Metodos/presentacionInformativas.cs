@@ -349,12 +349,12 @@ namespace gestionesAEAT.Metodos
                                         if (linea.Contains(";"))
                                         {
                                             (string registro, string error) = utilidad.divideCadena(linea, ';');
-                                            erroresSalida.AppendLine($"Error {reg.ToString("D2")} = {error} - Registro {reg.ToString("D2")} = {registro}");
+                                            erroresSalida.AppendLine($"E{reg.ToString("D2")} = {error} - Registro {reg.ToString("D2")} = {registro}");
                                             reg++;
                                         }
                                         else
                                         {
-                                            erroresSalida.AppendLine($"Error {reg} = {linea}");
+                                            erroresSalida.AppendLine($"E{reg.ToString("D2")} = {linea}");
                                             reg++;
                                         }
                                     }
