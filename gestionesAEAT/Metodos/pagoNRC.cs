@@ -83,6 +83,7 @@ namespace gestionesAEAT.Metodos
                     Formatting = Formatting.Indented
                 });
 
+                //Serializa la respuesta
                 StringBuilder textoSalida = new StringBuilder();
                 try
                 {
@@ -102,6 +103,7 @@ namespace gestionesAEAT.Metodos
 
                 }
 
+                //Si se produce una excepcion hay que capturar la respuesta ya que ahi vienen los errores
                 catch (WebException ex)
                 {
                     if (ex.Status == WebExceptionStatus.ProtocolError)
@@ -122,22 +124,16 @@ namespace gestionesAEAT.Metodos
                     }
                 }
 
+                //Si se produce otra excepcion
                 catch (Exception ex)
                 {
                     utilidad.GrabarSalida("Problemas al conectar con el servidor de la AEAT", ficheroResultado);
                     utilidad.grabadaSalida = true;
-
                 }
 
+                //Grabacion de los ficheros de salida y resultado
                 utilidad.GrabarSalida(textoSalida.ToString(), ficheroSalida);
-                utilidad.GrabarSalida("OK", ficheroResultado);
-
-                //else
-                //{
-                //    if ()
-
-                //        if (!string.IsNullOrEmpty(envio.respuestaEnvioAEAT)) utilidad.GrabarSalida(envio.respuestaEnvioAEAT, ficheroSalida);
-                //}
+                utilidad.GrabarSalida("OK", ficheroResultado)
             }
 
             catch (Exception ex)
