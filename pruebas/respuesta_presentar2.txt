@@ -1,1 +1,0 @@
-E00 = **OVPT-PTOV:Error en el alta de la domiciliacion. cod: [10023] - (No es posible realizar la accion solicitada por haberse superado la fecha limite establecida para este modelo-periodo).  #53#004/001@2024/10/21 11:02:53 004-01  21/10/2024 11:02:53

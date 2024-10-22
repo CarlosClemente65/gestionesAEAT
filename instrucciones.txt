@@ -12,6 +12,8 @@
 				4 = Ratificacion domicilio renta
 				5 = Descarga de datos fiscales de la renta (no necesita certificado)
 				6 = Envio facturas al Sii
+				7 = Presentacion declaraciones informativas
+				8 = Alta y consulta de pagos de modelos mediante cargo en cuenta con NRC
 			* ENTRADA= Nombre del fichero que contiene los datos a enviar en txt
 			* SALIDA= Nombre del fichero en el que se dejara la respuesta
 			* URLSII= Url a la que hacer el envio de facturas al SII.
@@ -92,10 +94,25 @@
 			SALIDA=salida.txt
 			OBLIGADO=SI
 			BUSQUEDA=SerieCertificado
+			
+	Pago de modelos mediante solicitud de NRC
+		Fichero de opciones con el NIf del titular del certificado
+			CLIENTE=00065
+			TIPO=8
+			ENTRADA=guion_pago.txt
+			SALIDA=salida_pago.txt
+			OBLIGADO=SI
+			BUSQUEDA=05196375P
 	
 Notas:
 	- Si no se pasan los datos del certificado y el proceso lo requeriere, se mostrara el formulario de seleccion
 	- Con la validacion de modelos (tipo 2) el parametro 5 debe ser un NO
+	- En todos los procesos, el fichero de entrada tiene la estructura siguiente:
+		[url] - En la linea siguiente ira la direccion a la que invocar el servicio
+		[cabecera] - En las lineas siguientes iran todos los parametros que sean necesarios enviar el servicio con el formato PARAMETRO = valor
+		[body] - En las lineas siguientes iran todas las lineas que sea necesario enviar al servicio
+		[respuesta] - En las lineas siguientes iran todas las variables que se espera recibir como respuesta
+					  Nota: algunos procesos no necesitan esta parte ya que estan previstas en clases especificas de respuesta
 
 */
 	

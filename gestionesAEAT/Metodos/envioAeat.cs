@@ -98,10 +98,18 @@ namespace gestionesAEAT
                 }
             }
 
+            catch (WebException ex)
+            {
+                //Relanza la excepcion para que se pueda capturar desde la llamada al metodo (se usa en el metodo 'PagoNRC')
+                throw ex;
+
+            
+            }
             catch (Exception ex)
             {
                 utilidad.GrabarSalida($"Error en la conexion con el servidor. {ex.Message}", Parametros.ficheroResultado);
                 utilidad.grabadaSalida = true;
+
             }
         }
 

@@ -1,2 +1,0 @@
-pdf = respuesta_validar_200_23.pdf
-A00 = 22000 - Comprobar el valor de la casilla 00608 en la pagina 15

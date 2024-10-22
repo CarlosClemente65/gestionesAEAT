@@ -2,6 +2,8 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using System.Text;
 
 namespace gestionesAEAT.Metodos
@@ -44,15 +46,10 @@ namespace gestionesAEAT.Metodos
     public class RespuestaDatosPago
     {
         public string nrc { get; set; }
-        public List<ElementosErrorDatosPago> error { get; set; }
-    }
-
-    public class ElementosErrorDatosPago
-    {
         public string codigo { get; set; }
         public string descripcion { get; set; }
-
     }
+
     public class PagoNRC
     {
         Utiles utilidad = Program.utilidad;
@@ -86,46 +83,61 @@ namespace gestionesAEAT.Metodos
                     Formatting = Formatting.Indented
                 });
 
-                envio.envioPost(utilidad.url, jsonEnvio, serieCertificado, "json");
-                string respuestaAEAT = envio.respuestaEnvioAEAT;
-
-                //Procesa la respuesta
-                if (envio.estadoRespuestaAEAT == "OK")
+                StringBuilder textoSalida = new StringBuilder();
+                try
                 {
-                    //Si se ha podido enviar, se serializa la respuesta de Hacienda
-                    RespuestaDatosPago respuestaEnvioModelos = JsonConvert.DeserializeObject<RespuestaDatosPago>(respuestaAEAT);
-                    StringBuilder textoSalida = new StringBuilder();
-                    if (respuestaEnvioModelos.nrc != null)
+                    envio.envioPost(utilidad.url, jsonEnvio, serieCertificado, "json");
+                    string respuestaAEAT = envio.respuestaEnvioAEAT;
+
+                    //Procesa la respuesta
+                    if (envio.estadoRespuestaAEAT == "OK")
                     {
-                        textoSalida.AppendLine($"nrc = {respuestaEnvioModelos.nrc}");
-                    }
-                    else
-                    {
-                        textoSalida.AppendLine($"nrc = ");
-                    }
-                    if (respuestaEnvioModelos.error != null)
-                    {
-                        foreach (var elemento in respuestaEnvioModelos.error)
+                        //Si se ha podido enviar, se serializa la respuesta de Hacienda
+                        RespuestaDatosPago respuestaEnvioModelos = JsonConvert.DeserializeObject<RespuestaDatosPago>(respuestaAEAT);
+                        if (respuestaEnvioModelos.nrc != null)
                         {
-                            textoSalida.AppendLine($"errores = {elemento.descripcion}");
+                            textoSalida.AppendLine($"nrc = {respuestaEnvioModelos.nrc}");
                         }
                     }
-                    else
-                    {
-                        textoSalida.AppendLine("errores = ");
-                    }
-
-                    utilidad.GrabarSalida(textoSalida.ToString(), ficheroSalida);
-                    utilidad.GrabarSalida("OK", ficheroResultado);
 
                 }
 
-                else
+                catch (WebException ex)
                 {
-                    if (!string.IsNullOrEmpty(envio.respuestaEnvioAEAT)) utilidad.GrabarSalida(envio.respuestaEnvioAEAT, ficheroSalida);
+                    if (ex.Status == WebExceptionStatus.ProtocolError)
+                    {
+                        WebResponse respuestaAEAT = (HttpWebResponse)ex.Response;
+                        string contenidoError = string.Empty;
+
+                        Stream stream = respuestaAEAT.GetResponseStream();
+                        StreamReader reader = new StreamReader(stream);
+                        contenidoError = reader.ReadToEnd();
+
+                        RespuestaDatosPago respuestaEnvioModelos = JsonConvert.DeserializeObject<RespuestaDatosPago>(contenidoError);
+                        int indice = 0;
+                        if (respuestaEnvioModelos.codigo != null)
+                        {
+                            textoSalida.AppendLine($"E{indice.ToString("D2")} = {respuestaEnvioModelos.codigo} : {respuestaEnvioModelos.descripcion}");
+                        }
+                    }
+                }
+
+                catch (Exception ex)
+                {
                     utilidad.GrabarSalida("Problemas al conectar con el servidor de la AEAT", ficheroResultado);
                     utilidad.grabadaSalida = true;
+
                 }
+
+                utilidad.GrabarSalida(textoSalida.ToString(), ficheroSalida);
+                utilidad.GrabarSalida("OK", ficheroResultado);
+
+                //else
+                //{
+                //    if ()
+
+                //        if (!string.IsNullOrEmpty(envio.respuestaEnvioAEAT)) utilidad.GrabarSalida(envio.respuestaEnvioAEAT, ficheroSalida);
+                //}
             }
 
             catch (Exception ex)

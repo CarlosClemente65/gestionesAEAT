@@ -1,3 +1,0 @@
-E00 = 99999 - null
-Error.  Codigo de error: E00000000000I Parametro FIRNIF no corresponde con el usuario identificado. 004-02  21/10/2024 10:48:26
- 004-02  21/10/2024 10:48:26
