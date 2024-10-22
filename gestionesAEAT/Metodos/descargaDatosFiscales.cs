@@ -41,7 +41,7 @@ namespace gestionesAEAT.Metodos
         string ficheroSalida = Parametros.ficheroSalida;
         string ficheroResultado = Parametros.ficheroResultado;
 
-        Utiles utilidad = new Utiles();
+        Utiles utilidad = Program.utilidad;
 
 
         public void descargaDF()

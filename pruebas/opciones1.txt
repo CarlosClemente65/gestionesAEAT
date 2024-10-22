@@ -1,8 +1,0 @@
-CLIENTE=000065
-TIPO=1
-ENTRADA=guion_presentar2.txt
-SALIDA=respuesta_presentar2.txt
-OBLIGADO=NO
-BUSQUEDA=
-CERTIFICADO=
-PASSWORD=

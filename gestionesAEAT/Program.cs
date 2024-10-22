@@ -143,6 +143,11 @@ namespace gestionesAEAT
                     presentacionInformativas nuevaPresentacion = new presentacionInformativas();
                     nuevaPresentacion.envioPeticion();
                     break;
+
+                case "8":
+                    PagoNRC nuevoPago = new PagoNRC();
+                    nuevoPago.envioPeticion();
+                    break;
             }
         }
 
@@ -153,7 +158,7 @@ namespace gestionesAEAT
             switch (tipo)
             {
                 case "1":
-                   frmSeleccion.tituloVentana = "Envio modelos AEAT";
+                    frmSeleccion.tituloVentana = "Envio modelos AEAT";
                     if (Parametros.conCertificado == false) Parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if (!string.IsNullOrEmpty(mensajeControl))
@@ -297,8 +302,22 @@ namespace gestionesAEAT
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
                     }
+                    break;
 
-                    //Revisar si es necesario algun parametro mas.
+                case "8":
+                    frmSeleccion.tituloVentana = "Pago modelos mediante NRC con cargo en cuenta";
+                    mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
+                    mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
                     break;
 
                 default:
@@ -358,7 +377,7 @@ namespace gestionesAEAT
                             mensaje = $"Error al leer el certificado. {resultadoLectura}";
                             utilidad.SalirAplicacion(mensaje);
                         }
-                        
+
                         Parametros.serieCertificado = gestionCertificados.consultaPropiedades(GestionarCertificados.nombresPropiedades.serieCertificado);
                     }
                 }

@@ -1,31 +1,38 @@
-# gestionesAEAT v1.3.0.0
-## Programa para la validación, envío y consulta de modelos de Hacienda, ratificar domicilio y descarga de datos fiscales de renta, y obtener relación de certificados instalados en el equipo
+# gestionesAEAT v1.5.0.0
+## Programa para la gestion de varios metodos de interaccion con los servidores web de Hacienda en la presentacion de declaraciones tributarias
 
 ### Desarrollado por Carlos Clemente (10-2024)
 
 ### Control de versiones
 - Version 1.0.0.0 - Primera version funcional
 - Version 1.3.0.0 - Incorporado envio facturas al SII
+- Version 1.4.0.0 - Incorporado envio de declaraciones informativas
+- Version 1.5.0.0 - Incorporado alta y consulta de pagos de modelos con NRC
 <br>
 
-### Instrucciones:
-- Mediante un fichero que contiene los datos de los modelos, permite hacer una validacion y envio a los servidores de Hacienda en presentacion directa.
-- Tambien permite la descarga de modelos presentados utilizando el NIF del presentador o de la empresa. Se pueden obtener todos los que correspondan al mismo modelo y ejercicio
-- En las gestiones de la campaña de renta, se puede hacer la consulta de la ratificacion del domicilio asi como la descarga de datos fiscales.
-- En el caso de ser necesario el uso de un certificado digital, si no se pasa como parametro, se solicita la seleccion de uno de los instalados en el equipo.
-- Permite el envio de facturas al SII
+### Funcionalidades:
+- Validacion y presentacion directa de modelos tributarios periodicos
+- Descarga de modelos presentados en un ejercicio de un contribuyente (individualmente por modelo)
+- Consulta del estado de la ratificacion del domicilio para la renta.
+- Descarga de datos fiscales de la renta.
+- Envio de facturas al SII
+- Presentacion de declaraciones informativas mediantes TGVI Online
+- Pago de declaraciones mediante el cargo en cuenta con NRC
+- Consulta de NRCs enviados a la AEAT por las entidades financieras
 <br>
 
 ### Parametros de ejecucion:
 * dsclave: clave de seguridad para la ejecucion
 * opciones.txt: fichero que contiene las opciones que admite la aplicacion que son las siguientes:
 	* tipo: permite indicar el tipo de proceso segun los siguientes:
-		1 = envio modelos
-		2 = validacion de modelos (no necesita certificado)
-		3 = consulta de modelos presentados
-		4 = ratificacion domicilio renta
-		5 = Descarga de datos fiscales de la renta
-		6 = Presentacion de facturas al SII
+		- 1 = envio modelos
+		- 2 = validacion de modelos (no necesita certificado)
+		- 3 = consulta de modelos presentados
+		- 4 = ratificacion domicilio renta
+		- 5 = Descarga de datos fiscales de la renta
+		- 6 = Presentacion de facturas al SII
+		- 7 = Presentacion declaraciones informativas
+		- 8 = Alta y consulta de pagos de modelos mediante cargo en cuenta con NRC
 	* ENTRADA= Nombre del fichero que contiene los datos a enviar en txt
 	* SALIDA= Nombre del fichero en el que se dejara la respuesta
 	* URLSII= Url a la que hacer el envio de facturas al SII.
@@ -87,6 +94,7 @@ Fichero de opciones con solicitud del certificado por pantalla
 <u>Descarga datos fiscales</u>
 ```
 Fichero de opciones
+	CLIENTE = 00065
 	TIPO=5
 	SALIDA=salida.txt
 	NIFRENTA=NIF
@@ -97,6 +105,7 @@ Fichero de opciones
 <u>Envio facturas al SII</u>
 ```
 Fichero de opciones con numero de serie del certificado
+	CLIENTE = 00065
 	TIPO=6
 	ENTRADA=facturaEmitida.xml
 	SALIDA=respuesta.xml
@@ -104,4 +113,24 @@ Fichero de opciones con numero de serie del certificado
 	OBLIGADO=SI
 	BUSQUEDA=numeroSerie
 	RESPUESTA=[siiR:CSV,sii:TimestampPresentacion,sii:NIF,sii:IDOtro,sii:ID,sii:NumSerieFacturaEmisor ... siiR:DescripcionErrorRegistro,faultstring]
+```
+
+<u>Presentacion declaraciones informativas</u>
+```
+	CLIENTE=00065
+	TIPO=7
+	ENTRADA=entrada.txt
+	SALIDA=salida.txt
+	OBLIGADO=SI
+	BUSQUEDA=SerieCertificado
+```
+
+<u>Alta / consulta de pagos mediante NRC</u>
+```
+	CLIENTE=00065
+	TIPO=8
+	ENTRADA=entrada.txt
+	SALIDA=salida.txt
+	OBLIGADO=SI
+	BUSQUEDA=SerieCertificado
 ```

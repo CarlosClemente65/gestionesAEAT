@@ -1,4 +1,0 @@
-* Temas pendientes
-	- En el metodo 'envioAEAT.envioPost' añadir un parametro 'codificacion' para ponerlo luego en 'contentType'
-	- En el metodo 'presetancionInformativas.envioPeticion' hay que desarrollar el metodo para el envio (falta pasar el certificado, url y la codificacion)
-	
