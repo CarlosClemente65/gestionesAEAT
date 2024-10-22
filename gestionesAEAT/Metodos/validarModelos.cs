@@ -106,8 +106,11 @@ namespace gestionesAEAT.Metodos
                             dato.Idioma = valor;
                             break;
 
-                        case "SINVL":
-                            dato.SinValidar = valor;
+                        case "VALIDAR":
+                            if (valor == "NO")
+                            {
+                                dato.SinValidar = string.Empty;
+                            }
                             break;
 
                         default:

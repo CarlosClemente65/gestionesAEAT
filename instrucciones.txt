@@ -29,6 +29,17 @@
 			* URLRENTA= Direccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año)
 			* RESPUESTA= Etiquetas del xml de respuesta en el envio al SII de las que se quiere obtener los resultados
 
+Notas:
+	- Si no se pasan los datos del certificado y el proceso lo requeriere, se mostrara el formulario de seleccion
+	- Con la validacion de modelos (tipo 2) el parametro 5 debe ser un NO
+	- En la validacion de modelos, si el guion tiene la variable VALIDAR=NO se genera el pdf sin validar (el defecto es SI)
+	- En todos los procesos, el fichero de entrada tiene la estructura siguiente:
+		[url] - En la linea siguiente ira la direccion a la que invocar el servicio
+		[cabecera] - En las lineas siguientes iran todos los parametros que sean necesarios enviar el servicio con el formato PARAMETRO = valor
+		[body] - En las lineas siguientes iran todas las lineas que sea necesario enviar al servicio
+		[respuesta] - En las lineas siguientes iran todas las variables que se espera recibir como respuesta
+					  Nota: algunos procesos no necesitan esta parte ya que estan previstas en clases especificas de respuesta
+
 /* Ejemplos de uso:
 	Envio modelos: gestionesAEAT dsclave opciones.txt 
 		Fichero de opciones con numero de serie
@@ -104,15 +115,6 @@
 			OBLIGADO=SI
 			BUSQUEDA=05196375P
 	
-Notas:
-	- Si no se pasan los datos del certificado y el proceso lo requeriere, se mostrara el formulario de seleccion
-	- Con la validacion de modelos (tipo 2) el parametro 5 debe ser un NO
-	- En todos los procesos, el fichero de entrada tiene la estructura siguiente:
-		[url] - En la linea siguiente ira la direccion a la que invocar el servicio
-		[cabecera] - En las lineas siguientes iran todos los parametros que sean necesarios enviar el servicio con el formato PARAMETRO = valor
-		[body] - En las lineas siguientes iran todas las lineas que sea necesario enviar al servicio
-		[respuesta] - En las lineas siguientes iran todas las variables que se espera recibir como respuesta
-					  Nota: algunos procesos no necesitan esta parte ya que estan previstas en clases especificas de respuesta
 
 */
 	

@@ -70,6 +70,8 @@ Fichero de opciones (no necesita certificado)
 	ENTRADA=entrada.txt
 	SALIDA=salida.txt
 	OBLIGADO=NO
+	
+	Nota: si en el guion viene el parametro VALIDAR=NO se genera el PDF sin validar
 ```
 <u>Consulta modelos</u>
 ```
