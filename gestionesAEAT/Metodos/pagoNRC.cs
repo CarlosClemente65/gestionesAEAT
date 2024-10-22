@@ -133,7 +133,7 @@ namespace gestionesAEAT.Metodos
 
                 //Grabacion de los ficheros de salida y resultado
                 utilidad.GrabarSalida(textoSalida.ToString(), ficheroSalida);
-                utilidad.GrabarSalida("OK", ficheroResultado)
+                utilidad.GrabarSalida("OK", ficheroResultado);
             }
 
             catch (Exception ex)
