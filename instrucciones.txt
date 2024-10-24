@@ -14,6 +14,7 @@
 				6 = Envio facturas al Sii
 				7 = Presentacion declaraciones informativas
 				8 = Alta y consulta de pagos de modelos mediante cargo en cuenta con NRC
+				9 = Descarga PDF de modelos con CSV
 			* ENTRADA= Nombre del fichero que contiene los datos a enviar en txt
 			* SALIDA= Nombre del fichero en el que se dejara la respuesta
 			* URLSII= Url a la que hacer el envio de facturas al SII.
@@ -28,6 +29,8 @@
 			* DPRENTA= En la descarga de datos fiscales, indica si se quieren tambien los datos personales (opciones 'S' o 'N')
 			* URLRENTA= Direccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año)
 			* RESPUESTA= Etiquetas del xml de respuesta en el envio al SII de las que se quiere obtener los resultados
+			* PROCESOINFORMATIVAS= Tipo de proceso a ejecutar en la presentacion de informativas (inicializa, envio, presenta, recupera)
+			* CSV= Codigo CSV del modelo para descargar el PDF
 
 Notas:
 	- Si no se pasan los datos del certificado y el proceso lo requeriere, se mostrara el formulario de seleccion
@@ -39,6 +42,7 @@ Notas:
 		[body] - En las lineas siguientes iran todas las lineas que sea necesario enviar al servicio
 		[respuesta] - En las lineas siguientes iran todas las variables que se espera recibir como respuesta
 					  Nota: algunos procesos no necesitan esta parte ya que estan previstas en clases especificas de respuesta
+	- En el proceso de descarga de modelos con CSV el fichero de entrada no es necesario, ya que se pasan los parametros en el fichero de opciones
 
 /* Ejemplos de uso:
 	Envio modelos: gestionesAEAT dsclave opciones.txt 
@@ -114,6 +118,12 @@ Notas:
 			SALIDA=salida_pago.txt
 			OBLIGADO=SI
 			BUSQUEDA=05196375P
+			
+	Descarga PDF de modelos con CSV
+		Fichero de opciones
+			TIPO=9
+			CSV=KSZABZ7EXBU6VDA3
+			SALIDA=salida.pdf
 	
 
 */

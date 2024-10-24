@@ -326,12 +326,6 @@ namespace gestionesAEAT
                     break;
 
                 case "9":
-                    mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
-                    if (!string.IsNullOrEmpty(mensajeControl))
-                    {
-                        mensaje.AppendLine(mensajeControl);
-                        mensajeControl = string.Empty;
-                    }
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
                     if (!string.IsNullOrEmpty(mensajeControl))
                     {

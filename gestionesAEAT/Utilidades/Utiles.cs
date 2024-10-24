@@ -62,9 +62,9 @@ namespace gestionesAEAT
         public void cargaFicheroEntrada(string ficheroEntrada)
         {
             //Carga el fichero de entrada en una lista y obtiene la codificacion UTF-8 o ISO8859-1 (ascii extendido 256 bits o ansi), ya que algun guion se le pasa como parametro la codificacion
-            
+
             //Carga del fichero
-            using (StreamReader sr = new StreamReader(ficheroEntrada,Parametros.codificacion))
+            using (StreamReader sr = new StreamReader(ficheroEntrada, Parametros.codificacion))
             {
                 string linea;
                 while ((linea = sr.ReadLine()) != null)
@@ -473,6 +473,8 @@ namespace gestionesAEAT
             mensaje.AppendLine(@"            5 = Descarga datos fiscales renta");
             mensaje.AppendLine(@"            6 = Envio de facturas al SII");
             mensaje.AppendLine(@"            7 = Prestar declaraciones informativas");
+            mensaje.AppendLine(@"            8 = Alta y consulta de pagos de modelos mediante cargo en cuenta con NRC");
+            mensaje.AppendLine(@"            9 = Descarga PDF de modelos con CSV");
             mensaje.AppendLine(@"        ENTRADA= Nombre del fichero con los datos a enviar");
             mensaje.AppendLine(@"        SALIDA= Nombre del fichero donde se grabara la salida");
             mensaje.AppendLine(@"        URLSII= Url a la que hacer el envio de facturas al SII");
@@ -486,6 +488,7 @@ namespace gestionesAEAT
             mensaje.AppendLine(@"        URLRENTA= Direccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año)");
             mensaje.AppendLine(@"        RESPUESTA= Etiquetas del xml de respuesta en el envio al SII de las que se quiere obtener los resultados");
             mensaje.AppendLine(@"        PROCESOINFORMATIVAS= Tipo de proceso a ejecutar en la presentacion de informativas (inicializa, envio, presenta, recupera)");
+            mensaje.AppendLine(@"        CSV= Codigo CSV del modelo a descargar el PDF");
             mensaje.AppendLine("\nEjemplos de fichero de opciones:");
             mensaje.AppendLine(@"    Envio modelos con numero de serie:");
             mensaje.AppendLine(@"        CLIENTE=00001");
@@ -523,15 +526,41 @@ namespace gestionesAEAT
             mensaje.AppendLine(@"        DPRENTA=S");
             mensaje.AppendLine(@"        URLRENTA=https://www9.agenciatributaria.gob.es/wlpl/DFPA-D182/SvDesDF23Pei");
             mensaje.AppendLine(@"    Envio facturas al SII con nombre del titular del certificado:");
+            mensaje.AppendLine(@"        CLIENTE=00001");
             mensaje.AppendLine(@"        TIPO=6");
-            mensaje.AppendLine(@"        ENTERADA=facturaEmitida.xml");
+            mensaje.AppendLine(@"        ENTRADA=facturaEmitida.xml");
             mensaje.AppendLine(@"        SALIDA=respuesta.xml");
             mensaje.AppendLine(@"        URLSII=https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fe/SiiFactFEV1SOAP");
             mensaje.AppendLine(@"        OBLIGADO=SI");
             mensaje.AppendLine(@"        BUSQUEDA=nombreCertificado");
+            mensaje.AppendLine(@"    Presentacion de informativas:");
+            mensaje.AppendLine(@"        CLIENTE=00001");
+            mensaje.AppendLine(@"        TIPO=7");
+            mensaje.AppendLine(@"        ENTRADA=guion.txt");
+            mensaje.AppendLine(@"        SALIDA=salida.txt");
+            mensaje.AppendLine(@"        OBLIGADO=SI");
+            mensaje.AppendLine(@"        BUSQUEDA=nombreCertificado");
+            mensaje.AppendLine(@"    Pago de modelos mediante solicitud de NRC");
+            mensaje.AppendLine(@"        CLIENTE=00001");
+            mensaje.AppendLine(@"        TIPO=8");
+            mensaje.AppendLine(@"        ENTRADA=guion.txt");
+            mensaje.AppendLine(@"        SALIDA=salida.txt");
+            mensaje.AppendLine(@"        OBLIGADO=SI");
+            mensaje.AppendLine(@"        BUSQUEDA=nombreCertificado");
+            mensaje.AppendLine(@"    Descarga PDF de modelos con CSV");
+            mensaje.AppendLine(@"        TIPO=9");
+            mensaje.AppendLine(@"        CSV=KSZABZ7EXBU6VDA3");
+            mensaje.AppendLine(@"        SALIDA=salida.PDF");
             mensaje.AppendLine("\nNotas:");
             mensaje.AppendLine(@"    - Si no se pasan los datos del certificado y el proceso lo requerire, se mostrara el formulario de seleccion");
-            mensaje.AppendLine(@"    - Los ficheros deben venir con la ruta completa, incluido el de opciones");
+            mensaje.AppendLine(@"    	- En la validacion de modelos, si el guion tiene la variable VALIDAR=NO se genera el pdf sin validar (el defecto es SI)");
+            mensaje.AppendLine(@"    	- En todos los procesos, el fichero de entrada tiene la estructura siguiente:");
+            mensaje.AppendLine(@"    	    [url] - En la linea siguiente ira la direccion a la que invocar el servicio");
+            mensaje.AppendLine(@"    	    [cabecera] - En las lineas siguientes iran todos los parametros que sean necesarios enviar el servicio con el formato PARAMETRO = valor");
+            mensaje.AppendLine(@"    	    [body] - En las lineas siguientes iran todas las lineas que sea necesario enviar al servicio");
+            mensaje.AppendLine(@"    	[respuesta] - En las lineas siguientes iran todas las variables que se espera recibir como respuesta");
+            mensaje.AppendLine(@"    	              Nota: algunos procesos no necesitan esta parte ya que estan previstas en clases especificas de respuesta");
+            mensaje.AppendLine(@"    	- En el proceso de descarga de modelos con CSV el fichero de entrada no es necesario, ya que se pasan los parametros en el fichero de opciones");
             mensaje.AppendLine("\nPulse una tecla para continuar");
 
             Console.WriteLine(mensaje.ToString());
@@ -674,7 +703,7 @@ namespace gestionesAEAT
             return resultadoSalida.ToString();
         }
 
-        public (string,string) divideCadena (string cadena, char divisor)
+        public (string, string) divideCadena(string cadena, char divisor)
         {
             //Permite dividir una cadena por el divisor pasado y solo la divide en un maximo de 2 partes (divide desde el primer divisor que encuentra)
             string atributo = string.Empty;
