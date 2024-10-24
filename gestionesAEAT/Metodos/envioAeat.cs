@@ -148,7 +148,9 @@ namespace gestionesAEAT
                 solicitudHttp.ContentLength = datosEnvio.Length;
 
                 //Grabacion de los datos a enviar al servidor
-                byte[] datosEnvioBytes = Encoding.UTF8.GetBytes(datosEnvio);
+                //Encoding codificacion = Parametros.codificacion;
+                Encoding codificacion = Encoding.UTF8;
+                byte[] datosEnvioBytes = codificacion.GetBytes(datosEnvio);
                 solicitudHttp.ContentLength = datosEnvioBytes.Length;
                 Stream requestStream = solicitudHttp.GetRequestStream();
                 requestStream.Write(datosEnvioBytes, 0, datosEnvioBytes.Length);

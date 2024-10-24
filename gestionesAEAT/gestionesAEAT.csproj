@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Metodos\descargaCSV.cs" />
     <Compile Include="Metodos\EnvioSii.cs" />
     <Compile Include="Metodos\PagoNRC.cs" />
     <Compile Include="Metodos\presentacionDirecta.cs" />

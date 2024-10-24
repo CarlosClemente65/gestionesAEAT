@@ -64,7 +64,7 @@ namespace gestionesAEAT
             //Carga el fichero de entrada en una lista y obtiene la codificacion UTF-8 o ISO8859-1 (ascii extendido 256 bits o ansi), ya que algun guion se le pasa como parametro la codificacion
             
             //Carga del fichero
-            using (StreamReader sr = new StreamReader(ficheroEntrada))
+            using (StreamReader sr = new StreamReader(ficheroEntrada,Parametros.codificacion))
             {
                 string linea;
                 while ((linea = sr.ReadLine()) != null)
@@ -76,6 +76,7 @@ namespace gestionesAEAT
             //Obtiene la codificacion
             string cadena;
             int bloque = 0;
+            Encoding nuevaCodificacion = null;
 
             for (int x = 0; x < textoGuion.Count; x++)
             {
@@ -99,7 +100,8 @@ namespace gestionesAEAT
                                 try
                                 {
                                     //Se intenta asignar el valor de la codificacion para evitar una excepcion
-                                    Parametros.codificacion = Encoding.GetEncoding(valor);
+                                    nuevaCodificacion = Encoding.GetEncoding(valor);
+                                    Parametros.codificacion = nuevaCodificacion;
                                 }
                                 catch
                                 {
@@ -108,6 +110,20 @@ namespace gestionesAEAT
                             }
                             break;
                         }
+                    }
+                }
+            }
+
+            //Si se detecta que se ha cargado una nueva codificacion, se vuelve a cargar el guion
+            if (nuevaCodificacion != null && nuevaCodificacion != Encoding.UTF8)
+            {
+                textoGuion.Clear();
+                using (StreamReader sr = new StreamReader(ficheroEntrada, nuevaCodificacion))
+                {
+                    string linea;
+                    while ((linea = sr.ReadLine()) != null)
+                    {
+                        textoGuion.Add(linea);
                     }
                 }
             }

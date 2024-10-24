@@ -148,6 +148,11 @@ namespace gestionesAEAT
                     PagoNRC nuevoPago = new PagoNRC();
                     nuevoPago.envioPeticion();
                     break;
+
+                case "9":
+                    descargaCSV descargaCSV = new descargaCSV();
+                    descargaCSV.descargaPDF();
+                    break;
             }
         }
 
@@ -306,6 +311,21 @@ namespace gestionesAEAT
 
                 case "8":
                     frmSeleccion.tituloVentana = "Pago modelos mediante NRC con cargo en cuenta";
+                    mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
+                    mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
+                    break;
+
+                case "9":
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if (!string.IsNullOrEmpty(mensajeControl))
                     {
