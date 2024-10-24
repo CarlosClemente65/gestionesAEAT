@@ -575,7 +575,7 @@ namespace gestionesAEAT
                         List<string> listaErrores = new List<string>();
                         listaErrores = erroresArray;
                         int linea = 0;
-                        for (int i = 0; i < listaErrores.Count - 1; i++)
+                        for (int i = 0; i < listaErrores.Count; i++)
                         {
                             listaErrores[i] = Regex.Replace(listaErrores[i], @"E\d{2} \- ", "");
                             resultadoSalida.AppendLine($"E{linea.ToString("D2")} = {listaErrores[i]}");
