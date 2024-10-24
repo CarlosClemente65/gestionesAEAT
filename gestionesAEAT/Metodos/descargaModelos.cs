@@ -127,7 +127,7 @@ namespace gestionesAEAT.Metodos
                 respuestasError.AddRange(servicio.Errores); //Graba en la lista los errores que se hayan descargado
                 foreach (var respuesta in servicio.Errores)
                 {
-                    textoSalida.AppendLine($"Error {elemento}: {respuesta.descripcionError}");
+                    textoSalida.AppendLine($"E{elemento.ToString("D2")} = {respuesta.descripcionError}");
                     elemento++;
                 }
             }
@@ -140,15 +140,15 @@ namespace gestionesAEAT.Metodos
                 {
                     //Forma el nombre del fichero PDF que se grabara para ponerlo en el fichero de respuestas.
                     respuesta.nombreFicheroPDF = $"{respuesta.nif}_{respuesta.modelo}_{respuesta.ejercicio}_{respuesta.periodo}_{respuesta.justificante}.pdf";
-                    textoSalida.AppendLine($"NIF: {respuesta.nif}");
-                    textoSalida.AppendLine($"Modelo: {respuesta.modelo}");
-                    textoSalida.AppendLine($"Ejercicio: {respuesta.ejercicio}");
-                    textoSalida.AppendLine($"Periodo: {respuesta.periodo}");
-                    textoSalida.AppendLine($"CSV: {respuesta.csv}");
-                    textoSalida.AppendLine($"Justificante: {respuesta.justificante}");
-                    textoSalida.AppendLine($"Expediente: {respuesta.expediente}");
-                    textoSalida.AppendLine($"Fecha presentacion: {respuesta.fechaYHoraPresentacion}");
-                    textoSalida.AppendLine($"Fichero PDF: {respuesta.nombreFicheroPDF}");
+                    textoSalida.AppendLine($"NIF = {respuesta.nif}");
+                    textoSalida.AppendLine($"Modelo = {respuesta.modelo}");
+                    textoSalida.AppendLine($"Ejercicio = {respuesta.ejercicio}");
+                    textoSalida.AppendLine($"Periodo = {respuesta.periodo}");
+                    textoSalida.AppendLine($"CSV = {respuesta.csv}");
+                    textoSalida.AppendLine($"Justificante = {respuesta.justificante}");
+                    textoSalida.AppendLine($"Expediente = {respuesta.expediente}");
+                    textoSalida.AppendLine($"Fecha presentacion = {respuesta.fechaYHoraPresentacion}");
+                    textoSalida.AppendLine($"Fichero PDF = {respuesta.nombreFicheroPDF}");
                     //textoSalida.AppendLine();
                     elemento++;
                 }
