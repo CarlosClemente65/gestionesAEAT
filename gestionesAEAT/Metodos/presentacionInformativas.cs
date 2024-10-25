@@ -1,10 +1,7 @@
 ﻿using gestionesAEAT.Utilidades;
-using Microsoft.Win32;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -315,7 +312,6 @@ namespace gestionesAEAT.Metodos
                             }
                         }
 
-                        utilidad.GrabarSalida(contenidoRespuesta.ToString(), Parametros.ficheroSalida);
 
                         //Almacena el cuerpo si tiene contenido (siempre seran los registros con errores de la presentacion
                         var erroresAEAT = respuesta.GetResponseStream();
@@ -335,7 +331,7 @@ namespace gestionesAEAT.Metodos
 
                             if (contenidoErrores.Length > 0)
                             {
-                                string pathErrores = Path.Combine(Path.GetDirectoryName(Parametros.ficheroSalida), "errores.txt");
+                                //string pathErrores = Path.Combine(Path.GetDirectoryName(Parametros.ficheroSalida), "errores.txt");
 
                                 //Se modifica el fichero de salida para poner primero el error y luego los datos del registro
                                 string[] lineasErrores = contenidoErrores.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
@@ -360,7 +356,11 @@ namespace gestionesAEAT.Metodos
                                     }
                                 }
 
-                                utilidad.GrabarSalida(erroresSalida.ToString(), pathErrores);
+                                //Se unen los dos resultados para grabar el fichero de salida
+                                contenidoRespuesta.AppendLine(erroresSalida.ToString());
+
+                                utilidad.GrabarSalida(contenidoRespuesta.ToString(), Parametros.ficheroSalida);
+                                //utilidad.GrabarSalida(erroresSalida.ToString(), pathErrores);
                             }
 
                         }

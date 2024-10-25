@@ -8,27 +8,26 @@ namespace gestionesAEAT.Utilidades
     public class Parametros
     {
         public static string dsclave { get; set; } = string.Empty;
-        public static string tipo { get; set; } = string.Empty;
         public static string pathFicheros { get; set; } = string.Empty;
+        public static string cliente { get; set; } = string.Empty;
+        public static string tipo { get; set; } = string.Empty;
         public static string ficheroOpciones { get; set; } = string.Empty;
         public static string ficheroEntrada { get; set; } = string.Empty;
         public static string ficheroSalida { get; set; } = string.Empty;
         public static string ficheroResultado { get; set; } = "errores.sal";
+        public static string UrlSii { get; set; } = string.Empty;
+        public static string[] respuesta { get; set; } = new string[0];
+        public static bool conCertificado { get; set; } = false;
         public static string textoBusqueda { get; set; } = string.Empty;
         public static string serieCertificado { get; set; } = string.Empty;
         public static string ficheroCertificado { get; set; } = string.Empty;
         public static string passwordCertificado { get; set; } = string.Empty;
-        public static bool conCertificado { get; set; } = false;
         public static string nifDf { get; set; } = string.Empty;
         public static string refRenta { get; set; } = string.Empty;
         public static string datosPersonales { get; set; } = "S";
         public static string urlDescargaDf { get; set; } = string.Empty;
-        public static string UrlSii { get; set; } = string.Empty;
-        public static string[] respuesta { get; set; } = new string[0];
-        public static string cliente { get; set; } = string.Empty;
-        public static string procesoInformativas {  get; set; } = string.Empty;
-        public static Encoding codificacion { get; set; } = Encoding.UTF8;
         public static string urlCSV{  get; set; } = string.Empty;
+        public static Encoding codificacion { get; set; } = Encoding.UTF8;
 
         static Utiles utilidad = new Utiles();
 
@@ -114,10 +113,6 @@ namespace gestionesAEAT.Utilidades
                         urlDescargaDf = valor;
                         break;
 
-                    case "PROCESOINFORMATIVAS":
-                        procesoInformativas = valor;
-                        break;
-
                     case "URLCSV":
                         urlCSV = valor;
                         break;
@@ -147,6 +142,14 @@ namespace gestionesAEAT.Utilidades
                             mensaje = "No se ha pasado el fichero de salida";
                             break;
 
+                        case "UrlSii":
+                            mensaje = "No se ha pasado la url a la que enviar las facturas";
+                            break;
+
+                        case "respuesta":
+                            mensaje = "No se han pasado las respuestas en la presentacion de informativas";
+                            break;
+
                         case "nifDf":
                             mensaje = "No se ha pasado el NIF del contribuyente";
                             break;
@@ -159,18 +162,9 @@ namespace gestionesAEAT.Utilidades
                             mensaje = "No se ha pasado la url de descarga de datos fiscales";
                             break;
 
-                        case "UrlSii":
-                            mensaje = "No se ha pasado la url a la que enviar las facturas";
+                        case "urlCSV":
+                            mensaje = "No se ha pasado la url de descarga del documento";
                             break;
-
-                        case "UrlInformativas":
-                            mensaje = "No se ha pasado la url a la que enviar el modelo de informativas";
-                            break;
-
-                        case "procesoInformativas":
-                            mensaje = "No se ha pasado el tipo de proceso a ejecutar en la presentacion de informativas";
-                            break;
-
                     }
                 }
             }

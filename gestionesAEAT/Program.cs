@@ -284,6 +284,13 @@ namespace gestionesAEAT
                         mensajeControl = string.Empty;
                     }
 
+                    mensajeControl = Parametros.ControlDatosParametros("respuesta");
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
+
                     break;
 
                 case "7":
@@ -296,12 +303,6 @@ namespace gestionesAEAT
                         mensajeControl = string.Empty;
                     }
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
-                    if (!string.IsNullOrEmpty(mensajeControl))
-                    {
-                        mensaje.AppendLine(mensajeControl);
-                        mensajeControl = string.Empty;
-                    }
-                    mensajeControl = Parametros.ControlDatosParametros("procesoInformativas");
                     if (!string.IsNullOrEmpty(mensajeControl))
                     {
                         mensaje.AppendLine(mensajeControl);

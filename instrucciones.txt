@@ -1,9 +1,9 @@
 /*Uso de la aplicacion
-	gestionesAEAT clave opciones.txt
+	gestionesAEAT clave guion.txt
 	
 	- Parametros:
 		* dsclave: unicamente sirve como medida de seguridad de ejecucion y debe pasarse siempre ds123456
-		* opciones.txt: fichero que contiene las opciones que admite la aplicacion que son las siguientes:
+		* guion.txt: fichero que contiene las opciones que admite la aplicacion que son las siguientes:
 			*CLIENTE= Codigo de cliente para incluirlo en el html de respuestas
 			* TIPO= Tipo de proceso a ejecutar segun los siguientes:
 				1 = Envio modelos
@@ -18,6 +18,7 @@
 			* ENTRADA= Nombre del fichero que contiene los datos a enviar en txt
 			* SALIDA= Nombre del fichero en el que se dejara la respuesta
 			* URLSII= Url a la que hacer el envio de facturas al SII.
+			* RESPUESTA= Etiquetas del xml de respuesta en el envio al SII de las que se quiere obtener los resultados
 			* OBLIGADO= Indica si el proceso necesita usar certificado (valores SI/NO). Si no se indica, los procesos
 						que lo necesiten pediran seleccionar un certificado
 			* BUSQUEDA= Cadena a buscar en los certificados instalados en la maquina a utilizar en el proceso (puede ser
@@ -28,9 +29,7 @@
 			* REFRENTA= Codigo de 5 caracteres de la referencia de renta para la descarga de datos fiscales
 			* DPRENTA= En la descarga de datos fiscales, indica si se quieren tambien los datos personales (opciones 'S' o 'N')
 			* URLRENTA= Direccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año)
-			* RESPUESTA= Etiquetas del xml de respuesta en el envio al SII de las que se quiere obtener los resultados
-			* PROCESOINFORMATIVAS= Tipo de proceso a ejecutar en la presentacion de informativas (inicializa, envio, presenta, recupera)
-			* CSV= Codigo CSV del modelo para descargar el PDF
+			* URLCSV= Codigo CSV del modelo para descargar el PDF
 
 Notas:
 	- Si no se pasan los datos del certificado y el proceso lo requeriere, se mostrara el formulario de seleccion
@@ -44,9 +43,10 @@ Notas:
 					  Nota: algunos procesos no necesitan esta parte ya que estan previstas en clases especificas de respuesta
 	- En el proceso de descarga de modelos con CSV el fichero de entrada no es necesario, ya que se pasan los parametros en el fichero de opciones
 
-/* Ejemplos de uso:
-	Envio modelos: gestionesAEAT dsclave opciones.txt 
-		Fichero de opciones con numero de serie
+/* Ejemplos de uso: gestionesAEAT dsclave guion.txt 
+	
+	Envio modelos
+		Fichero de guion con numero de serie
 			CLIENTE=00001
 			TIPO=1
 			ENTRADA=entrada.txt
@@ -54,24 +54,24 @@ Notas:
 			OBLIGADO=SI
 			BUSQUEDA=numeroserie
 
-    Validar modelos: gestionesAEAT dsclave opciones.txt
-		Fichero de opciones (no necesita certificado)
+    Validar modelos
+		Fichero de guion (no necesita certificado)
 			CLIENTE=00001
 			TIPO=2
 			ENTRADA=entrada.txt
 			SALIDA=salida.txt
 			OBLIGADO=NO
 		
-    Consulta modelos: gestionesAEAT dsclave opciones.txt
-		Fichero de opciones con solicitud de certificado por pantalla
+    Consulta modelos
+		Fichero de guion con solicitud de certificado por pantalla
 			CLIENTE=00001
 			TIPO=3
 			ENTRADA=entrada.txt
 			SALIDA=salida.txt
 			OBLIGADO=SI
 		
-    Ratificar domicilio renta: gestionesAEAT dsclave opciones.txt
-		Fichero de opciones con	el nombre del titular del certificado
+    Ratificar domicilio renta
+		Fichero de guion con el nombre del titular del certificado
 			CLIENTE=00001
 			TIPO=4
 			ENTRADA=entrada.txt
@@ -79,8 +79,8 @@ Notas:
 			OBLIGADO=SI
 			BUSQUEDA=NombreCertificado
 
-    Descarga datos fiscales: gestionesAEAT dsclave opciones.txt
-		Fichero de opciones
+    Descarga datos fiscales
+		Fichero de guion 
 			CLIENTE=00065
 			TIPO=5
 			SALIDA=salida.txt
@@ -89,8 +89,8 @@ Notas:
 			DPRENTA=S
 			URLRENTA=https://www9.agenciatributaria.gob.es/wlpl/DFPA-D182/SvDesDF23Pei
 		
-	Envio facturas al sii: gestionesAEAT dsclave opciones.txt
-		Fichero de opciones con fichero y password del certificado
+	Envio facturas al sii
+		Fichero de guion con fichero y password del certificado
 			CLIENTE=00065
 			TIPO=6
 			ENTRADA=facturaEmitida.xml
@@ -101,8 +101,8 @@ Notas:
 			PASSWORD=contraseña
 			RESPUESTA=[siiR:CSV,sii:TimestampPresentacion,sii:NIF,sii:IDOtro,sii:ID,sii:NumSerieFacturaEmisor,sii:FechaExpedicionFacturaEmisor,siiR:EstadoRegistro,siiR:CodigoErrorRegistro,siiR:DescripcionErrorRegistro,faultstring]
 	
-	Presentacion de informativas: gestionesAEAT dsclave opciones.txt
-		Fichero de opciones con numero de serie del certificado
+	Presentacion de informativas
+		Fichero de guion con numero de serie del certificado
 			CLIENTE=00065
 			TIPO=7
 			ENTRADA=entrada.txt
@@ -111,7 +111,7 @@ Notas:
 			BUSQUEDA=SerieCertificado
 			
 	Pago de modelos mediante solicitud de NRC
-		Fichero de opciones con el NIf del titular del certificado
+		Fichero de guion con el NIf del titular del certificado
 			CLIENTE=00065
 			TIPO=8
 			ENTRADA=guion_pago.txt
@@ -120,11 +120,11 @@ Notas:
 			BUSQUEDA=05196375P
 			
 	Descarga PDF de modelos con CSV
-		Fichero de opciones
+		Fichero de guion (no es necesario el fichero de entrada, se pone la url en el propio guion)
+			CLIENTE=00065
 			TIPO=9
-			CSV=KSZABZ7EXBU6VDA3
-			SALIDA=salida.pdf
-	
+			URLCSV=https://prewww2.aeat.es/wlpl/inwinvoc/es.aeat.dit.adu.eeca.catalogo.vis.VisualizaSc?COMPLETA=SI&ORIGEN=E&NIF=&CSV=SDMCFEZXM8QKF9ZU
+			SALIDA=salida.pdf	
 
 */
 	
