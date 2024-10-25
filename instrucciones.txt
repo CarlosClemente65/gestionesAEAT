@@ -1,35 +1,36 @@
 /*Uso de la aplicacion
-	gestionesAEAT clave guion.txt
+	gestionesAEAT dsclave guion.txt
 	
-	- Parametros:
-		* dsclave: unicamente sirve como medida de seguridad de ejecucion y debe pasarse siempre ds123456
-		* guion.txt: fichero que contiene las opciones que admite la aplicacion que son las siguientes:
-			*CLIENTE= Codigo de cliente para incluirlo en el html de respuestas
-			* TIPO= Tipo de proceso a ejecutar segun los siguientes:
-				1 = Envio modelos
-				2 = Validacion de modelos (no necesita certificado)
-				3 = Consulta de modelos presentados
-				4 = Ratificacion domicilio renta
-				5 = Descarga de datos fiscales de la renta (no necesita certificado)
-				6 = Envio facturas al Sii
-				7 = Presentacion declaraciones informativas
-				8 = Alta y consulta de pagos de modelos mediante cargo en cuenta con NRC
-				9 = Descarga PDF de modelos con CSV
-			* ENTRADA= Nombre del fichero que contiene los datos a enviar en txt
-			* SALIDA= Nombre del fichero en el que se dejara la respuesta
-			* URLSII= Url a la que hacer el envio de facturas al SII.
-			* RESPUESTA= Etiquetas del xml de respuesta en el envio al SII de las que se quiere obtener los resultados
-			* OBLIGADO= Indica si el proceso necesita usar certificado (valores SI/NO). Si no se indica, los procesos
-						que lo necesiten pediran seleccionar un certificado
-			* BUSQUEDA= Cadena a buscar en los certificados instalados en la maquina a utilizar en el proceso (puede ser
-						el numero de serie, el NIF o el nombre del titular o del representante del certificado)
-			* CERTIFICADO= Nombre del fichero.pfx que contiene el certificado digital.
-			* PASSWORD= Contraseña del certificado que se pasa por fichero
-			* NIFRENTA= Para la descarga de datos fiscales es necesario pasar el NIF del contribuyente
-			* REFRENTA= Codigo de 5 caracteres de la referencia de renta para la descarga de datos fiscales
-			* DPRENTA= En la descarga de datos fiscales, indica si se quieren tambien los datos personales (opciones 'S' o 'N')
-			* URLRENTA= Direccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año)
-			* URLCSV= Codigo CSV del modelo para descargar el PDF
+	* dsclave: unicamente sirve como medida de seguridad de ejecucion y debe pasarse siempre ds123456
+	* guion.txt: fichero que contiene los parametros que admite la aplicacion
+	
+	- Parametros que pueden incluirse en el guion:
+		*CLIENTE= Codigo de cliente para incluirlo en el html de respuestas
+		* TIPO= Tipo de proceso a ejecutar segun los siguientes:
+			1 = Envio modelos
+			2 = Validacion de modelos (no necesita certificado)
+			3 = Consulta de modelos presentados
+			4 = Ratificacion domicilio renta
+			5 = Descarga de datos fiscales de la renta (no necesita certificado)
+			6 = Envio facturas al Sii
+			7 = Presentacion declaraciones informativas
+			8 = Alta y consulta de pagos de modelos mediante cargo en cuenta con NRC
+			9 = Descarga de documentos PDF a traves del codigo CSV
+		* ENTRADA= Nombre del fichero que contiene los datos a enviar en txt
+		* SALIDA= Nombre del fichero en el que se dejara la respuesta
+		* URLSII= Url a la que hacer el envio de facturas al SII.
+		* RESPUESTA= Etiquetas del xml de respuesta en el envio al SII de las que se quiere obtener los resultados
+		* OBLIGADO= Indica si el proceso necesita usar certificado (valores SI/NO). Si no se indica, los procesos
+					que lo necesiten pediran seleccionar un certificado
+		* BUSQUEDA= Cadena a buscar en los certificados instalados en la maquina a utilizar en el proceso (puede ser
+					el numero de serie, el NIF o el nombre del titular o del representante del certificado)
+		* CERTIFICADO= Nombre del fichero.pfx que contiene el certificado digital.
+		* PASSWORD= Contraseña del certificado que se pasa por fichero
+		* NIFRENTA= Para la descarga de datos fiscales es necesario pasar el NIF del contribuyente
+		* REFRENTA= Codigo de 5 caracteres de la referencia de renta para la descarga de datos fiscales
+		* DPRENTA= En la descarga de datos fiscales, indica si se quieren tambien los datos personales (opciones 'S' o 'N')
+		* URLRENTA= Direccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año)
+		* URLCSV= Url de descarga del documento mediante codigo CSV
 
 Notas:
 	- Si no se pasan los datos del certificado y el proceso lo requeriere, se mostrara el formulario de seleccion
@@ -41,85 +42,77 @@ Notas:
 		[body] - En las lineas siguientes iran todas las lineas que sea necesario enviar al servicio
 		[respuesta] - En las lineas siguientes iran todas las variables que se espera recibir como respuesta
 					  Nota: algunos procesos no necesitan esta parte ya que estan previstas en clases especificas de respuesta
-	- En el proceso de descarga de modelos con CSV el fichero de entrada no es necesario, ya que se pasan los parametros en el fichero de opciones
+	- En el proceso de descarga de documentos con CSV el fichero de entrada no es necesario, ya que se pasan los parametros en el fichero de opciones
 
-/* Ejemplos de uso: gestionesAEAT dsclave guion.txt 
+/* Ejemplos de fichero guion 
 	
-	Envio modelos
-		Fichero de guion con numero de serie
-			CLIENTE=00001
-			TIPO=1
-			ENTRADA=entrada.txt
-			SALIDA=salida.txt
-			OBLIGADO=SI
-			BUSQUEDA=numeroserie
+	Envio modelos con numero de serie
+		CLIENTE=00001
+		TIPO=1
+		ENTRADA=entrada.txt
+		SALIDA=salida.txt
+		OBLIGADO=SI
+		BUSQUEDA=numeroserie
 
-    Validar modelos
-		Fichero de guion (no necesita certificado)
-			CLIENTE=00001
-			TIPO=2
-			ENTRADA=entrada.txt
-			SALIDA=salida.txt
-			OBLIGADO=NO
+    Validar modelos (no necesita certificado)
+		CLIENTE=00001
+		TIPO=2
+		ENTRADA=entrada.txt
+		SALIDA=salida.txt
+		OBLIGADO=NO
 		
-    Consulta modelos
-		Fichero de guion con solicitud de certificado por pantalla
-			CLIENTE=00001
-			TIPO=3
-			ENTRADA=entrada.txt
-			SALIDA=salida.txt
-			OBLIGADO=SI
+    Consulta modelos con solicitud de certificado por pantalla
+		CLIENTE=00001
+		TIPO=3
+		ENTRADA=entrada.txt
+		SALIDA=salida.txt
+		OBLIGADO=SI
 		
-    Ratificar domicilio renta
-		Fichero de guion con el nombre del titular del certificado
-			CLIENTE=00001
-			TIPO=4
-			ENTRADA=entrada.txt
-			SALIDA=salida.txt
-			OBLIGADO=SI
-			BUSQUEDA=NombreCertificado
+    Ratificar domicilio renta con el nombre del titular del certificado
+		CLIENTE=00001
+		TIPO=4
+		ENTRADA=entrada.txt
+		SALIDA=salida.txt
+		OBLIGADO=SI
+		BUSQUEDA=NombreCertificado
 
     Descarga datos fiscales
-		Fichero de guion 
-			CLIENTE=00065
-			TIPO=5
-			SALIDA=salida.txt
-			NIFRENTA=NIF
-			REFRENTA=refRenta
-			DPRENTA=S
-			URLRENTA=https://www9.agenciatributaria.gob.es/wlpl/DFPA-D182/SvDesDF23Pei
+		CLIENTE=00065
+		TIPO=5
+		SALIDA=salida.txt
+		NIFRENTA=NIF
+		REFRENTA=refRenta
+		DPRENTA=S
+		URLRENTA=https://www9.agenciatributaria.gob.es/wlpl/DFPA-D182/SvDesDF23Pei
 		
-	Envio facturas al sii
-		Fichero de guion con fichero y password del certificado
-			CLIENTE=00065
-			TIPO=6
-			ENTRADA=facturaEmitida.xml
-			SALIDA=respuesta-xml
-			URLSII=https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fe/SiiFactFEV1SOAP
-			OBLIGADO=SI
-			CERTIFICADO=certificado.pfx
-			PASSWORD=contraseña
-			RESPUESTA=[siiR:CSV,sii:TimestampPresentacion,sii:NIF,sii:IDOtro,sii:ID,sii:NumSerieFacturaEmisor,sii:FechaExpedicionFacturaEmisor,siiR:EstadoRegistro,siiR:CodigoErrorRegistro,siiR:DescripcionErrorRegistro,faultstring]
+	Envio facturas al sii con fichero y password del certificado
+		CLIENTE=00065
+		TIPO=6
+		ENTRADA=facturaEmitida.xml
+		SALIDA=respuesta-xml
+		URLSII=https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fe/SiiFactFEV1SOAP
+		OBLIGADO=SI
+		CERTIFICADO=certificado.pfx
+		PASSWORD=contraseña
+		RESPUESTA=[siiR:CSV,sii:TimestampPresentacion,sii:NIF,sii:IDOtro,sii:ID,sii:NumSerieFacturaEmisor,sii:FechaExpedicionFacturaEmisor,siiR:EstadoRegistro,siiR:CodigoErrorRegistro,siiR:DescripcionErrorRegistro,faultstring]
 	
-	Presentacion de informativas
-		Fichero de guion con numero de serie del certificado
-			CLIENTE=00065
-			TIPO=7
-			ENTRADA=entrada.txt
-			SALIDA=salida.txt
-			OBLIGADO=SI
-			BUSQUEDA=SerieCertificado
+	Presentacion de informativas con numero de serie del certificado
+		CLIENTE=00065
+		TIPO=7
+		ENTRADA=entrada.txt
+		SALIDA=salida.txt
+		OBLIGADO=SI
+		BUSQUEDA=SerieCertificado
 			
-	Pago de modelos mediante solicitud de NRC
-		Fichero de guion con el NIf del titular del certificado
-			CLIENTE=00065
-			TIPO=8
-			ENTRADA=guion_pago.txt
-			SALIDA=salida_pago.txt
-			OBLIGADO=SI
-			BUSQUEDA=05196375P
+	Pago de modelos mediante solicitud de NRC con el NIf del titular del certificado
+		CLIENTE=00065
+		TIPO=8
+		ENTRADA=guion_pago.txt
+		SALIDA=salida_pago.txt
+		OBLIGADO=SI
+		BUSQUEDA=05196375P
 			
-	Descarga PDF de modelos con CSV
+	Descarga de documentos PDF mediante CSV
 		Fichero de guion (no es necesario el fichero de entrada, se pone la url en el propio guion)
 			CLIENTE=00065
 			TIPO=9

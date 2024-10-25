@@ -460,10 +460,10 @@ namespace gestionesAEAT
         {
             StringBuilder mensaje = new StringBuilder();
             mensaje.AppendLine("");
-            mensaje.AppendLine(@"Uso de la aplicacion: gestionesAEAT.exe clave c:\carpeta\opciones.txt");
-            mensaje.AppendLine("\nParametros:");
+            mensaje.AppendLine(@"Uso de la aplicacion: gestionesAEAT.exe clave c:\carpeta\guion.txt");
             mensaje.AppendLine(@"    clave\t\tclave de ejecucion del programa");
             mensaje.AppendLine(@"    opciones.txt\tFichero que contiene las siguientes opciones que admite la aplicacion:");
+            mensaje.AppendLine("\n     Parametros que pueden incluirse en el guion:");
             mensaje.AppendLine(@"        CLIENTE= Codigo de cliente para incluirlo en el html de respuestas");
             mensaje.AppendLine(@"        TIPO= Tipo de proceso a ejecutar segun la siguiente lista:");
             mensaje.AppendLine(@"            1 = Envio de modelos");
@@ -474,10 +474,11 @@ namespace gestionesAEAT
             mensaje.AppendLine(@"            6 = Envio de facturas al SII");
             mensaje.AppendLine(@"            7 = Prestar declaraciones informativas");
             mensaje.AppendLine(@"            8 = Alta y consulta de pagos de modelos mediante cargo en cuenta con NRC");
-            mensaje.AppendLine(@"            9 = Descarga PDF de modelos con CSV");
+            mensaje.AppendLine(@"            9 = Descarga de documentos PDF a traves del codigo CSV");
             mensaje.AppendLine(@"        ENTRADA= Nombre del fichero con los datos a enviar");
             mensaje.AppendLine(@"        SALIDA= Nombre del fichero donde se grabara la salida");
             mensaje.AppendLine(@"        URLSII= Url a la que hacer el envio de facturas al SII");
+            mensaje.AppendLine(@"        RESPUESTA= Etiquetas del xml de respuesta en el envio al SII de las que se quiere obtener los resultados");
             mensaje.AppendLine(@"        OBLIGADO= Indica si el proceso necesita usar certificado (valores SI/NO)");
             mensaje.AppendLine(@"        BUSQUEDA= Cadena a buscar en los certificados (numero serie, NIF o nombre del titular o del representante del certificado");
             mensaje.AppendLine(@"        CERTIFICADO= Nombre del fichero.pfx que contiene el certificado digital");
@@ -486,10 +487,8 @@ namespace gestionesAEAT
             mensaje.AppendLine(@"        REFRENTA= Codigo de 5 caracteres de la referencia de renta para la descarga de datos fiscales");
             mensaje.AppendLine(@"        DPRENTA= En la descarga de datos fiscales indica si se quieren tambien los datos personales (valor 'S' o 'N')");
             mensaje.AppendLine(@"        URLRENTA= Direccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año)");
-            mensaje.AppendLine(@"        RESPUESTA= Etiquetas del xml de respuesta en el envio al SII de las que se quiere obtener los resultados");
-            mensaje.AppendLine(@"        PROCESOINFORMATIVAS= Tipo de proceso a ejecutar en la presentacion de informativas (inicializa, envio, presenta, recupera)");
-            mensaje.AppendLine(@"        CSV= Codigo CSV del modelo a descargar el PDF");
-            mensaje.AppendLine("\nEjemplos de fichero de opciones:");
+            mensaje.AppendLine(@"        URLCSV= Url de descarga del documento mediante codigo CSV");
+            mensaje.AppendLine("\nEjemplos de fichero guion:");
             mensaje.AppendLine(@"    Envio modelos con numero de serie:");
             mensaje.AppendLine(@"        CLIENTE=00001");
             mensaje.AppendLine(@"        TIPO=1");
@@ -533,23 +532,23 @@ namespace gestionesAEAT
             mensaje.AppendLine(@"        URLSII=https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fe/SiiFactFEV1SOAP");
             mensaje.AppendLine(@"        OBLIGADO=SI");
             mensaje.AppendLine(@"        BUSQUEDA=nombreCertificado");
-            mensaje.AppendLine(@"    Presentacion de informativas:");
+            mensaje.AppendLine(@"    Presentacion de informativas con nombre del titular del certificado:");
             mensaje.AppendLine(@"        CLIENTE=00001");
             mensaje.AppendLine(@"        TIPO=7");
             mensaje.AppendLine(@"        ENTRADA=guion.txt");
             mensaje.AppendLine(@"        SALIDA=salida.txt");
             mensaje.AppendLine(@"        OBLIGADO=SI");
             mensaje.AppendLine(@"        BUSQUEDA=nombreCertificado");
-            mensaje.AppendLine(@"    Pago de modelos mediante solicitud de NRC");
+            mensaje.AppendLine(@"    Pago de modelos mediante solicitud de NRC con nombre del titular del certificado:");
             mensaje.AppendLine(@"        CLIENTE=00001");
             mensaje.AppendLine(@"        TIPO=8");
             mensaje.AppendLine(@"        ENTRADA=guion.txt");
             mensaje.AppendLine(@"        SALIDA=salida.txt");
             mensaje.AppendLine(@"        OBLIGADO=SI");
             mensaje.AppendLine(@"        BUSQUEDA=nombreCertificado");
-            mensaje.AppendLine(@"    Descarga PDF de modelos con CSV");
+            mensaje.AppendLine(@"    Descarga de documentos PDF mediante CSV (no necesita certificado)");
             mensaje.AppendLine(@"        TIPO=9");
-            mensaje.AppendLine(@"        CSV=KSZABZ7EXBU6VDA3");
+            mensaje.AppendLine(@"        CSV=https://prewww2.aeat.es/wlpl/inwinvoc/es.aeat.dit.adu.eeca.catalogo.vis.VisualizaSc?COMPLETA=SI&ORIGEN=E&NIF=&CSV=SDMCFEZXM8QKF9ZU");
             mensaje.AppendLine(@"        SALIDA=salida.PDF");
             mensaje.AppendLine("\nNotas:");
             mensaje.AppendLine(@"    - Si no se pasan los datos del certificado y el proceso lo requerire, se mostrara el formulario de seleccion");
@@ -560,7 +559,7 @@ namespace gestionesAEAT
             mensaje.AppendLine(@"    	    [body] - En las lineas siguientes iran todas las lineas que sea necesario enviar al servicio");
             mensaje.AppendLine(@"    	[respuesta] - En las lineas siguientes iran todas las variables que se espera recibir como respuesta");
             mensaje.AppendLine(@"    	              Nota: algunos procesos no necesitan esta parte ya que estan previstas en clases especificas de respuesta");
-            mensaje.AppendLine(@"    	- En el proceso de descarga de modelos con CSV el fichero de entrada no es necesario, ya que se pasan los parametros en el fichero de opciones");
+            mensaje.AppendLine(@"    	- En el proceso de descarga de documentos con CSV el fichero de entrada no es necesario, ya que se pasan los parametros en el fichero de opciones");
             mensaje.AppendLine("\nPulse una tecla para continuar");
 
             Console.WriteLine(mensaje.ToString());

@@ -8,6 +8,7 @@
 - Version 1.3.0.0 - Incorporado envio facturas al SII
 - Version 1.4.0.0 - Incorporado envio de declaraciones informativas
 - Version 1.5.0.0 - Incorporado alta y consulta de pagos de modelos con NRC
+- Version 1.6.2.0 - Incorporado descarga de documentos PDF mediante CSV
 <br>
 
 ### Funcionalidades:
@@ -19,6 +20,7 @@
 - Presentacion de declaraciones informativas mediantes TGVI Online
 - Pago de declaraciones mediante el cargo en cuenta con NRC
 - Consulta de NRCs enviados a la AEAT por las entidades financieras
+- Descarga de documentos PDF mediante codigo CSV que se envia a una url para su cotejo
 <br>
 
 ### Parametros de ejecucion:
@@ -33,9 +35,11 @@
 		- 6 = Presentacion de facturas al SII
 		- 7 = Presentacion declaraciones informativas
 		- 8 = Alta y consulta de pagos de modelos mediante cargo en cuenta con NRC
+		- 9 = Descarga de documentos PDF a traves del codigo CSV
 	* ENTRADA= Nombre del fichero que contiene los datos a enviar en txt
 	* SALIDA= Nombre del fichero en el que se dejara la respuesta
 	* URLSII= Url a la que hacer el envio de facturas al SII.
+	* RESPUESTA= Etiquetas del xml de respuesta en el envio al SII de las que se quiere obtener los resultados
 	* OBLIGADO= Indica si el proceso necesita usar certificado (valores SI/NO). Si no se indica, los procesos que lo necesiten pediran seleccionar un certificado
 	* BUSQUEDA= Cadena a buscar en los certificados instalados en la maquina a utilizar en el proceso (puede ser el numero de serie, el NIF o el nombre del titular o del representante del certificado)
 	* CERTIFICADO= Nombre del fichero.pfx que contiene el certificado digital.
@@ -44,16 +48,15 @@
 	* REFRENTA= Codigo de 5 caracteres de la referencia de renta para la descarga de datos fiscales
 	* DPRENTA= En la descarga de datos fiscales, indica si se quieren tambien los datos personales (opciones 'S' o 'N')
 	* URLRENTA= Direccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año)
-	* RESPUESTA= Etiquetas del xml de respuesta en el envio al SII de las que se quiere obtener los resultados
+	* URLCSV= Url de descarga del documento mediante codigo CSV
 <br>
 
 <b>Ejemplos de uso: </b>
 
-- gestionesAEAT dsclave opciones.txt
+- gestionesAEAT dsclave guion.txt
 
-<u>Envio de modelos</u>
+<u>Envio de modelos con numero de serie</u>
 ```
-Fichero de opciones con numero de serie
 	CLIENTE=00001
 	TIPO=1
 	ENTRADA=entrada.txt
@@ -62,9 +65,8 @@ Fichero de opciones con numero de serie
 	BUSQUEDA=numeroserie
 ```
 
-<u>Validar modelos</u>
+<u>Validar modelos (no necesita certificado)</u>
 ```
-Fichero de opciones (no necesita certificado)
 	CLIENTE=00001
 	TIPO=2
 	ENTRADA=entrada.txt
@@ -73,9 +75,8 @@ Fichero de opciones (no necesita certificado)
 	
 	Nota: si en el guion viene el parametro VALIDAR=NO se genera el PDF sin validar
 ```
-<u>Consulta modelos</u>
+<u>Consulta modelos con fichero y password del certificado</u>
 ```
-Fichero de opciones con fichero y password del certificado
 	CLIENTE=00001
 	TIPO=3
 	ENTRADA=entrada.txt
@@ -84,9 +85,8 @@ Fichero de opciones con fichero y password del certificado
 	CERTIFICADO=certificado.pfx
 	PASSWORD=contraseña
 ```
-<u>Ratificar domicilio renta</u>
+<u>Ratificar domicilio renta con solicitud del certificado por pantalla</u>
 ```
-Fichero de opciones con solicitud del certificado por pantalla
 	CLIENTE=00001
 	TIPO=4
 	ENTRADA=entrada.txt
@@ -95,7 +95,6 @@ Fichero de opciones con solicitud del certificado por pantalla
 ```
 <u>Descarga datos fiscales</u>
 ```
-Fichero de opciones
 	CLIENTE = 00065
 	TIPO=5
 	SALIDA=salida.txt
@@ -104,9 +103,8 @@ Fichero de opciones
 	DPRENTA=S
 	URLRENTA=https://www9.agenciatributaria.gob.es/wlpl/DFPA-D182/SvDesDF23Pei
 ```
-<u>Envio facturas al SII</u>
+<u>Envio facturas al SII con numero de serie del certificado</u>
 ```
-Fichero de opciones con numero de serie del certificado
 	CLIENTE = 00065
 	TIPO=6
 	ENTRADA=facturaEmitida.xml
@@ -117,7 +115,7 @@ Fichero de opciones con numero de serie del certificado
 	RESPUESTA=[siiR:CSV,sii:TimestampPresentacion,sii:NIF,sii:IDOtro,sii:ID,sii:NumSerieFacturaEmisor ... siiR:DescripcionErrorRegistro,faultstring]
 ```
 
-<u>Presentacion declaraciones informativas</u>
+<u>Presentacion declaraciones informativas con numero de serie del certificado</u>
 ```
 	CLIENTE=00065
 	TIPO=7
@@ -127,7 +125,7 @@ Fichero de opciones con numero de serie del certificado
 	BUSQUEDA=SerieCertificado
 ```
 
-<u>Alta / consulta de pagos mediante NRC</u>
+<u>Alta / consulta de pagos mediante NRC con el numero de serie del certificado</u>
 ```
 	CLIENTE=00065
 	TIPO=8
@@ -135,4 +133,13 @@ Fichero de opciones con numero de serie del certificado
 	SALIDA=salida.txt
 	OBLIGADO=SI
 	BUSQUEDA=SerieCertificado
+```
+
+<u>Descarga de documentos PDF mediante CSV</u>
+```
+	CLIENTE=00065
+	TIPO=9
+	URLCSV=https://prewww2.aeat.es/wlpl/inwinvoc/es.aeat.dit.adu.eeca.catalogo.vis.VisualizaSc?COMPLETA=SI&ORIGEN=E&NIF=&CSV=SDMCFEZXM8QKF9ZU
+	SALIDA=salida.pdf	
+	Nota: no es necesario el fichero de entrada, se pone la url en el propio guion
 ```
