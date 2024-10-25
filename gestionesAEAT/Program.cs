@@ -151,7 +151,7 @@ namespace gestionesAEAT
 
                 case "9":
                     descargaCSV descargaCSV = new descargaCSV();
-                    descargaCSV.descargaPDF();
+                    descargaCSV.descargaDocumentoCSV().GetAwaiter().GetResult();
                     break;
             }
         }

@@ -28,7 +28,7 @@ namespace gestionesAEAT.Utilidades
         public static string cliente { get; set; } = string.Empty;
         public static string procesoInformativas {  get; set; } = string.Empty;
         public static Encoding codificacion { get; set; } = Encoding.UTF8;
-        public static string csvDescarga {  get; set; } = string.Empty;
+        public static string urlCSV{  get; set; } = string.Empty;
 
         static Utiles utilidad = new Utiles();
 
@@ -118,9 +118,10 @@ namespace gestionesAEAT.Utilidades
                         procesoInformativas = valor;
                         break;
 
-                    case "CSV":
-                        csvDescarga = valor;
+                    case "URLCSV":
+                        urlCSV = valor;
                         break;
+
                 }
             }
         }

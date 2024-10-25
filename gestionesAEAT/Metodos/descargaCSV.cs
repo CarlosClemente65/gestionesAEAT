@@ -1,5 +1,9 @@
 ﻿using gestionesAEAT.Utilidades;
+using System;
 using System.IO;
+using System.Net.Http;
+using System.Security.Policy;
+using System.Threading.Tasks;
 
 namespace gestionesAEAT.Metodos
 {
@@ -8,38 +12,54 @@ namespace gestionesAEAT.Metodos
         Utiles utilidad = Program.utilidad;
         envioAeat envio = new envioAeat();
 
-        public void descargaPDF()
+        HttpClient cliente = new HttpClient();
+        public async Task descargaDocumentoCSV()
         {
-            //Metodo para descargar el PDF de los modelos presentados a traves del CSV
-
             string ficheroSalida = Parametros.ficheroSalida;
             string ficheroResultado = Parametros.ficheroResultado;
+            string ficheroSalidaTxt = Path.ChangeExtension(ficheroSalida, "txt");
+            string url = Parametros.urlCSV;
 
-            string csv = Parametros.csvDescarga;
-
-            string url = @"https://www2.agenciatributaria.gob.es/wlpl/inwinvoc/es.aeat.dit.adu.eeca.catalogo.vis.VisualizaSc"; //Url para envios reales
-            string urlPre = @"https://prewww2.aeat.es/wlpl/inwinvoc/es.aeat.dit.adu.eeca.catalogo.vis.VisualizaSc"; //Url para el servicio de pruebas
-
-            string datosEnvio = string.Empty;
-            datosEnvio = $"COMPLETA=SI&ORIGEN=E&NIF=B02314169&CSV={csv}";
-            envio.envioPost(url, datosEnvio, "form");//Metodo sin certificado
-
-            //Procesa la respuesta
-            if (envio.estadoRespuestaAEAT == "OK")
+            try
             {
-                if (envio.respuestaEnvioAEAT.Contains("<!DOCTYPE html>"))
+                HttpResponseMessage respuesta = await cliente.GetAsync(url);
+                // Verificar que la respuesta fue exitosa
+                if (respuesta.IsSuccessStatusCode)
                 {
-                    //Puede llegar un html con algun tipo de error
-                    string path = Path.ChangeExtension(ficheroSalida, "html");
-                    File.WriteAllText(path, envio.respuestaEnvioAEAT);
-                    File.WriteAllText(ficheroResultado, "E00 = El CSV no es valido");
+                    var tipoContenido = respuesta.Content.Headers.ContentType.MediaType;
+                    // Verificar si el contenido es PDF
+                    if (tipoContenido == "application/pdf")
+                    {
+                        // Leer el contenido en bytes y guardar como PDF
+                        byte[] contenidoPdf = await respuesta.Content.ReadAsByteArrayAsync();
+                        File.WriteAllBytes(ficheroSalida, contenidoPdf);
+                    }
+                    else if (tipoContenido == "text/html")
+                    {
+                        // Leer el contenido como cadena de texto (HTML u otro) y guardar como HTML
+                        string contenidoHtml = await respuesta.Content.ReadAsStringAsync();
+                        string ficheroHtml = Path.ChangeExtension(Parametros.ficheroSalida, "html");
+                        File.WriteAllText(ficheroHtml, contenidoHtml);
+                        File.WriteAllText(ficheroSalidaTxt, "E00 = No se ha podido descargar el documento");
+                    }
+
+                    else
+                    {
+                        File.WriteAllText(ficheroSalida, "E00 = No se ha podido descargar el documento");
+                    }
                 }
                 else
                 {
-                    //string ficheroPDF = Path.Combine(pathSalida, respuesta.nombreFicheroPDF);
-                    File.WriteAllBytes(ficheroSalida, envio.respuestaEnvioAEATBytes);
-                    File.WriteAllText(ficheroResultado, "OK");
+                    File.WriteAllText(ficheroSalida, "E00 = No se ha podido descargar el documento");
                 }
+
+                File.WriteAllText(ficheroResultado, "OK");
+
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText(ficheroSalida, $"No se ha podido descargar el documento. {ex.Message}");
+                File.WriteAllText(ficheroResultado, "OK");
             }
         }
     }
