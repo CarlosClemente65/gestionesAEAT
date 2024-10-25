@@ -1,4 +1,4 @@
-# gestionesAEAT v1.5.0.0
+# gestionesAEAT v1.6.2.0
 ## Programa para la gestion de varios metodos de interaccion con los servidores web de Hacienda en la presentacion de declaraciones tributarias
 
 ### Desarrollado por Carlos Clemente (10-2024)
@@ -57,89 +57,90 @@
 
 <u>Envio de modelos con numero de serie</u>
 ```
-	CLIENTE=00001
-	TIPO=1
-	ENTRADA=entrada.txt
-	SALIDA=salida.txt
-	OBLIGADO=SI
-	BUSQUEDA=numeroserie
+CLIENTE=00001
+TIPO=1
+ENTRADA=entrada.txt
+SALIDA=salida.txt
+OBLIGADO=SI
+BUSQUEDA=numeroserie
 ```
 
 <u>Validar modelos (no necesita certificado)</u>
 ```
-	CLIENTE=00001
-	TIPO=2
-	ENTRADA=entrada.txt
-	SALIDA=salida.txt
-	OBLIGADO=NO
+CLIENTE=00001
+TIPO=2
+ENTRADA=entrada.txt
+SALIDA=salida.txt
+OBLIGADO=NO
 	
-	Nota: si en el guion viene el parametro VALIDAR=NO se genera el PDF sin validar
+Nota: si en el guion viene el parametro VALIDAR=NO se genera el PDF sin validar
 ```
 <u>Consulta modelos con fichero y password del certificado</u>
 ```
-	CLIENTE=00001
-	TIPO=3
-	ENTRADA=entrada.txt
-	SALIDA=salida.txt
-	OBLIGADO=SI
-	CERTIFICADO=certificado.pfx
-	PASSWORD=contraseña
+CLIENTE=00001
+TIPO=3
+ENTRADA=entrada.txt
+SALIDA=salida.txt
+OBLIGADO=SI
+CERTIFICADO=certificado.pfx
+PASSWORD=contraseña
 ```
 <u>Ratificar domicilio renta con solicitud del certificado por pantalla</u>
 ```
-	CLIENTE=00001
-	TIPO=4
-	ENTRADA=entrada.txt
-	SALIDA=salida.txt
-	OBLIGADO=SI
+CLIENTE=00001
+TIPO=4
+ENTRADA=entrada.txt
+SALIDA=salida.txt
+OBLIGADO=SI
 ```
 <u>Descarga datos fiscales</u>
 ```
-	CLIENTE = 00065
-	TIPO=5
-	SALIDA=salida.txt
-	NIFRENTA=NIF
-	REFRENTA=refRenta
-	DPRENTA=S
-	URLRENTA=https://www9.agenciatributaria.gob.es/wlpl/DFPA-D182/SvDesDF23Pei
+CLIENTE = 00065
+TIPO=5
+SALIDA=salida.txt
+NIFRENTA=NIF
+REFRENTA=refRenta
+DPRENTA=S
+URLRENTA=https://www9.agenciatributaria.gob.es/wlpl/DFPA-D182/SvDesDF23Pei
 ```
 <u>Envio facturas al SII con numero de serie del certificado</u>
 ```
-	CLIENTE = 00065
-	TIPO=6
-	ENTRADA=facturaEmitida.xml
-	SALIDA=respuesta.xml
-	URLSII=https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fe/SiiFactFEV1SOAP
-	OBLIGADO=SI
-	BUSQUEDA=numeroSerie
-	RESPUESTA=[siiR:CSV,sii:TimestampPresentacion,sii:NIF,sii:IDOtro,sii:ID,sii:NumSerieFacturaEmisor ... siiR:DescripcionErrorRegistro,faultstring]
+CLIENTE = 00065
+TIPO=6
+ENTRADA=facturaEmitida.xml
+SALIDA=respuesta.xml
+URLSII=https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fe/SiiFactFEV1SOAP
+OBLIGADO=SI
+BUSQUEDA=numeroSerie
+RESPUESTA=[siiR:CSV,sii:TimestampPresentacion,sii:NIF,sii:IDOtro,sii:ID,sii:NumSerieFacturaEmisor ... siiR:DescripcionErrorRegistro,faultstring]
 ```
 
 <u>Presentacion declaraciones informativas con numero de serie del certificado</u>
 ```
-	CLIENTE=00065
-	TIPO=7
-	ENTRADA=entrada.txt
-	SALIDA=salida.txt
-	OBLIGADO=SI
-	BUSQUEDA=SerieCertificado
+CLIENTE=00065
+TIPO=7
+ENTRADA=entrada.txt
+SALIDA=salida.txt
+OBLIGADO=SI
+BUSQUEDA=SerieCertificado
 ```
 
 <u>Alta / consulta de pagos mediante NRC con el numero de serie del certificado</u>
 ```
-	CLIENTE=00065
-	TIPO=8
-	ENTRADA=entrada.txt
-	SALIDA=salida.txt
-	OBLIGADO=SI
-	BUSQUEDA=SerieCertificado
+CLIENTE=00065
+TIPO=8
+ENTRADA=entrada.txt
+SALIDA=salida.txt
+OBLIGADO=SI
+BUSQUEDA=SerieCertificado
 ```
 
 <u>Descarga de documentos PDF mediante CSV</u>
 ```
-	CLIENTE=00065
-	TIPO=9
-	URLCSV=https://prewww2.aeat.es/wlpl/inwinvoc/es.aeat.dit.adu.eeca.catalogo.vis.VisualizaSc?COMPLETA=SI&ORIGEN=E&NIF=&CSV=SDMCFEZXM8QKF9ZU
-	SALIDA=salida.pdf	
-	Nota: no es necesario el fichero de entrada, se pone la url en el propio guion
+CLIENTE=00065
+TIPO=9
+URLCSV=https://prewww2.aeat.es/wlpl/inwinvoc/es.aeat.dit.adu.eeca.catalogo.vis.VisualizaSc?COMPLETA=SI&ORIGEN=E&NIF=&CSV=SDMCFEZXM8QKF9ZU
+SALIDA=salida.pdf	
+
+Nota: no es necesario el fichero de entrada, se pone la url en el propio guion
 ```

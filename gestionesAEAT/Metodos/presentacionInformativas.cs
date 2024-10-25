@@ -299,16 +299,22 @@ namespace gestionesAEAT.Metodos
                     if (estadoRespuestaAEAT == "OK")
                     {
                         StringBuilder contenidoRespuesta = new StringBuilder();
-                        for (int i = 0; i < respuesta.Headers.Count; i++)
+                        foreach (string elemento in utilidad.respuesta)
                         {
-                            string nombreHeader = respuesta.Headers.GetKey(i); // Obtener el nombre de la cabecera
-                            string valorHeader = respuesta.Headers[nombreHeader]; // Obtener el valor de la cabecera
-
-                            var propiedad = claseRespuesta.GetProperty(nombreHeader.ToLower());
-                            if (propiedad != null)
+                            for (int i = 0; i < respuesta.Headers.Count; i++)
                             {
-                                nombreHeader = nombreHeader.ToUpper();
-                                contenidoRespuesta.AppendLine($"{nombreHeader} = {valorHeader}"); // Añadir nombre y valor al StringBuilder
+                                string nombreHeader = respuesta.Headers.GetKey(i); // Obtener el nombre de la cabecera
+                                string valorHeader = respuesta.Headers[nombreHeader]; // Obtener el valor de la cabecera
+                                var propiedad = claseRespuesta.GetProperty(nombreHeader.ToLower());
+
+                                if (propiedad != null)
+                                {
+                                    if (elemento == nombreHeader.ToUpper())
+                                    {
+                                        nombreHeader = nombreHeader.ToUpper();
+                                        contenidoRespuesta.AppendLine($"{elemento} = {valorHeader}"); // Añadir nombre y valor al StringBuilder
+                                    }
+                                }
                             }
                         }
 
@@ -334,36 +340,20 @@ namespace gestionesAEAT.Metodos
                             {
                                 string pathErrores = Path.Combine(Path.GetDirectoryName(Parametros.ficheroSalida), "errores.txt");
 
-                                //Se modifica el fichero de salida para poner primero el error y luego los datos del registro
-                                string[] lineasErrores = contenidoErrores.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+                                //Se procesan los errores para añadirlos al fichero de errores (no incluye lineas vacias)
+                                string[] lineasErrores = contenidoErrores.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
                                 StringBuilder erroresSalida = new StringBuilder();
 
                                 int reg = 1;
                                 foreach (string linea in lineasErrores)
                                 {
-                                    if (!string.IsNullOrWhiteSpace(linea))
-                                    {
-                                        if (linea.Contains(";"))
-                                        {
-                                            (string registro, string error) = utilidad.divideCadena(linea, ';');
-                                            erroresSalida.AppendLine($"E{reg.ToString("D2")} = {error} - Registro {reg.ToString("D2")} = {registro}");
-                                            reg++;
-                                        }
-                                        else
-                                        {
-                                            erroresSalida.AppendLine($"E{reg.ToString("D2")} = {linea}");
-                                            reg++;
-                                        }
-                                    }
+                                    erroresSalida.AppendLine(linea);
+                                    reg++;
                                 }
 
-                                ////Se unen los dos resultados para grabar el fichero de salida
-                                //contenidoRespuesta.AppendLine(erroresSalida.ToString());
-
-                                //utilidad.GrabarSalida(contenidoRespuesta.ToString(), Parametros.ficheroSalida);
                                 utilidad.GrabarSalida(erroresSalida.ToString(), pathErrores);
+                                File.WriteAllText(pathErrores, erroresSalida.ToString(), Encoding.Default);
                             }
-
                         }
                     }
 
