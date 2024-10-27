@@ -591,7 +591,7 @@ namespace gestionesAEAT
 
         public void GrabarSalida(string mensajeSalida, string ficheroSalida)
         {
-            if (!grabadaSalida) File.WriteAllText(ficheroSalida, mensajeSalida);
+            if (!grabadaSalida) File.WriteAllText(ficheroSalida, mensajeSalida,Encoding.Default);
         }
 
         public string generaFicheroSalida<T>(T proceso, string ficheroPdf = "")

@@ -43,6 +43,14 @@ Notas:
 		[respuesta] - En las lineas siguientes iran todas las variables que se espera recibir como respuesta
 					  Nota: algunos procesos no necesitan esta parte ya que estan previstas en clases especificas de respuesta
 	- En el proceso de descarga de documentos con CSV el fichero de entrada no es necesario, ya que se pasan los parametros en el fichero de opciones
+	- En la presentacion de informativas, las urls que se pueden usar y su funcion es la siguiente (para pruebas usar “prewww1.aeat.es" en vez de "www1.agenciatributaria.gob.es"):
+		* Inicializar envio: https://www1.agenciatributaria.gob.es/wlpl/OVPT-NTGV/InicializarEnvio
+		* Enviar registros :https://www1.agenciatributaria.gob.es/wlpl/OVPT-NTGV/EnviarDatos
+		* Recuperar idenvio: https://www1.agenciatributaria.gob.es/wlpl/OVPT-NTGV/RecuperarEnvio
+		* Presentar registros: https://www1.agenciatributaria.gob.es/wlpl/OVPT-NTGV/PresentarEnvio
+		* Recuperar registros con errores: https://www1.agenciatributaria.gob.es/wlpl/OVPT-NTGV/RecuperarErrores
+		* Dar de baja una declaracion: https://www1.agenciatributaria.gob.es/wlpl/OVPT-NTGV/BajaDeclaracion
+		* Obtener borrador registros validados: https://www1.agenciatributaria.gob.es/wlpl/OVPT-NTGV/VistaPrevia
 
 /* Ejemplos de fichero guion 
 	

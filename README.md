@@ -1,4 +1,4 @@
-# gestionesAEAT v1.6.2.0
+# gestionesAEAT v1.6.3.0
 ## Programa para la gestion de varios metodos de interaccion con los servidores web de Hacienda en la presentacion de declaraciones tributarias
 
 ### Desarrollado por Carlos Clemente (10-2024)
@@ -9,6 +9,7 @@
 - Version 1.4.0.0 - Incorporado envio de declaraciones informativas
 - Version 1.5.0.0 - Incorporado alta y consulta de pagos de modelos con NRC
 - Version 1.6.2.0 - Incorporado descarga de documentos PDF mediante CSV
+- Version 1.6.3.0 - Incorporado la generacion de un borrador en declaraciones informativas
 <br>
 
 ### Funcionalidades:

@@ -124,6 +124,18 @@ namespace gestionesAEAT.Metodos
         public string enviot2ko { get; set; }
     }
 
+    public class vistaPrevia
+    {
+        public string idenvio { get; set; }
+    }
+
+    public class respuestaVistaPrevia
+    {
+        public string idenvio { get; set; }
+        public string codigo { get; set; }
+        public string mensaje { get; set; }
+    }
+
 
     public class presentacionInformativas
     {
@@ -184,6 +196,12 @@ namespace gestionesAEAT.Metodos
                         instanciaClase = new recuperarEnvio();
                         claseRespuesta = typeof(respuestaRecuperarEnvio);
                         break;
+
+                    case "VistaPrevia":
+                        instanciaClase = new vistaPrevia();
+                        claseRespuesta = typeof(respuestaVistaPrevia);
+                        break;
+
                 }
 
                 // Asignación de los valores a las propiedades de la clase usando reflexión
@@ -320,39 +338,62 @@ namespace gestionesAEAT.Metodos
 
                         utilidad.GrabarSalida(contenidoRespuesta.ToString(), Parametros.ficheroSalida);
 
-                        //Almacena el cuerpo si tiene contenido (siempre seran los registros con errores de la presentacion
+                        //Procesa la respuesta y la graba segun el tipo que sea (texto, html o pdf); los registros con errores vendran en texto, si hay algun error en el proceso vendra un html, y si el proceso es obtener un borrador sera un pdf.
                         var erroresAEAT = respuesta.GetResponseStream();
                         if (erroresAEAT != null)
                         {
-                            StringBuilder contenidoErrores = new StringBuilder();
-                            using (StreamReader reader = new StreamReader(erroresAEAT))
-                            {
-                                string body = reader.ReadToEnd();
+                            string pathErrores = string.Empty;
+                            var tipoRespuesta = respuesta.ContentType;
 
-                                //Solo añade al reader las lineas que no estan vacias.
-                                if (!string.IsNullOrWhiteSpace(body))
+                            if (tipoRespuesta.StartsWith("text/plain"))
+                            {
+                                pathErrores = Path.Combine(Path.GetDirectoryName(Parametros.ficheroSalida), "errores.txt");
+                                StringBuilder erroresSalida = new StringBuilder();
+                                using (StreamReader reader = new StreamReader(erroresAEAT))
                                 {
-                                    contenidoErrores.AppendLine(body); // Añadir el body al contenido
+                                    string linea;
+                                    while ((linea = reader.ReadLine()) != null)
+                                    {
+                                        if (!string.IsNullOrWhiteSpace(linea))
+                                        {
+                                            erroresSalida.AppendLine(linea);
+                                        }
+                                    }
+                                }
+                                if (erroresSalida.Length > 0)
+                                {
+                                    utilidad.GrabarSalida(erroresSalida.ToString(), pathErrores);
+                                    File.WriteAllText(pathErrores, erroresSalida.ToString(), Encoding.Default);
                                 }
                             }
 
-                            if (contenidoErrores.Length > 0)
+                            else if (tipoRespuesta.StartsWith("text/html"))
                             {
-                                string pathErrores = Path.Combine(Path.GetDirectoryName(Parametros.ficheroSalida), "errores.txt");
+                                pathErrores = Path.ChangeExtension(Parametros.ficheroSalida, "html");
 
-                                //Se procesan los errores para añadirlos al fichero de errores (no incluye lineas vacias)
-                                string[] lineasErrores = contenidoErrores.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-                                StringBuilder erroresSalida = new StringBuilder();
-
-                                int reg = 1;
-                                foreach (string linea in lineasErrores)
+                                using (StreamReader reader = new StreamReader(erroresAEAT))
                                 {
-                                    erroresSalida.AppendLine(linea);
-                                    reg++;
+                                    string contenidoHtml = reader.ReadToEnd();
+                                    utilidad.GrabarSalida(contenidoHtml, pathErrores);
                                 }
 
-                                utilidad.GrabarSalida(erroresSalida.ToString(), pathErrores);
-                                File.WriteAllText(pathErrores, erroresSalida.ToString(), Encoding.Default);
+                            }
+
+                            else if (tipoRespuesta.StartsWith("application/pdf"))
+                            {
+                                pathErrores = Path.ChangeExtension(Parametros.ficheroSalida, "pdf");
+
+                                // Lee el contenido binario del PDF y lo guarda en el archivo de salida
+                                using (var fileStream = new FileStream(pathErrores, FileMode.Create, FileAccess.Write))
+                                {
+                                    byte[] buffer = new byte[81920]; // Tamaño de búfer de 80 KB
+                                    int bytesRead;
+                                    while ((bytesRead = erroresAEAT.Read(buffer, 0, buffer.Length)) > 0)
+                                    {
+                                        fileStream.Write(buffer, 0, bytesRead);
+                                    }
+                                }
+
                             }
                         }
                     }
