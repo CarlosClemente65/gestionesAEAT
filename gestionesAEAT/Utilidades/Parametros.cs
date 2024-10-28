@@ -165,6 +165,10 @@ namespace gestionesAEAT.Utilidades
                         case "urlCSV":
                             mensaje = "No se ha pasado la url de descarga del documento";
                             break;
+
+                        case "urlValida":
+                            mensaje = "No se ha pasado la url de validacion del NIF";
+                            break;
                     }
                 }
             }
