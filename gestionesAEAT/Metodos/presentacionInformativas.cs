@@ -208,21 +208,22 @@ namespace gestionesAEAT.Metodos
                 AsignarValoresClase(instanciaClase);
 
                 //Prepara el cuerpo del envio
-                string datosBody = string.Empty;
+                StringBuilder datosBody = new StringBuilder();
                 for (int i = 0; i < utilidad.body.Count; i++)
                 {
-                    if (i == utilidad.body.Count - 1)
-                    {
-                        datosBody += utilidad.body[i];
-                    }
-                    else
-                    {
-                        datosBody += utilidad.body[i] + @"\n";
-                    }
+                    datosBody.AppendLine(utilidad.body[i]);
+                    //if (i == utilidad.body.Count - 1)
+                    //{
+                    //    datosBody += utilidad.body[i];
+                    //}
+                    //else
+                    //{
+                    //    datosBody += utilidad.body[i] + @"\n";
+                    //}
                 }
 
                 //Envia los datos
-                envioInformativas(datosBody, claseRespuesta);
+                envioInformativas(datosBody.ToString(), claseRespuesta);
             }
 
             catch (Exception ex)
