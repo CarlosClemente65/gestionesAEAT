@@ -1,4 +1,4 @@
-# gestionesAEAT v1.6.3.0
+# gestionesAEAT v1.6.4.0
 ## Programa para la gestion de varios metodos de interaccion con los servidores web de Hacienda en la presentacion de declaraciones tributarias
 
 ### Desarrollado por Carlos Clemente (10-2024)
@@ -10,6 +10,7 @@
 - Version 1.5.0.0 - Incorporado alta y consulta de pagos de modelos con NRC
 - Version 1.6.2.0 - Incorporado descarga de documentos PDF mediante CSV
 - Version 1.6.3.0 - Incorporado la generacion de un borrador en declaraciones informativas
+- Version 1.6.4.0 - Incorporado la validacion de NIFs
 <br>
 
 ### Funcionalidades:
@@ -22,6 +23,7 @@
 - Pago de declaraciones mediante el cargo en cuenta con NRC
 - Consulta de NRCs enviados a la AEAT por las entidades financieras
 - Descarga de documentos PDF mediante codigo CSV que se envia a una url para su cotejo
+- Validacion de NIFs en los servidores de la AEAT
 <br>
 
 ### Parametros de ejecucion:
@@ -37,6 +39,7 @@
 		- 7 = Presentacion declaraciones informativas
 		- 8 = Alta y consulta de pagos de modelos mediante cargo en cuenta con NRC
 		- 9 = Descarga de documentos PDF a traves del codigo CSV
+		- 10 = Validacion de NIFs
 	* ENTRADA= Nombre del fichero que contiene los datos a enviar en txt
 	* SALIDA= Nombre del fichero en el que se dejara la respuesta
 	* URLSII= Url a la que hacer el envio de facturas al SII.
@@ -144,4 +147,13 @@ URLCSV=https://prewww2.aeat.es/wlpl/inwinvoc/es.aeat.dit.adu.eeca.catalogo.vis.V
 SALIDA=salida.pdf	
 
 Nota: no es necesario el fichero de entrada, se pone la url en el propio guion
+```
+
+<u>Validar NIFs</u>
+```
+TIPO=10
+ENTRADA=entrada.txt
+SALIDA=salida.txt
+OBLIGADO=SI
+BUSQUEDA=numeroserie
 ```

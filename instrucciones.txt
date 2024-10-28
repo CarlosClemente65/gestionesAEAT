@@ -16,6 +16,7 @@
 			7 = Presentacion declaraciones informativas
 			8 = Alta y consulta de pagos de modelos mediante cargo en cuenta con NRC
 			9 = Descarga de documentos PDF a traves del codigo CSV
+			10 = Validar NIFs en los servidores de la AEAT
 		* ENTRADA= Nombre del fichero que contiene los datos a enviar en txt
 		* SALIDA= Nombre del fichero en el que se dejara la respuesta
 		* URLSII= Url a la que hacer el envio de facturas al SII.
@@ -51,6 +52,7 @@ Notas:
 		* Recuperar registros con errores: https://www1.agenciatributaria.gob.es/wlpl/OVPT-NTGV/RecuperarErrores
 		* Dar de baja una declaracion: https://www1.agenciatributaria.gob.es/wlpl/OVPT-NTGV/BajaDeclaracion
 		* Obtener borrador registros validados: https://www1.agenciatributaria.gob.es/wlpl/OVPT-NTGV/VistaPrevia
+	- En el proceso de Validacion de NIFs el fichero de entrada solo tiene las etiquetas NIF y NOMBRE de cada uno de los NIFs a validar (la url esta por programa)
 
 /* Ejemplos de fichero guion 
 	
@@ -68,6 +70,7 @@ Notas:
 		ENTRADA=entrada.txt
 		SALIDA=salida.txt
 		OBLIGADO=NO
+		Nota: si en el guion viene el parametro VALIDAR=NO se genera el PDF sin validar
 		
     Consulta modelos con solicitud de certificado por pantalla
 		CLIENTE=00001
@@ -121,11 +124,19 @@ Notas:
 		BUSQUEDA=05196375P
 			
 	Descarga de documentos PDF mediante CSV
-		Fichero de guion (no es necesario el fichero de entrada, se pone la url en el propio guion)
-			CLIENTE=00065
-			TIPO=9
-			URLCSV=https://prewww2.aeat.es/wlpl/inwinvoc/es.aeat.dit.adu.eeca.catalogo.vis.VisualizaSc?COMPLETA=SI&ORIGEN=E&NIF=&CSV=SDMCFEZXM8QKF9ZU
-			SALIDA=salida.pdf	
+		CLIENTE=00065
+		TIPO=9
+		URLCSV=https://prewww2.aeat.es/wlpl/inwinvoc/es.aeat.dit.adu.eeca.catalogo.vis.VisualizaSc?COMPLETA=SI&ORIGEN=E&NIF=&CSV=SDMCFEZXM8QKF9ZU
+		SALIDA=salida.pdf
+		Nota: no es necesario el fichero de entrada ya que se pone la url en el propio guion
+			
+	Validacion NIFs
+		TIPO=10
+		ENTRADA=guion_validaNif.txt
+		SALIDA=respuesta_validaNif.txt
+		OBLIGADO=SI
+		BUSQUEDA=05196375P
+		Nota: en el fichero de entrada solo van los parametros NIF= y NOMBRE= de cada uno de los NIFs a validar
 
 */
 	

@@ -50,7 +50,7 @@ namespace gestionesAEAT
                     }
 
                     Parametros.Configuracion.Inicializar();
-                    Parametros.CargarOpciones(argumentos[1]);
+                    Parametros.ficheroOpciones = argumentos[1];
 
                     if (!File.Exists(Parametros.ficheroOpciones))
                     {
@@ -59,6 +59,7 @@ namespace gestionesAEAT
                     }
                     else
                     {
+                        Parametros.CargarOpciones(Parametros.ficheroOpciones);
                         //Controla si las opciones pasadas son correctas.
                         string controlTipo = Parametros.tipo;
                         log += ControlOpciones(controlTipo);
@@ -152,6 +153,11 @@ namespace gestionesAEAT
                 case "9":
                     descargaCSV descargaCSV = new descargaCSV();
                     descargaCSV.descargaDocumentoCSV().GetAwaiter().GetResult();
+                    break;
+
+                case "10":
+                    validarNif validarNif = new validarNif();
+                    validarNif.envioPeticion().GetAwaiter().GetResult(); ;
                     break;
             }
         }
@@ -333,6 +339,23 @@ namespace gestionesAEAT
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
                     }
+                    break;
+
+                case "10":
+                    frmSeleccion.tituloVentana = "Validacion NIF";
+                    mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
+                    mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
+                    if (!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
+
                     break;
 
                 default:
