@@ -101,7 +101,15 @@ namespace gestionesAEAT.Metodos
         {
             //Metodo para descargar el PDF de los modelos presentados a traves del CSV
             string url = @"https://www2.agenciatributaria.gob.es/wlpl/inwinvoc/es.aeat.dit.adu.eeca.catalogo.vis.VisualizaSc";
+
+            //Si el envio se hace al servidor de pruebas, la descarga hay que hacerla a otra url
+            if (utilidad.url.Contains("prewww1"))
+            {
+                url = @"https://prewww2.aeat.es/wlpl/inwinvoc/es.aeat.dit.adu.eeca.catalogo.vis.VisualizaSc";
+            }
+
             string datosEnvio = string.Empty;
+            StringBuilder erroresCSV = new StringBuilder();
 
             foreach (var respuesta in respuestasCorrectas)
             {
@@ -109,10 +117,19 @@ namespace gestionesAEAT.Metodos
                 envio.envioPost(url, datosEnvio, "form");//Metodo sin certificado
                 if (envio.estadoRespuestaAEAT == "OK")
                 {
-                    string ficheroPDF = Path.Combine(pathSalida, respuesta.nombreFicheroPDF);
-                    File.WriteAllBytes(ficheroPDF, envio.respuestaEnvioAEATBytes);
+                    string ficheroSalida = Path.Combine(pathSalida, respuesta.nombreFicheroPDF);
+                    if (envio.respuestaEnvioAEAT.Contains("<!DOCTYPE html>"))
+                    {
+                        //Si se devuelve un html es porque hay errores en la descarga y se almacena en el fichero de salida
+                        ficheroSalida = Path.ChangeExtension(respuesta.nombreFicheroPDF, "html");
+                        erroresCSV.AppendLine($"Error al descargar el modelo con CSV {respuesta.csv}");
+                    }
+                    File.WriteAllBytes(ficheroSalida, envio.respuestaEnvioAEATBytes);
                 }
             }
+
+            //Si hay errores se graba en el fichero de resultado
+            if (erroresCSV.Length > 0) File.WriteAllText(Parametros.ficheroResultado, erroresCSV.ToString());
         }
 
         public string formateaRespuesta(string datos)
