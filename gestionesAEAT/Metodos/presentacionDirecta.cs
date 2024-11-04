@@ -219,6 +219,7 @@ namespace gestionesAEAT.Metodos
                         string resultadoSalida = utilidad.generaFicheroSalida(respuestaEnvioModelos);
 
                         //Graba el fichero de salida
+                        //Se pone la codificacion CP437 que es la que utiliza el basico en el grid
                         Encoding codificacionCP437 = Encoding.GetEncoding("IBM437");
                         File.WriteAllText(ficheroSalida, resultadoSalida, codificacionCP437);
                     }
