@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Text;
 
 namespace gestionesAEAT.Metodos
 {
@@ -218,7 +219,8 @@ namespace gestionesAEAT.Metodos
                         string resultadoSalida = utilidad.generaFicheroSalida(respuestaEnvioModelos);
 
                         //Graba el fichero de salida
-                        File.WriteAllText(ficheroSalida, resultadoSalida);
+                        Encoding codificacionCP437 = Encoding.GetEncoding("IBM437");
+                        File.WriteAllText(ficheroSalida, resultadoSalida, codificacionCP437);
                     }
 
 
