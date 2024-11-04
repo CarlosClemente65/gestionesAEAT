@@ -2,7 +2,6 @@
 using System;
 using System.IO;
 using System.Net.Http;
-using System.Security.Policy;
 using System.Threading.Tasks;
 
 namespace gestionesAEAT.Metodos

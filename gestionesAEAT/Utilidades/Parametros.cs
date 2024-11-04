@@ -35,7 +35,7 @@ namespace gestionesAEAT.Utilidades
         {
             ficheroOpciones = _ficheroOpciones;
             //Metodo para procesar el fichero de opciones
-            string[] lineas = File.ReadAllLines(ficheroOpciones);
+            string[] lineas = File.ReadAllLines(ficheroOpciones, Encoding.Default);
             foreach (string linea in lineas)
             {
                 //Evita procesar lineas vacias
@@ -49,7 +49,7 @@ namespace gestionesAEAT.Utilidades
                 switch (clave)
                 {
                     case "CLIENTE":
-                        cliente = valor;
+                        cliente = utilidad.quitaRaros(valor);
                         break;
 
                     case "TIPO":

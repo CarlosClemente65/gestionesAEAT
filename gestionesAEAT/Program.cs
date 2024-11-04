@@ -3,9 +3,7 @@ using gestionesAEAT.Formularios;
 using gestionesAEAT.Metodos;
 using gestionesAEAT.Utilidades;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 
@@ -67,14 +65,6 @@ namespace gestionesAEAT
                         string controlTipo = Parametros.tipo;
                         log += ControlOpciones(controlTipo);
                         if (!string.IsNullOrEmpty(log)) utilidad.SalirAplicacion(log);
-
-                        //Control de que existan las bibliotecas necesarias
-                        //string controlBibliotecas = ControlBibliotecas();
-                        ////if (controlBibliotecas.Length > 0)
-                        ////{
-                        ////    MessageBox.Show("Faltan ficheros para la ejecucion de la aplicacion. Contacte con el departamento tecnico.", "Error en la ejecucion", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        ////    utilidad.SalirAplicacion(controlBibliotecas);
-                        ////}
 
                         try
                         {
