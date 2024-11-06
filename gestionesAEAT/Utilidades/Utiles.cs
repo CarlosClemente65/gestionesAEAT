@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using gestionesAEAT.Metodos;
 using gestionesAEAT.Utilidades;
+using Microsoft.Win32;
 
 namespace gestionesAEAT
 {
@@ -716,6 +717,20 @@ namespace gestionesAEAT
             }
 
             return (atributo, valor);
+        }
+
+        public bool ChequeoFramework (int versionNecesaria)
+        {
+            int versionInstalada = 0;
+            using (RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32)
+            .OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\"))
+            {
+                if (ndpKey != null && ndpKey.GetValue("Release") != null)
+                {
+                    versionInstalada = (int)ndpKey.GetValue("Release");
+                }
+            }
+            return versionInstalada >= versionNecesaria;
         }
 
     }
