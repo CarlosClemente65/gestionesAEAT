@@ -25,6 +25,13 @@ namespace gestionesAEAT
         [STAThread] //Atributo necesario para que la aplicacion pueda abrir el formulario de carga de certificado
         static void Main(string[] argumentos)
         {
+            //Deteccion de la version de .NET Framework instalada para evitar excepciones
+            if (!utilidad.ChequeoFramework(528040)) // 528040 corresponde a .NET Framework 4.8
+            {
+               MessageBox.Show("El programa requiere .NET Framework 4.8 o superior para ejecutarse. Contacte con el departamento tecnico", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Environment.Exit(1); // Salir de la aplicación
+            }
+
             try
             {
                 if (argumentos.Length < 2)
