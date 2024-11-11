@@ -11,7 +11,7 @@ using System.Xml.Serialization;
 
 namespace gestionesAEAT.Metodos
 {
-
+    //Clase que contiene el envio (header y body)
     [XmlRoot(ElementName = "Envelope", Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
     public class Envelope
     {
@@ -24,18 +24,21 @@ namespace gestionesAEAT.Metodos
 
     public class Body
     {
+        //Clase que contiene el desglose del body
         [XmlElement(ElementName = "VNifV2Ent", Namespace = "http://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/burt/jdit/ws/VNifV2Ent.xsd")]
         public VNifV2Ent VNifV2Ent { get; set; }
     }
 
     public class VNifV2Ent
     {
+        //Clase que contiene el desglose de VNifV2Ent
         [XmlElement("Contribuyente")]
         public List<Contribuyente> Contribuyentes { get; set; } = new List<Contribuyente>();
     }
 
     public class Contribuyente
     {
+        //Clase que contiene el desglose del contribuyente
         [XmlElement("Nif")]
         public string Nif { get; set; }
 
@@ -47,31 +50,35 @@ namespace gestionesAEAT.Metodos
     [XmlRoot(ElementName = "Envelope", Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
     public class EnvelopeResponse
     {
-        [XmlElement(ElementName = "Body", Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
+        //Clase que contiene la respuesta (solo viene el body)
+        [XmlElement(ElementName = "Body")]
         public BodyResponse Body { get; set; }
     }
 
     public class BodyResponse
     {
+        //Clase que contiene el desglose del body de la respuesta
         //Campo para la respuesta correcta
         [XmlElement(ElementName = "VNifV2Sal", Namespace = "http://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/burt/jdit/ws/VNifV2Sal.xsd")]
         public VNifV2Sal VNifV2Sal { get; set; }
 
         //Campo para si viene un error
         [XmlElement(ElementName = "Fault", Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
-        public Fault Fault { get; set; }
+        public RespuestaError respuestaError { get; set; }
 
     }
 
     [XmlRoot("VNifV2Sal", Namespace = "http://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/burt/jdit/ws/VNifV2Sal.xsd")]
     public class VNifV2Sal
     {
+        //Clase que contiene el desglose de VNifV2Sal
         [XmlElement("Contribuyente")]
         public List<RespuestaContribuyente> Respuestas { get; set; } = new List<RespuestaContribuyente>();
     }
 
     public class RespuestaContribuyente
     {
+        //Clase que contiene la respuesta valida del contribuyente
         [XmlElement("Nif")]
         public string Nif { get; set; }
 
@@ -81,17 +88,16 @@ namespace gestionesAEAT.Metodos
         [XmlElement("Resultado")]
         public string Resultado { get; set; }
 
-        [XmlElement("CodigoError")]
-        public string CodigoError { get; set; }
     }
 
     [XmlRoot("Fault", Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
-    public class Fault
+    public class RespuestaError
     {
-        [XmlElement("faultcode")]
+        //Clase que contiene el desglose de la respuesta erronea
+        [XmlElement("faultcode", Namespace ="")]
         public string FaultCode { get; set; }
 
-        [XmlElement("faultstring")]
+        [XmlElement("faultstring", Namespace ="")]
         public string FaultString { get; set; }
     }
 
@@ -126,7 +132,7 @@ namespace gestionesAEAT.Metodos
                 var envelopeResponse = DeserializarRespuesta(respuestaEnvioAEAT);
 
                 var datosSalida = new StringBuilder();
-                // Acceder a la lista de respuestas
+                // Acceder a la lista de respuestas si no hay errores en el envio
                 if (envelopeResponse.Body.VNifV2Sal != null)
                 {
                     foreach (var respuesta in envelopeResponse.Body.VNifV2Sal.Respuestas)
@@ -134,18 +140,12 @@ namespace gestionesAEAT.Metodos
                         datosSalida.AppendLine($"NIF={respuesta.Nif}");
                         datosSalida.AppendLine($"NOMBRE={respuesta.Nombre}");
                         datosSalida.AppendLine($"RESULTADO={respuesta.Resultado}");
-
-                        //if (!string.IsNullOrEmpty(respuesta.CodigoError))
-                        //{
-                        //    datosSalida.AppendLine($"CODIGO ERROR={respuesta.CodigoError}");
-                        //}
-
                     }
                 }
-                else if (envelopeResponse.Body.Fault != null)
+                else if (envelopeResponse.Body.respuestaError != null)
                 {
-                    var datos = respuestaEnvioAEAT;
-                    datosSalida.AppendLine($"CODIGO ERROR={envelopeResponse.Body.Fault.FaultString}");
+                    //Cuando hay algun error en el envio, puede venir una respuesta con el error
+                    datosSalida.AppendLine($"ERROR={envelopeResponse.Body.respuestaError.FaultString}");
                 }
 
 
@@ -161,15 +161,12 @@ namespace gestionesAEAT.Metodos
 
             }
             utilidad.GrabarSalida("OK", Parametros.ficheroResultado);
-
-
-            //await EnviarSolicitud(xmlDatos, rutaEnvio);
         }
 
 
         private string FormatearXml(string xmlOriginal)
         {
-            //Este metodo es para intentar formatear la respuesta del xml quitando los espacios al inicio, y poniendo un salto de linea antes de cada cierre de etiqueta que es como se hacia con el programa anterior.
+            //Este metodo es para intentar formatear la respuesta del xml quitando los espacios al inicio, y poniendo un salto de linea antes de cada cierre de etiqueta que es como se hacia con el programa anterior. Lo dejo por referencia pero no se utiliza (se graba un fichero de texto con los valores)
             // Cargar el XML original en un StringBuilder
             var stringBuilder = new StringBuilder();
             stringBuilder.AppendLine(xmlOriginal);
@@ -199,6 +196,7 @@ namespace gestionesAEAT.Metodos
 
         public VNifV2Ent asignarValores()
         {
+            //Procesa el guion para asignar los valores a las propiedades de la clase de envio
             var contribuyentes = new List<Contribuyente>();
             string rutaArchivo = Parametros.ficheroEntrada;
 
@@ -243,6 +241,7 @@ namespace gestionesAEAT.Metodos
 
         private string SerializarAxml(Envelope envelope)
         {
+            //Serializa en un XML los valores de las propiedades de la clase de envio
             var xmlSerializer = new XmlSerializer(typeof(Envelope));
 
             // Definir los espacios de nombres con prefijos requeridos
@@ -266,12 +265,13 @@ namespace gestionesAEAT.Metodos
 
         private async Task EnviarSolicitud(string datosEnvio, string url, string serieCertificado)
         {
+            //Metodo para hacer el envio de forma asincrona
             (X509Certificate2 certificado, bool resultado) = Program.gestionCertificados.exportaCertificadoDigital(serieCertificado);
 
             if (certificado != null)
             {
                 //Protocolo de seguridad
-                System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
                 //Crear datos para la solicitud HTTP
                 HttpWebRequest solicitudHttp = (HttpWebRequest)WebRequest.Create(url);
@@ -321,6 +321,7 @@ namespace gestionesAEAT.Metodos
 
         private EnvelopeResponse DeserializarRespuesta(string xmlRespuesta)
         {
+            //Metodo para deserializar la respuesta recibida con la clase de la respuesta
             var serializer = new XmlSerializer(typeof(EnvelopeResponse));
             using (var stringReader = new StringReader(xmlRespuesta))
             {
