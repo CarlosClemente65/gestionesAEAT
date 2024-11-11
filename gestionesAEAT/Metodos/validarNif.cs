@@ -53,8 +53,14 @@ namespace gestionesAEAT.Metodos
 
     public class BodyResponse
     {
+        //Campo para la respuesta correcta
         [XmlElement(ElementName = "VNifV2Sal", Namespace = "http://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/burt/jdit/ws/VNifV2Sal.xsd")]
         public VNifV2Sal VNifV2Sal { get; set; }
+
+        //Campo para si viene un error
+        [XmlElement(ElementName = "Fault", Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
+        public Fault Fault { get; set; }
+
     }
 
     [XmlRoot("VNifV2Sal", Namespace = "http://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/burt/jdit/ws/VNifV2Sal.xsd")]
@@ -77,6 +83,16 @@ namespace gestionesAEAT.Metodos
 
         [XmlElement("CodigoError")]
         public string CodigoError { get; set; }
+    }
+
+    [XmlRoot("Fault", Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
+    public class Fault
+    {
+        [XmlElement("faultcode")]
+        public string FaultCode { get; set; }
+
+        [XmlElement("faultstring")]
+        public string FaultString { get; set; }
     }
 
     public class validarNif
@@ -119,13 +135,19 @@ namespace gestionesAEAT.Metodos
                         datosSalida.AppendLine($"NOMBRE={respuesta.Nombre}");
                         datosSalida.AppendLine($"RESULTADO={respuesta.Resultado}");
 
-                        if (!string.IsNullOrEmpty(respuesta.CodigoError))
-                        {
-                            datosSalida.AppendLine($"CODIGO ERROR={respuesta.CodigoError}");
-                        }
+                        //if (!string.IsNullOrEmpty(respuesta.CodigoError))
+                        //{
+                        //    datosSalida.AppendLine($"CODIGO ERROR={respuesta.CodigoError}");
+                        //}
 
                     }
                 }
+                else if (envelopeResponse.Body.Fault != null)
+                {
+                    var datos = respuestaEnvioAEAT;
+                    datosSalida.AppendLine($"CODIGO ERROR={envelopeResponse.Body.Fault.FaultString}");
+                }
+
 
                 utilidad.GrabarSalida(datosSalida.ToString(), Parametros.ficheroSalida);
 
@@ -209,7 +231,7 @@ namespace gestionesAEAT.Metodos
                 else if (clave.Equals("NOMBRE", StringComparison.OrdinalIgnoreCase) && contribuyenteActual != null)
                 {
                     // Si encontramos el Nombre, lo asignamos al contribuyente actual
-                    contribuyenteActual.Nombre = valor;
+                    contribuyenteActual.Nombre = valor ;
                     contribuyentes.Add(contribuyenteActual); // Añadimos el contribuyente completo a la lista
                     contribuyenteActual = null; // Reiniciamos para el próximo contribuyente
                 }
