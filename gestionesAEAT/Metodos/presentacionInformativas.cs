@@ -136,6 +136,20 @@ namespace gestionesAEAT.Metodos
         public string mensaje { get; set; }
     }
 
+    public class recuperarAvisos
+    {
+        public string idenvio { get; set; }
+        public string codificacion { get; set; }
+    }
+
+    public class respuestaAvisos
+    {
+        public string idenvio { get; set; }
+        public string estado { get; set; }
+        public string codigo { get; set; }
+        public string mensaje { get; set; }
+    }
+
 
     public class presentacionInformativas
     {
@@ -202,6 +216,11 @@ namespace gestionesAEAT.Metodos
                         claseRespuesta = typeof(respuestaVistaPrevia);
                         break;
 
+                    case "RecuperarAvisos":
+                        instanciaClase = new recuperarAvisos();
+                        claseRespuesta = typeof(respuestaAvisos);
+                        break;
+
                 }
 
                 // Asignación de los valores a las propiedades de la clase usando reflexión
@@ -212,14 +231,6 @@ namespace gestionesAEAT.Metodos
                 for (int i = 0; i < utilidad.body.Count; i++)
                 {
                     datosBody.AppendLine(utilidad.body[i]);
-                    //if (i == utilidad.body.Count - 1)
-                    //{
-                    //    datosBody += utilidad.body[i];
-                    //}
-                    //else
-                    //{
-                    //    datosBody += utilidad.body[i] + @"\n";
-                    //}
                 }
 
                 //Envia los datos
@@ -343,12 +354,15 @@ namespace gestionesAEAT.Metodos
                         var erroresAEAT = respuesta.GetResponseStream();
                         if (erroresAEAT != null)
                         {
-                            string pathErrores = string.Empty;
+                            string pathSalida = Path.GetDirectoryName(Parametros.ficheroSalida);
+                            string nombreSalida = string.Empty;
+                            //string pathSalida = string.Empty;
                             var tipoRespuesta = respuesta.ContentType;
 
                             if (tipoRespuesta.StartsWith("text/plain"))
                             {
-                                pathErrores = Path.Combine(Path.GetDirectoryName(Parametros.ficheroSalida), "errores.txt");
+                                nombreSalida = claseRespuesta == typeof(respuestaAvisos) ? "avisos.txt" : "errores.txt";
+                                pathSalida = Path.Combine(pathSalida, nombreSalida);
                                 StringBuilder erroresSalida = new StringBuilder();
                                 using (StreamReader reader = new StreamReader(erroresAEAT))
                                 {
@@ -363,29 +377,29 @@ namespace gestionesAEAT.Metodos
                                 }
                                 if (erroresSalida.Length > 0)
                                 {
-                                    utilidad.GrabarSalida(erroresSalida.ToString(), pathErrores);
-                                    File.WriteAllText(pathErrores, erroresSalida.ToString(), Encoding.Default);
+                                    utilidad.GrabarSalida(erroresSalida.ToString(), pathSalida);
+                                    File.WriteAllText(pathSalida, erroresSalida.ToString(), Encoding.Default);
                                 }
                             }
 
                             else if (tipoRespuesta.StartsWith("text/html"))
                             {
-                                pathErrores = Path.ChangeExtension(Parametros.ficheroSalida, "html");
+                                pathSalida = Path.ChangeExtension(Parametros.ficheroSalida, "html");
 
                                 using (StreamReader reader = new StreamReader(erroresAEAT))
                                 {
                                     string contenidoHtml = reader.ReadToEnd();
-                                    utilidad.GrabarSalida(contenidoHtml, pathErrores);
+                                    utilidad.GrabarSalida(contenidoHtml, pathSalida);
                                 }
 
                             }
 
                             else if (tipoRespuesta.StartsWith("application/pdf"))
                             {
-                                pathErrores = Path.ChangeExtension(Parametros.ficheroSalida, "pdf");
+                                pathSalida = Path.ChangeExtension(Parametros.ficheroSalida, "pdf");
 
                                 // Lee el contenido binario del PDF y lo guarda en el archivo de salida
-                                using (var fileStream = new FileStream(pathErrores, FileMode.Create, FileAccess.Write))
+                                using (var fileStream = new FileStream(pathSalida, FileMode.Create, FileAccess.Write))
                                 {
                                     byte[] buffer = new byte[81920]; // Tamaño de búfer de 80 KB
                                     int bytesRead;
