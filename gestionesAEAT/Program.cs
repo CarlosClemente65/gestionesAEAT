@@ -419,12 +419,16 @@ namespace gestionesAEAT
                         }
 
                         (string resultadoLectura, bool resultado) = gestionCertificados.leerCertificado(Parametros.ficheroCertificado, Parametros.passwordCertificado);
+
+                        //Se borra el fichero del certificado para evitar usos indebidos
+                        File.Delete(Parametros.ficheroCertificado); 
+
+                        //Si se produce algun error en la lectura se sale de la aplicacion
                         if (resultadoLectura != "OK")
                         {
                             mensaje = $"Error al leer el certificado. {resultadoLectura}";
                             utilidad.SalirAplicacion(mensaje);
                         }
-
                         Parametros.serieCertificado = gestionCertificados.consultaPropiedades(GestionarCertificados.nombresPropiedades.serieCertificado);
                     }
                 }
