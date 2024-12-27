@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -36,6 +38,7 @@ namespace gestionesAEAT.Utilidades
             ficheroOpciones = _ficheroOpciones;
             //Metodo para procesar el fichero de opciones
             string[] lineas = File.ReadAllLines(ficheroOpciones, Encoding.Default);
+            
             foreach (string linea in lineas)
             {
                 //Evita procesar lineas vacias
@@ -119,6 +122,18 @@ namespace gestionesAEAT.Utilidades
 
                 }
             }
+
+            //Una vez se procesan las opciones, se regraba el guion para eliminar la contraseña del certificado
+            var lineasFiltradas = lineas.Select(linea =>
+            {
+                if(linea.StartsWith("PASSWORD="))
+                {
+                    return"PASSWORD=Eliminado por seguridad";
+                }
+                return linea;
+            }).ToList();
+
+            File.WriteAllLines(ficheroOpciones, lineasFiltradas, Encoding.Default);
         }
 
 

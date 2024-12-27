@@ -68,6 +68,7 @@ namespace gestionesAEAT
                     else
                     {
                         Parametros.CargarOpciones(Parametros.ficheroOpciones);
+
                         //Controla si las opciones pasadas son correctas.
                         string controlTipo = Parametros.tipo;
                         log += ControlOpciones(controlTipo);
@@ -421,7 +422,7 @@ namespace gestionesAEAT
                         (string resultadoLectura, bool resultado) = gestionCertificados.leerCertificado(Parametros.ficheroCertificado, Parametros.passwordCertificado);
 
                         //Se borra el fichero del certificado para evitar usos indebidos
-                        File.Delete(Parametros.ficheroCertificado); 
+                        if (File.Exists(Parametros.ficheroCertificado)) File.Delete(Parametros.ficheroCertificado); 
 
                         //Si se produce algun error en la lectura se sale de la aplicacion
                         if (resultadoLectura != "OK")
