@@ -51,8 +51,6 @@ namespace gestionesAEAT.Metodos
 
     public class PagoNRC
     {
-        Utiles utilidad = Program.utilidad;
-
         public string atributo = string.Empty;
         public string valor = string.Empty;
 
@@ -86,7 +84,7 @@ namespace gestionesAEAT.Metodos
                 StringBuilder textoSalida = new StringBuilder();
                 try
                 {
-                    envio.envioPost(utilidad.url, jsonEnvio, serieCertificado, "json");
+                    envio.envioPost(Utiles.url, jsonEnvio, serieCertificado, "json");
                     string respuestaAEAT = envio.respuestaEnvioAEAT;
 
                     //Procesa la respuesta
@@ -126,27 +124,27 @@ namespace gestionesAEAT.Metodos
                 //Si se produce otra excepcion
                 catch (Exception ex)
                 {
-                    utilidad.GrabarSalida("Problemas al conectar con el servidor de la AEAT", ficheroResultado);
-                    utilidad.grabadaSalida = true;
+                    Utiles.GrabarSalida("Problemas al conectar con el servidor de la AEAT", ficheroResultado);
+                    Utiles.grabadaSalida = true;
                 }
 
                 //Grabacion de los ficheros de salida y resultado
-                utilidad.GrabarSalida(textoSalida.ToString(), ficheroSalida);
-                utilidad.GrabarSalida("OK", ficheroResultado);
+                Utiles.GrabarSalida(textoSalida.ToString(), ficheroSalida);
+                Utiles.GrabarSalida("OK", ficheroResultado);
             }
 
             catch (Exception ex)
             {
                 //Si se ha producido algun error en el envio
                 string mensaje = $"MENSAJE = Proceso cancelado o error en el envio. {ex.Message}";
-                utilidad.GrabarSalida(mensaje, Parametros.ficheroResultado);
-                utilidad.grabadaSalida = true;
+                Utiles.GrabarSalida(mensaje, Parametros.ficheroResultado);
+                Utiles.grabadaSalida = true;
             }
         }
         public void cargaDatosPago(DatosPagoAutoliquidacion contenidoEnvio, string ficheroEntrada)
         {
             //Prepara el guion
-            utilidad.cargaDatosGuion(ficheroEntrada);
+            Utiles.cargaDatosGuion(ficheroEntrada);
 
             //Instanciacion de la clase para almacenar los valores de la cabecera
             contenidoEnvio.operacion = new ElementosOperacion();
@@ -155,9 +153,9 @@ namespace gestionesAEAT.Metodos
             contenidoEnvio.ingreso = new ElementosIngreso();
 
             //Formatear datos de la cabecera
-            foreach (var elemento in utilidad.cabecera)
+            foreach (var elemento in Utiles.cabecera)
             {
-                (atributo, valor) = utilidad.divideCadena(elemento, '=');
+                (atributo, valor) = Utiles.divideCadena(elemento, '=');
 
                 // Verificar si el nombre coincide con alguna propiedad de la clase servaliDos y asignar el valor correspondiente
                 switch (atributo)

@@ -58,7 +58,6 @@ namespace gestionesAEAT.Metodos
 
         string textoSalida = string.Empty; //Texto que se grabara en el fichero de salida
 
-        Utiles utilidad = Program.utilidad; //Instanciacion de las utilidades para poder usarlas
         envioAeat envio = new envioAeat();
 
         public void envioPeticion()
@@ -70,15 +69,15 @@ namespace gestionesAEAT.Metodos
             try
             {
                 //Prepara los datos del guion
-                utilidad.cargaDatosGuion(ficheroEntrada); //Monta en la clase Utiles las listas "cabecera", "body" y "respuesta" para luego acceder a esos datos a montar el envio
+                Utiles.cargaDatosGuion(ficheroEntrada); //Monta en la clase Utiles las listas "cabecera", "body" y "respuesta" para luego acceder a esos datos a montar el envio
 
                 //Instanciacion de la clase para almacenar los valores de la cabecera
                 servaliDos dato = new servaliDos();
 
                 //Formatear datos de la cabecera
-                foreach (var elemento in utilidad.cabecera)
+                foreach (var elemento in Utiles.cabecera)
                 {
-                    (atributo, valor) = utilidad.divideCadena(elemento, '=');
+                    (atributo, valor) = Utiles.divideCadena(elemento, '=');
 
                     // Verificar si el nombre coincide con alguna propiedad de la clase servaliDos y asignar el valor correspondiente
                     switch (atributo)
@@ -123,7 +122,7 @@ namespace gestionesAEAT.Metodos
 
                 });
 
-                envio.envioPost(utilidad.url, jsonEnvio, "json");//Metodo sin certificado
+                envio.envioPost(Utiles.url, jsonEnvio, "json");//Metodo sin certificado
                 respuestaAEAT = envio.respuestaEnvioAEAT;
 
 
@@ -131,8 +130,8 @@ namespace gestionesAEAT.Metodos
                 if (envio.estadoRespuestaAEAT == "OK")
                 {
                     //Deserializa la respuesta de Hacienda con la clase RespuestaValidarModelos
-                    utilidad.respuestaValidarModelos = JsonConvert.DeserializeObject<RespuestaValidarModelos>(respuestaAEAT);
-                    textoSalida = utilidad.generarRespuesta(ficheroSalida, "validar");
+                    Utiles.respuestaValidarModelos = JsonConvert.DeserializeObject<RespuestaValidarModelos>(respuestaAEAT);
+                    textoSalida = Utiles.generarRespuesta(ficheroSalida, "validar");
 
                     //Grabar un fichero con los errores, avisos o advertencias que se han podido producir
                     if (!string.IsNullOrEmpty(textoSalida))
@@ -143,17 +142,17 @@ namespace gestionesAEAT.Metodos
 
                     //Si hay una respuesta en pdf se graba en la ruta de salida
                     string ficheroPdf = string.Empty;
-                    if (utilidad.respuestaValidarModelos.respuesta.pdf != null && utilidad.respuestaValidarModelos.respuesta.pdf.Count > 0)
+                    if (Utiles.respuestaValidarModelos.respuesta.pdf != null && Utiles.respuestaValidarModelos.respuesta.pdf.Count > 0)
                     {
                         ficheroPdf = Path.ChangeExtension(ficheroSalida, "pdf");
-                        string respuestaPDF = utilidad.respuestaValidarModelos.respuesta.pdf[0];
+                        string respuestaPDF = Utiles.respuestaValidarModelos.respuesta.pdf[0];
                         byte[] contenidoPDF = Convert.FromBase64String(respuestaPDF);
                         File.WriteAllBytes(ficheroPdf, contenidoPDF);
                     }
 
                     //Procesa la respuesta de la validacion para generar el fichero de salida
-                    var respuestaValidar = utilidad.respuestaValidarModelos;
-                    string resultadoSalida = utilidad.generaFicheroSalida(respuestaValidar, ficheroPdf);
+                    var respuestaValidar = Utiles.respuestaValidarModelos;
+                    string resultadoSalida = Utiles.generaFicheroSalida(respuestaValidar, ficheroPdf);
 
                     //Graba el fichero de salida
                     File.WriteAllText(ficheroSalida, resultadoSalida.ToString());
@@ -167,8 +166,8 @@ namespace gestionesAEAT.Metodos
             {
                 //Si se ha producido algun error en el envio
                 string mensaje = $"MENSAJE = Proceso cancelado o error en el envio. {ex.Message}";
-                utilidad.GrabarSalida(mensaje, ficheroResultado);
-                utilidad.grabadaSalida = true;
+                Utiles.GrabarSalida(mensaje, ficheroResultado);
+                Utiles.grabadaSalida = true;
             }
         }
     }

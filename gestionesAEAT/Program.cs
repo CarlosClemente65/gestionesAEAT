@@ -13,7 +13,7 @@ namespace gestionesAEAT
     internal class Program
     {
         //Instanciacion de las clases a nivel de clase para hacerlas accesibles a toda la clase
-        public static Utiles utilidad = new Utiles();
+        //public static Utiles utilidad = new Utiles();
         public static GestionarCertificados gestionCertificados = new GestionarCertificados(); //Instanciacion de la clase que gestiona los certificados
 
         //Declaracion de variables a nivel de clase para hacerlas accesibles al resto.
@@ -26,7 +26,7 @@ namespace gestionesAEAT
         static void Main(string[] argumentos)
         {
             //Deteccion de la version de .NET Framework instalada para evitar excepciones
-            if (!utilidad.ChequeoFramework(528040)) // 528040 corresponde a .NET Framework 4.8
+            if (!Utiles.ChequeoFramework(528040)) // 528040 corresponde a .NET Framework 4.8
             {
                MessageBox.Show("El programa requiere .NET Framework 4.8 o superior para ejecutarse. Contacte con el departamento tecnico", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Environment.Exit(1); // Salir de la aplicación
@@ -38,13 +38,13 @@ namespace gestionesAEAT
                 {
                     if (argumentos.Length > 0 && (argumentos[0].ToUpper() == "-H" || argumentos[0] == "?"))
                     {
-                        utilidad.MostrarAyuda();
-                        utilidad.SalirAplicacion(log);
+                        Utiles.MostrarAyuda();
+                        Utiles.SalirAplicacion(log);
                     }
                     else
                     {
                         log += $"Son necesarios al menos 2 parametros: dsclave y fichero de opciones";
-                        utilidad.SalirAplicacion(log);
+                        Utiles.SalirAplicacion(log);
                     }
                 }
 
@@ -54,7 +54,7 @@ namespace gestionesAEAT
                     if (dsclave != "ds123456")
                     {
                         log += "Clave de ejecucion incorrecta";
-                        utilidad.SalirAplicacion(log);
+                        Utiles.SalirAplicacion(log);
                     }
 
                     Parametros.Configuracion.Inicializar();
@@ -63,7 +63,7 @@ namespace gestionesAEAT
                     if (!File.Exists(Parametros.ficheroOpciones))
                     {
                         log += "No existe el fichero de opciones";
-                        utilidad.SalirAplicacion(log);
+                        Utiles.SalirAplicacion(log);
                     }
                     else
                     {
@@ -72,7 +72,7 @@ namespace gestionesAEAT
                         //Controla si las opciones pasadas son correctas.
                         string controlTipo = Parametros.tipo;
                         log += ControlOpciones(controlTipo);
-                        if (!string.IsNullOrEmpty(log)) utilidad.SalirAplicacion(log);
+                        if (!string.IsNullOrEmpty(log)) Utiles.SalirAplicacion(log);
 
                         try
                         {
@@ -85,7 +85,7 @@ namespace gestionesAEAT
                         catch (ArgumentException ex)
                         {
                             log += $"Se ha producido un error al procesar la peticion. {ex.Message}";
-                            utilidad.SalirAplicacion(log);
+                            Utiles.SalirAplicacion(log);
                         }
                     }
                 }
@@ -94,8 +94,8 @@ namespace gestionesAEAT
             {
                 MessageBox.Show("Faltan ficheros para la ejecucion de la aplicacion. Contacte con el departamento tecnico.", "Error en la ejecucion", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 string mensaje = $"Error en el proceso {ex.Message}";
-                utilidad.GrabarSalida(mensaje, Parametros.ficheroResultado);
-                utilidad.grabadaSalida = true;
+                Utiles.GrabarSalida(mensaje, Parametros.ficheroResultado);
+                Utiles.grabadaSalida = true;
             }
         }
 
@@ -374,8 +374,8 @@ namespace gestionesAEAT
             }
 
             //Borrado de ficheros de salida y errores si existen de una ejecucion anterior.
-            utilidad.borrarFicheros(Parametros.ficheroSalida);
-            utilidad.borrarFicheros(Parametros.ficheroResultado);
+            Utiles.borrarFicheros(Parametros.ficheroSalida);
+            Utiles.borrarFicheros(Parametros.ficheroResultado);
 
             return mensaje.ToString();
         }
@@ -411,12 +411,12 @@ namespace gestionesAEAT
                         if (!File.Exists(Parametros.ficheroCertificado))
                         {
                             mensaje = $"El fichero del certificado {Parametros.ficheroCertificado} no existe";
-                            utilidad.SalirAplicacion(mensaje);
+                            Utiles.SalirAplicacion(mensaje);
                         }
                         if (string.IsNullOrEmpty(Parametros.passwordCertificado))
                         {
                             mensaje = "No se ha pasado la contraseña del certificado";
-                            utilidad.SalirAplicacion(mensaje);
+                            Utiles.SalirAplicacion(mensaje);
                         }
 
                         (string resultadoLectura, bool resultado) = gestionCertificados.leerCertificado(Parametros.ficheroCertificado, Parametros.passwordCertificado);
@@ -428,7 +428,7 @@ namespace gestionesAEAT
                         if (resultadoLectura != "OK")
                         {
                             mensaje = $"Error al leer el certificado. {resultadoLectura}";
-                            utilidad.SalirAplicacion(mensaje);
+                            Utiles.SalirAplicacion(mensaje);
                         }
                         Parametros.serieCertificado = gestionCertificados.consultaPropiedades(GestionarCertificados.nombresPropiedades.serieCertificado);
                     }

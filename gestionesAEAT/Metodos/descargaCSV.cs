@@ -8,7 +8,6 @@ namespace gestionesAEAT.Metodos
 {
     public class descargaCSV
     {
-        Utiles utilidad = Program.utilidad;
         envioAeat envio = new envioAeat();
 
         HttpClient cliente = new HttpClient();

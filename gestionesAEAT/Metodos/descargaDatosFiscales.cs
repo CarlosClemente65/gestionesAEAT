@@ -41,9 +41,6 @@ namespace gestionesAEAT.Metodos
         string ficheroSalida = Parametros.ficheroSalida;
         string ficheroResultado = Parametros.ficheroResultado;
 
-        Utiles utilidad = Program.utilidad;
-
-
         public void descargaDF()
         {
             //Metodo para descargar los datos fiscales
@@ -69,22 +66,22 @@ namespace gestionesAEAT.Metodos
                 respuestaAEAT = envioSolicitud(datosEnvio);
 
                 string mensajeError = string.Empty;
-                if (!string.IsNullOrEmpty(respuestaAEAT))
+                if(!string.IsNullOrEmpty(respuestaAEAT))
                 {
                     tipoContenido tipoRespuesta = detectarTipoRespuestaAEAT(respuestaAEAT);
-                    switch (tipoRespuesta)
+                    switch(tipoRespuesta)
                     {
                         case tipoContenido.XML:
                             try
                             {
                                 refrenta respuestaXML = DeserializarXml<refrenta>(respuestaAEAT);
-                                if (respuestaXML.Status != 0)
+                                if(respuestaXML.Status != 0)
                                 {
                                     mensajeError = $"Error en la descarga. Descripcion del error: {respuestaXML.Error.Descipcion}";
                                 }
                             }
 
-                            catch (Exception ex)
+                            catch(Exception ex)
                             {
                                 mensajeError = ($"Error en la descarga. Descripcion del error: {ex.Message}");
                             }
@@ -115,19 +112,19 @@ namespace gestionesAEAT.Metodos
                 }
 
                 //Si se ha producido un error se graba la salida y no se procesan mas veces la salida (grabarSalida = true)
-                if (!string.IsNullOrEmpty(mensajeError))
+                if(!string.IsNullOrEmpty(mensajeError))
                 {
-                    utilidad.GrabarSalida(mensajeError, ficheroResultado);
-                    utilidad.grabadaSalida = true;
+                    Utiles.GrabarSalida(mensajeError, ficheroResultado);
+                    Utiles.grabadaSalida = true;
                 }
 
-                if (string.IsNullOrEmpty(mensajeError) && !string.IsNullOrEmpty(respuestaAEAT)) utilidad.GrabarSalida(respuestaAEAT, ficheroSalida);
+                if(string.IsNullOrEmpty(mensajeError) && !string.IsNullOrEmpty(respuestaAEAT)) Utiles.GrabarSalida(respuestaAEAT, ficheroSalida);
             }
 
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                utilidad.GrabarSalida($"Error al descargar datos fiscales. {ex.Message}", ficheroResultado);
-                utilidad.grabadaSalida = true;
+                Utiles.GrabarSalida($"Error al descargar datos fiscales. {ex.Message}", ficheroResultado);
+                Utiles.grabadaSalida = true;
             }
         }
 
@@ -137,12 +134,12 @@ namespace gestionesAEAT.Metodos
             UTF8Encoding utf8 = new UTF8Encoding();
             byte[] bytes = Encoding.UTF8.GetBytes(refRenta);
 
-            using (SHA512 sha = SHA512.Create())
+            using(SHA512 sha = SHA512.Create())
             {
                 byte[] hashBytes = sha.ComputeHash(bytes);
                 StringBuilder refEncriptada = new StringBuilder(128);
 
-                foreach (byte b in hashBytes)
+                foreach(byte b in hashBytes)
                 {
                     refEncriptada.Append(b.ToString("x2"));
                 }
@@ -184,9 +181,9 @@ namespace gestionesAEAT.Metodos
                 //Devuelve el estado 'OK' si todo ha ido bien
                 string estadoRespuestaAEAT = respuesta.StatusDescription;
 
-                if (estadoRespuestaAEAT == "OK")
+                if(estadoRespuestaAEAT == "OK")
                 {
-                    if (contenidoRespuesta.IndexOf("<status>0</status>") != -1)
+                    if(contenidoRespuesta.IndexOf("<status>0</status>") != -1)
                     {
                         urlDescarga = $"{urlDescarga}?nif={nifDf}&pdp={datosPersonales}";
                         HttpWebRequest solicitudHttp1 = (HttpWebRequest)WebRequest.Create(urlDescarga);
@@ -199,15 +196,15 @@ namespace gestionesAEAT.Metodos
                         StreamReader reader1 = new StreamReader(datosRespuesta1, Encoding.Default, false, 512);
 
                         string estadoRespuestaAEAT1 = respuesta1.StatusDescription;
-                        if (estadoRespuestaAEAT1 == "OK") contenidoRespuesta = reader1.ReadToEnd();
+                        if(estadoRespuestaAEAT1 == "OK") contenidoRespuesta = reader1.ReadToEnd();
                     }
                     File.WriteAllText(ficheroResultado, "OK");
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                utilidad.GrabarSalida($"Error en la conexion con el servidor. {ex.Message}", ficheroResultado);
-                utilidad.grabadaSalida = true;
+                Utiles.GrabarSalida($"Error en la conexion con el servidor. {ex.Message}", ficheroResultado);
+                Utiles.grabadaSalida = true;
             }
 
             return contenidoRespuesta;
@@ -216,7 +213,7 @@ namespace gestionesAEAT.Metodos
         private T DeserializarXml<T>(string xml)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(T));
-            using (StringReader reader = new StringReader(xml))
+            using(StringReader reader = new StringReader(xml))
             {
                 return (T)serializer.Deserialize(reader);
             }
@@ -235,7 +232,7 @@ namespace gestionesAEAT.Metodos
         {
             //Metodo que devuelve el tipo de contenido que tiene una respuesta.
             //Comrpueba si es una cadena vacia o solo tiene espacios en blanco
-            if (string.IsNullOrWhiteSpace(input)) return tipoContenido.desconocido;
+            if(string.IsNullOrWhiteSpace(input)) return tipoContenido.desconocido;
 
             //Comprobar si es un XML
             try
@@ -244,16 +241,16 @@ namespace gestionesAEAT.Metodos
                 xmlDoc.LoadXml(input);
                 return tipoContenido.XML;
             }
-            catch (XmlException)
+            catch(XmlException)
             {
                 //No es XML seguir con otras comprobaciones
             }
 
             //Comprobar si es un HTML (debe tener etiquetas de html)
-            if (Regex.IsMatch(input, @"<\s*(html|head|body|title|meta|div|span|a|p)[^>]*>", RegexOptions.IgnoreCase)) return tipoContenido.HTML;
+            if(Regex.IsMatch(input, @"<\s*(html|head|body|title|meta|div|span|a|p)[^>]*>", RegexOptions.IgnoreCase)) return tipoContenido.HTML;
 
             //Comprobar si es texto plano (no debe contener etiquetas comunes de XML o HTML
-            if (!Regex.IsMatch(input, @"<[^>]+>")) return tipoContenido.TXT;
+            if(!Regex.IsMatch(input, @"<[^>]+>")) return tipoContenido.TXT;
 
             return tipoContenido.desconocido;
         }
