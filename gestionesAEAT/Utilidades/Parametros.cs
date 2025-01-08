@@ -31,8 +31,6 @@ namespace gestionesAEAT.Utilidades
         public static string urlCSV{  get; set; } = string.Empty;
         public static Encoding codificacion { get; set; } = Encoding.UTF8;
 
-        static Utiles utilidad = new Utiles();
-
         public static void CargarOpciones(string _ficheroOpciones)
         {
             ficheroOpciones = _ficheroOpciones;
@@ -47,12 +45,12 @@ namespace gestionesAEAT.Utilidades
                 //Divide la linea en clave=valor
                 string clave = string.Empty;
                 string valor = string.Empty;
-                (clave, valor) = utilidad.divideCadena(linea, '=');
+                (clave, valor) = Utiles.divideCadena(linea, '=');
 
                 switch (clave)
                 {
                     case "CLIENTE":
-                        cliente = utilidad.quitaRaros(valor);
+                        cliente = Utiles.quitaRaros(valor);
                         break;
 
                     case "TIPO":

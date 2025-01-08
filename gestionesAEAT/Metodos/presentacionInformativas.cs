@@ -153,8 +153,6 @@ namespace gestionesAEAT.Metodos
 
     public class presentacionInformativas
     {
-        Utiles utilidad = Program.utilidad; //Instanciacion de las utilidades para poder usarlas
-
         string atributo = string.Empty; //Cada una de las variables que se pasan a la AEAT
         string valor = string.Empty; //Valor del atributo que se pasa a la AEAT
 
@@ -170,11 +168,11 @@ namespace gestionesAEAT.Metodos
 
             try
             {
-                utilidad.cargaDatosGuion(Parametros.ficheroEntrada); //Monta en la clase Utiles las listas "cabecera", "body" y "respuesta" para luego acceder a esos datos a montar el envio
+                Utiles.cargaDatosGuion(Parametros.ficheroEntrada); //Monta en la clase Utiles las listas "cabecera", "body" y "respuesta" para luego acceder a esos datos a montar el envio
 
                 //Obtenemos el tipo de proceso segun la ultima parte de la url que venga en el guion
-                int indice = utilidad.url.LastIndexOf('/');
-                string proceso = utilidad.url.Substring(indice + 1);
+                int indice = Utiles.url.LastIndexOf('/');
+                string proceso = Utiles.url.Substring(indice + 1);
 
                 // Objeto que contendrá la instancia de la clase a rellenar
                 object instanciaClase = null;
@@ -228,9 +226,9 @@ namespace gestionesAEAT.Metodos
 
                 //Prepara el cuerpo del envio
                 StringBuilder datosBody = new StringBuilder();
-                for (int i = 0; i < utilidad.body.Count; i++)
+                for (int i = 0; i < Utiles.body.Count; i++)
                 {
-                    datosBody.AppendLine(utilidad.body[i]);
+                    datosBody.AppendLine(Utiles.body[i]);
                 }
 
                 //Envia los datos
@@ -241,20 +239,20 @@ namespace gestionesAEAT.Metodos
             {
                 //Si se ha producido algun error en el envio
                 string mensaje = $"MENSAJE = Proceso cancelado o error en el envio. {ex.Message}";
-                utilidad.GrabarSalida(mensaje, Parametros.ficheroResultado);
-                utilidad.grabadaSalida = true;
+                Utiles.GrabarSalida(mensaje, Parametros.ficheroResultado);
+                Utiles.grabadaSalida = true;
             }
         }
 
         public void AsignarValoresClase(object instanciaClase)
         {
             //Asigna los valores de la cabecera a las propiedades de la clase
-            List<string> listaValores = utilidad.cabecera; //Carga la lista con los valores de la cabecera
+            List<string> listaValores = Utiles.cabecera; //Carga la lista con los valores de la cabecera
             foreach (var linea in listaValores)
             {
                 string nombre = string.Empty;
                 string valor = string.Empty;
-                (nombre, valor) = utilidad.divideCadena(linea, '=');
+                (nombre, valor) = Utiles.divideCadena(linea, '=');
                 if (!string.IsNullOrEmpty(valor))
                 {
                     // Obtener el tipo de la clase instanciada
@@ -281,7 +279,7 @@ namespace gestionesAEAT.Metodos
 
         public void envioInformativas(string datosBody, Type claseRespuesta)
         {
-            string url = utilidad.url;
+            string url = Utiles.url;
             try
             {
                 //Carga el certificado digital segun el numero de serie
@@ -305,7 +303,7 @@ namespace gestionesAEAT.Metodos
                     {
                         foreach (var linea in datosCabecera)
                         {
-                            (string nombre, string valor) = utilidad.divideCadena(linea, '=');
+                            (string nombre, string valor) = Utiles.divideCadena(linea, '=');
                             if (!string.IsNullOrEmpty(nombre) && !string.IsNullOrEmpty(valor))
                             {
                                 solicitudHttp.Headers[nombre] = valor;
@@ -329,7 +327,7 @@ namespace gestionesAEAT.Metodos
                     if (estadoRespuestaAEAT == "OK")
                     {
                         StringBuilder contenidoRespuesta = new StringBuilder();
-                        foreach (string elemento in utilidad.respuesta)
+                        foreach (string elemento in Utiles.respuesta)
                         {
                             for (int i = 0; i < respuesta.Headers.Count; i++)
                             {
@@ -348,7 +346,7 @@ namespace gestionesAEAT.Metodos
                             }
                         }
 
-                        utilidad.GrabarSalida(contenidoRespuesta.ToString(), Parametros.ficheroSalida);
+                        Utiles.GrabarSalida(contenidoRespuesta.ToString(), Parametros.ficheroSalida);
 
                         //Procesa la respuesta y la graba segun el tipo que sea (texto, html o pdf); los registros con errores vendran en texto, si hay algun error en el proceso vendra un html, y si el proceso es obtener un borrador sera un pdf.
                         var erroresAEAT = respuesta.GetResponseStream();
@@ -377,7 +375,7 @@ namespace gestionesAEAT.Metodos
                                 }
                                 if (erroresSalida.Length > 0)
                                 {
-                                    utilidad.GrabarSalida(erroresSalida.ToString(), pathSalida);
+                                    Utiles.GrabarSalida(erroresSalida.ToString(), pathSalida);
                                     File.WriteAllText(pathSalida, erroresSalida.ToString(), Encoding.Default);
                                 }
                             }
@@ -389,7 +387,7 @@ namespace gestionesAEAT.Metodos
                                 using (StreamReader reader = new StreamReader(erroresAEAT))
                                 {
                                     string contenidoHtml = reader.ReadToEnd();
-                                    utilidad.GrabarSalida(contenidoHtml, pathSalida);
+                                    Utiles.GrabarSalida(contenidoHtml, pathSalida);
                                 }
 
                             }
@@ -413,19 +411,19 @@ namespace gestionesAEAT.Metodos
                         }
                     }
 
-                    utilidad.GrabarSalida("OK", Parametros.ficheroResultado);
+                    Utiles.GrabarSalida("OK", Parametros.ficheroResultado);
                 }
 
                 else
                 {
-                    utilidad.GrabarSalida("No se ha cargado el certificado", Parametros.ficheroResultado);
+                    Utiles.GrabarSalida("No se ha cargado el certificado", Parametros.ficheroResultado);
                 }
             }
 
             catch (Exception ex)
             {
-                utilidad.GrabarSalida($"Error en la conexion con el servidor. {ex.Message}", Parametros.ficheroResultado);
-                utilidad.grabadaSalida = true;
+                Utiles.GrabarSalida($"Error en la conexion con el servidor. {ex.Message}", Parametros.ficheroResultado);
+                Utiles.grabadaSalida = true;
             }
         }
     }

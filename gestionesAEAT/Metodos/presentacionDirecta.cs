@@ -67,9 +67,6 @@ namespace gestionesAEAT.Metodos
 
         string textoSalida = string.Empty; //Texto que se grabara en el fichero de salida
 
-        Utiles utilidad = Program.utilidad; //Instanciacion de las utilidades para poder usarlas
-
-
         public void envioPeticion()
         {
             string ficheroEntrada = Parametros.ficheroEntrada;
@@ -82,15 +79,15 @@ namespace gestionesAEAT.Metodos
             try
             {
                 //Prepara el guion
-                utilidad.cargaDatosGuion(ficheroEntrada); //Monta en la clase Utiles las listas "cabecera", "body" y "respuesta" para luego acceder a esos datos a montar el envio
+                Utiles.cargaDatosGuion(ficheroEntrada); //Monta en la clase Utiles las listas "cabecera", "body" y "respuesta" para luego acceder a esos datos a montar el envio
 
                 //Instanciacion de la clase para almacenar los valores de la cabecera
                 PresBasicaDos contenidoEnvio = new PresBasicaDos();
 
                 //Formatear datos de la cabecera
-                foreach (var elemento in utilidad.cabecera)
+                foreach (var elemento in Utiles.cabecera)
                 {
-                    (atributo, valor) = utilidad.divideCadena(elemento, '=');
+                    (atributo, valor) = Utiles.divideCadena(elemento, '=');
 
                     // Verificar si el nombre coincide con alguna propiedad de la clase servaliDos y asignar el valor correspondiente
                     switch (atributo)
@@ -145,7 +142,7 @@ namespace gestionesAEAT.Metodos
                     Formatting = Formatting.Indented
                 });
 
-                envio.envioPost(utilidad.url, jsonEnvio, serieCertificado, "json");
+                envio.envioPost(Utiles.url, jsonEnvio, serieCertificado, "json");
                 respuestaAEAT = envio.respuestaEnvioAEAT;
 
 
@@ -153,11 +150,11 @@ namespace gestionesAEAT.Metodos
                 if (envio.estadoRespuestaAEAT == "OK")
                 {
                     //Si se ha podido enviar, se serializa la respuesta de Hacienda
-                    utilidad.respuestaEnvioModelos = JsonConvert.DeserializeObject<RespuestaPresBasicaDos>(respuestaAEAT);
-                    textoSalida = utilidad.generarRespuesta(ficheroSalida, "enviar");
+                    Utiles.respuestaEnvioModelos = JsonConvert.DeserializeObject<RespuestaPresBasicaDos>(respuestaAEAT);
+                    textoSalida = Utiles.generarRespuesta(ficheroSalida, "enviar");
 
                     //Procesado de los tipos de respuesta posibles
-                    var respuestaEnvio = utilidad.respuestaEnvioModelos.respuesta;
+                    var respuestaEnvio = Utiles.respuestaEnvioModelos.respuesta;
                     if (respuestaEnvio.correcta != null && !string.IsNullOrEmpty(respuestaEnvio.correcta.CodigoSeguroVerificacion))
                     {
                         //Si hay datos en las propiedades de la respuesta correcta se graba el PDF y el fichero con los datos del modelo
@@ -215,8 +212,8 @@ namespace gestionesAEAT.Metodos
                     else
                     {
                         //Procesa la respuesta de la validacion para generar el fichero de salida
-                        var respuestaEnvioModelos = utilidad.respuestaEnvioModelos;
-                        string resultadoSalida = utilidad.generaFicheroSalida(respuestaEnvioModelos);
+                        var respuestaEnvioModelos = Utiles.respuestaEnvioModelos;
+                        string resultadoSalida = Utiles.generaFicheroSalida(respuestaEnvioModelos);
 
                         //Graba el fichero de salida
                         //Se pone la codificacion CP437 que es la que utiliza el basico en el grid
@@ -242,8 +239,8 @@ namespace gestionesAEAT.Metodos
             {
                 //Si se ha producido algun error en el envio
                 string mensaje = $"MENSAJE = Proceso cancelado o error en el envio. {ex.Message}";
-                utilidad.GrabarSalida(mensaje, Parametros.ficheroResultado);
-                utilidad.grabadaSalida = true;
+                Utiles.GrabarSalida(mensaje, Parametros.ficheroResultado);
+                Utiles.grabadaSalida = true;
             }
         }
     }

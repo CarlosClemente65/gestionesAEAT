@@ -9,7 +9,6 @@ namespace gestionesAEAT.Formularios
 {
     public partial class frmSeleccion : Form
     {
-        Utiles utilidad = new Utiles();
 
         //Crea un diccionario para saber el orden de cada columna
         private Dictionary<string, EstadoOrdenacion> estadosOrdenacion;
@@ -102,7 +101,7 @@ namespace gestionesAEAT.Formularios
 
         private void btnCancelar_Click(object sender, EventArgs e)
         {
-            utilidad.SalirAplicacion("El usuario a cancelado la operacion");
+            Utiles.SalirAplicacion("El usuario a cancelado la operacion");
             Environment.Exit(0);
         }
 
@@ -189,7 +188,7 @@ namespace gestionesAEAT.Formularios
         private void btnCerrar_Click(object sender, EventArgs e)
         {
             string mensaje = $"Proceso cancelado por el usuario.";
-            utilidad.GrabarSalida(mensaje, Parametros.ficheroResultado);
+            Utiles.GrabarSalida(mensaje, Parametros.ficheroResultado);
             Environment.Exit(0);
         }
 

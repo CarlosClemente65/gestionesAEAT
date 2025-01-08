@@ -47,9 +47,7 @@ namespace gestionesAEAT.Metodos
         public List<RespuestaCorrectaDescarga> respuestasCorrectas = new List<RespuestaCorrectaDescarga>();
         public List<RespuestaErrorDescarga> respuestasError = new List<RespuestaErrorDescarga>();
         envioAeat envio = new envioAeat();
-        Utiles utilidad = Program.utilidad;
-
-
+       
         public void obtenerModelos()
         {
             string ficheroEntrada = Parametros.ficheroEntrada;
@@ -64,12 +62,12 @@ namespace gestionesAEAT.Metodos
 
 
             //Prepara los datos del guion
-            utilidad.cargaDatosGuion(ficheroEntrada); //Monta en la clase Utiles las listas "cabecera", "body" y "respuesta" para luego acceder a esos datos a montar el envio
+            Utiles.cargaDatosGuion(ficheroEntrada); //Monta en la clase Utiles las listas "cabecera", "body" y "respuesta" para luego acceder a esos datos a montar el envio
 
-            datosEnvio = utilidad.procesarGuionHtml(); //Formatea el guion para poder pasarlo al servidor
+            datosEnvio = Utiles.procesarGuionHtml(); //Formatea el guion para poder pasarlo al servidor
 
             //Realiza el envio a la AEAT
-            envio.envioPost(utilidad.url, datosEnvio, serieCertificado, "form");
+            envio.envioPost(Utiles.url, datosEnvio, serieCertificado, "form");
 
             //Procesa la respuesta
             if (envio.estadoRespuestaAEAT == "OK") //Si no ha habido error en la comunicacion
@@ -103,7 +101,7 @@ namespace gestionesAEAT.Metodos
             string url = @"https://www2.agenciatributaria.gob.es/wlpl/inwinvoc/es.aeat.dit.adu.eeca.catalogo.vis.VisualizaSc";
 
             //Si el envio se hace al servidor de pruebas, la descarga hay que hacerla a otra url
-            if (utilidad.url.Contains("prewww1"))
+            if (Utiles.url.Contains("prewww1"))
             {
                 url = @"https://prewww2.aeat.es/wlpl/inwinvoc/es.aeat.dit.adu.eeca.catalogo.vis.VisualizaSc";
             }

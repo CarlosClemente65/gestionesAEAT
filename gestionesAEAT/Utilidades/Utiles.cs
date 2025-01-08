@@ -10,30 +10,30 @@ using Microsoft.Win32;
 
 namespace gestionesAEAT
 {
-    public class Utiles
+    public static class Utiles
     {
         //Clase con diversas utilidades que se usan en los metodos
-        public string url { get; set; } //Variable que almacena la url a la que enviar los datos a la AEAT
+        public static string url { get; set; } //Variable que almacena la url a la que enviar los datos a la AEAT
 
-        public string cliente { get; set; }
+        public static string cliente { get; set; }
 
         //Variables para almacenar en listas los datos de la cabecera, body y respuesta que vienen en el guion
-        public List<string> cabecera = new List<string>(); //Lineas de la cabecera
-        public List<string> body = new List<string>(); //Lineas del body 
-        public List<string> respuesta = new List<string>(); //Lineas de la respuesta 
-        public List<string> textoGuion = new List<string>(); //Lista que almacena las lineas del guion para procesarlo
+        public static List<string> cabecera = new List<string>(); //Lineas de la cabecera
+        public static List<string> body = new List<string>(); //Lineas del body 
+        public static List<string> respuesta = new List<string>(); //Lineas de la respuesta 
+        public static List<string> textoGuion = new List<string>(); //Lista que almacena las lineas del guion para procesarlo
 
         //Variables para almacenar las respuestas del envio
-        public List<string> erroresArray = new List<string>();
-        public List<string> avisosArray = new List<string>();
-        public List<string> advertenciasArray = new List<string>();
+        public static List<string> erroresArray = new List<string>();
+        public static List<string> avisosArray = new List<string>();
+        public static List<string> advertenciasArray = new List<string>();
 
-        public RespuestaValidarModelos respuestaValidarModelos; //Varible que almacena la respuesta completa de la AEAT en la validacion de modelos
-        public RespuestaPresBasicaDos respuestaEnvioModelos; //Variable que almacena la respuesta completa de la AEAT en la presentacion directa
+        public static RespuestaValidarModelos respuestaValidarModelos; //Variable que almacena la respuesta completa de la AEAT en la validacion de modelos
+        public static RespuestaPresBasicaDos respuestaEnvioModelos; //Variable que almacena la respuesta completa de la AEAT en la presentacion directa
 
-        public bool grabadaSalida = false;
+        public static bool grabadaSalida = false;
 
-        public string quitaRaros(string cadena)
+        public static string quitaRaros(string cadena)
         {
             //Metodo para eliminar caracteres raros
             Dictionary<char, char> caracteresReemplazo = new Dictionary<char, char>
@@ -61,7 +61,7 @@ namespace gestionesAEAT
             return resultado.ToString();
         }
 
-        public void cargaFicheroEntrada(string ficheroEntrada)
+        public static void cargaFicheroEntrada(string ficheroEntrada)
         {
             //Carga el fichero de entrada en una lista y obtiene la codificacion UTF-8 o ISO8859-1 (ascii extendido 256 bits o ansi), ya que algun guion se le pasa como parametro la codificacion
 
@@ -131,7 +131,7 @@ namespace gestionesAEAT
             }
         }
 
-        public void borrarFicheros(string fichero)
+        public static void borrarFicheros(string fichero)
         {
             //Borra ficheros anteriores antes de algunas ejecuciones
             string rutaSalida = string.Empty;
@@ -158,7 +158,7 @@ namespace gestionesAEAT
             }
         }
 
-        public string procesarGuionHtml()
+        public static string procesarGuionHtml()
         {
             //Procesa el guion para poder hacer el envio a la AEAT
             string textoAEAT = string.Empty;
@@ -177,7 +177,7 @@ namespace gestionesAEAT
             return textoAEAT;
         }
 
-        public void cargaDatosGuion(string ficheroEntrada)
+        public static void cargaDatosGuion(string ficheroEntrada)
         {
             //Procesa el fichero de entrada para montar una lista con las lineas del guion
             cargaFicheroEntrada(ficheroEntrada);
@@ -233,7 +233,7 @@ namespace gestionesAEAT
             }
         }
 
-        public string generarRespuesta(string ficheroRespuesta, string tipo)
+        public static string generarRespuesta(string ficheroRespuesta, string tipo)
         {
             //Metodo para generar un html si hay errores, avisos o advertencias. Se recibe como parametro el tipo ya que el tratamiento de la respuesta cambia si es en el envio o en la validacion
             string modelo = string.Empty;
@@ -325,7 +325,7 @@ namespace gestionesAEAT
             return respuestaHtml;
         }
 
-        private string generarHtml(string modelo, string ejercicio, string periodo, string cliente)
+        private static string generarHtml(string modelo, string ejercicio, string periodo, string cliente)
         {
             //Metodo que crea el html
 
@@ -415,7 +415,7 @@ namespace gestionesAEAT
             return contenidoHtml.ToString();
         }
 
-        private string generarFilasHtml(string clave, string fondo, string borde)
+        private static string generarFilasHtml(string clave, string fondo, string borde)
         {
             //Metodo que devuelve todas las lineas de los errores, avisos o advertencias con sus colores correspondientes
             StringBuilder elementos = new StringBuilder();
@@ -447,7 +447,7 @@ namespace gestionesAEAT
             return elementos.ToString();
         }
 
-        public void SalirAplicacion(string mensaje)
+        public static void SalirAplicacion(string mensaje)
         {
             //Si hay algun texto de error en el log, lo graba en un fichero
             if (!string.IsNullOrEmpty(mensaje))
@@ -458,7 +458,7 @@ namespace gestionesAEAT
             Environment.Exit(0);
         }
 
-        public void MostrarAyuda()
+        public static void MostrarAyuda()
         {
             StringBuilder mensaje = new StringBuilder();
             mensaje.AppendLine("");
@@ -568,7 +568,7 @@ namespace gestionesAEAT
             Console.ReadLine();
         }
 
-        public string formateaXML(string xmlRespuesta)
+        public static string formateaXML(string xmlRespuesta)
         {
             // Crea un objeto XmlDocument y carga el XML de la respuesta
             XmlDocument documento = new XmlDocument();
@@ -591,12 +591,12 @@ namespace gestionesAEAT
             }
         }
 
-        public void GrabarSalida(string mensajeSalida, string ficheroSalida)
+        public static void GrabarSalida(string mensajeSalida, string ficheroSalida)
         {
             if (!grabadaSalida) File.WriteAllText(ficheroSalida, mensajeSalida,Encoding.Default);
         }
 
-        public string generaFicheroSalida<T>(T proceso, string ficheroPdf = "")
+        public static string generaFicheroSalida<T>(T proceso, string ficheroPdf = "")
         {
             //Se recibe un tipo generico (T) que luego se usa para montar las respuestas segun de donde vienen
             StringBuilder resultadoSalida = new StringBuilder();
@@ -704,7 +704,7 @@ namespace gestionesAEAT
             return resultadoSalida.ToString();
         }
 
-        public (string, string) divideCadena(string cadena, char divisor)
+        public static (string, string) divideCadena(string cadena, char divisor)
         {
             //Permite dividir una cadena por el divisor pasado y solo la divide en un maximo de 2 partes (divide desde el primer divisor que encuentra)
             string atributo = string.Empty;
@@ -719,7 +719,7 @@ namespace gestionesAEAT
             return (atributo, valor);
         }
 
-        public bool ChequeoFramework (int versionNecesaria)
+        public static bool ChequeoFramework (int versionNecesaria)
         {
             int versionInstalada = 0;
             using (RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32)

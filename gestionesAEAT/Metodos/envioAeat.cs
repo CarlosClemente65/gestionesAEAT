@@ -16,8 +16,6 @@ namespace gestionesAEAT
         string contenidoRespuesta; //Almacena la respuesta del servidor para poder quitar simbolos extraños
         X509Certificate2 certificado = null;
 
-        Utiles utilidad = Program.utilidad;
-
         public void envioPost(string url, string datosEnvio, string serieCertificado, string tipoEnvio = "form") //Se pone el tipo de envio opcional como formulario y si es de tipo json se debe pasar en la llamada al metodo
         {
             try
@@ -25,7 +23,7 @@ namespace gestionesAEAT
                 bool resultado = false;
                 (certificado, resultado) = Program.gestionCertificados.exportaCertificadoDigital(serieCertificado);
 
-                if (certificado != null)
+                if(certificado != null)
                 {
                     //Protocolo de seguridad
                     System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
@@ -37,7 +35,7 @@ namespace gestionesAEAT
                     solicitudHttp.Method = "POST";
 
                     //Configura el contenido en funcion de si el envio se hace por un formulario o un json
-                    switch (tipoEnvio)
+                    switch(tipoEnvio)
                     {
                         case "form":
                             solicitudHttp.ContentType = "application/x-www-form-urlencoded";
@@ -77,7 +75,7 @@ namespace gestionesAEAT
                     estadoRespuestaAEAT = respuesta.StatusDescription;
 
                     //Grabar el contenido de la respuesta para devolverlo al metodo de llamada
-                    using (MemoryStream ms = new MemoryStream())
+                    using(MemoryStream ms = new MemoryStream())
                     {
                         respuesta.GetResponseStream().CopyTo(ms);
                         contenidoRespuesta = Encoding.UTF8.GetString(ms.ToArray()); //Se pasa a una variable temporal para poder pasar el quita raros.
@@ -87,7 +85,7 @@ namespace gestionesAEAT
                         respuestaEnvioAEATBytes = ms.ToArray();
                     }
 
-                    respuestaEnvioAEAT = utilidad.quitaRaros(contenidoRespuesta); //Solo se quitan los caracteres raros en el string, ya que en byte no procede
+                    respuestaEnvioAEAT = Utiles.quitaRaros(contenidoRespuesta); //Solo se quitan los caracteres raros en el string, ya que en byte no procede
                 }
                 else
                 {
@@ -98,17 +96,17 @@ namespace gestionesAEAT
                 }
             }
 
-            catch (WebException ex)
+            catch(WebException ex)
             {
                 //Relanza la excepcion para que se pueda capturar desde la llamada al metodo (se usa en el metodo 'PagoNRC')
                 throw ex;
 
-            
+
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                utilidad.GrabarSalida($"Error en la conexion con el servidor. {ex.Message}", Parametros.ficheroResultado);
-                utilidad.grabadaSalida = true;
+                Utiles.GrabarSalida($"Error en la conexion con el servidor. {ex.Message}", Parametros.ficheroResultado);
+                Utiles.grabadaSalida = true;
 
             }
         }
@@ -128,7 +126,7 @@ namespace gestionesAEAT
                 solicitudHttp.Method = "POST";
 
                 //configura el contenido en funcion de si el envio se hace por un formulario o un json
-                switch (tipoEnvio)
+                switch(tipoEnvio)
                 {
                     case "form":
                         solicitudHttp.ContentType = "application/x-www-form-urlencoded";
@@ -161,7 +159,7 @@ namespace gestionesAEAT
                 estadoRespuestaAEAT = respuesta.StatusDescription;
 
                 //Grabar el contenido de la respuesta para devolverlo al metodo de llamada
-                using (MemoryStream ms = new MemoryStream())
+                using(MemoryStream ms = new MemoryStream())
                 {
                     respuesta.GetResponseStream().CopyTo(ms);
                     contenidoRespuesta = Encoding.UTF8.GetString(ms.ToArray());
@@ -171,12 +169,12 @@ namespace gestionesAEAT
                     respuestaEnvioAEATBytes = ms.ToArray();
                 }
 
-                respuestaEnvioAEAT = utilidad.quitaRaros(contenidoRespuesta);//Solo se quitan los caracteres raros en el string, ya que en byte no procede
+                respuestaEnvioAEAT = Utiles.quitaRaros(contenidoRespuesta);//Solo se quitan los caracteres raros en el string, ya que en byte no procede
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                utilidad.GrabarSalida($"Error en la conexion con el servidor. {ex.Message}", Parametros.ficheroResultado);
-                utilidad.grabadaSalida = true;
+                Utiles.GrabarSalida($"Error en la conexion con el servidor. {ex.Message}", Parametros.ficheroResultado);
+                Utiles.grabadaSalida = true;
             }
         }
     }

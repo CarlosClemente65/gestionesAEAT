@@ -24,9 +24,7 @@ namespace gestionesAEAT.Metodos
 
         string mensaje; //Variable auxiliar para la grabacion de la respuesta
 
-        Utiles utilidad = Program.utilidad; //Instanciacion de las utilidades para poder usarlas
         envioAeat envio = new envioAeat();
-
 
         public void envioPeticion(int paso)
         {
@@ -37,18 +35,18 @@ namespace gestionesAEAT.Metodos
             //Borrar los ficheros si existen en la ruta pasada
             if (paso == 1)
             {
-                utilidad.borrarFicheros(ficheroSalida);
+                Utiles.borrarFicheros(ficheroSalida);
             }
 
-            if (paso == 2) utilidad.borrarFicheros(ficheroSalidaConyuge);
+            if (paso == 2) Utiles.borrarFicheros(ficheroSalidaConyuge);
 
             try
             {
-                if (paso == 1) utilidad.cargaDatosGuion(ficheroEntrada);
+                if (paso == 1) Utiles.cargaDatosGuion(ficheroEntrada);
 
                 datosEnvio = formateoCabecera(paso); //Genera los datos a enviar (paso 1 para el titular y paso 2 para el conyuge)
 
-                envio.envioPost(utilidad.url, datosEnvio, serieCertificado, "form");//Metodo con certificado
+                envio.envioPost(Utiles.url, datosEnvio, serieCertificado, "form");//Metodo con certificado
                 respuestaAEAT = envio.respuestaEnvioAEAT;
 
                 if (envio.estadoRespuestaAEAT == "OK")
@@ -68,8 +66,8 @@ namespace gestionesAEAT.Metodos
             {
                 //Si se ha producido algun error en el envio
                 mensaje = $"MENSAJE = Proceso cancelado o error en el envio. {ex.Message}";
-                utilidad.GrabarSalida(mensaje, ficheroResultado);
-                utilidad.grabadaSalida = true;
+                Utiles.GrabarSalida(mensaje, ficheroResultado);
+                Utiles.grabadaSalida = true;
             }
 
             try
@@ -83,8 +81,8 @@ namespace gestionesAEAT.Metodos
             catch (Exception ex)
             {
                 mensaje = $"MENSAJE = Se ha producido un error al grabar los ficheros de respuesta. {ex.Message}";
-                utilidad.GrabarSalida(mensaje, ficheroResultado);
-                utilidad.grabadaSalida = true;
+                Utiles.GrabarSalida(mensaje, ficheroResultado);
+                Utiles.grabadaSalida = true;
             }
         }
 
@@ -97,7 +95,7 @@ namespace gestionesAEAT.Metodos
             string car;
             string valor;
             string cadena = string.Empty;
-            var respuesta = utilidad.respuesta;
+            var respuesta = Utiles.respuesta;
             for (int i = 0; i < respuesta.Count; i++)
             {
                 //Busca la posicion de la palabra que se pasa en el bloque 'respuesta' del fichero de entrada
@@ -129,9 +127,9 @@ namespace gestionesAEAT.Metodos
         private string formateoCabecera(int paso)
         {
             nifConyuge = false;
-            for (int i = 0; i < utilidad.cabecera.Count; i++)
+            for (int i = 0; i < Utiles.cabecera.Count; i++)
             {
-                cargaCabecera(utilidad.cabecera[i]);
+                cargaCabecera(Utiles.cabecera[i]);
 
                 if (paso == 1 && atributo == "NIF2")
                 {
@@ -163,7 +161,7 @@ namespace gestionesAEAT.Metodos
         {
             try
             {
-                (atributo, valor) = utilidad.divideCadena(cadena.ToString(), '=');
+                (atributo, valor) = Utiles.divideCadena(cadena.ToString(), '=');
                 atributo = atributo.Trim();
                 valor = valor.Trim();
             }
@@ -171,8 +169,8 @@ namespace gestionesAEAT.Metodos
             catch (Exception ex)
             {
                 mensaje = $"Se ha producido un error al procesar el guion. {ex.Message}";
-                utilidad.GrabarSalida(mensaje, ficheroResultado);
-                utilidad.grabadaSalida = true;
+                Utiles.GrabarSalida(mensaje, ficheroResultado);
+                Utiles.grabadaSalida = true;
             }
         }
     }

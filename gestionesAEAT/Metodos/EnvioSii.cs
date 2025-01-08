@@ -9,8 +9,6 @@ namespace gestionesAEAT.Metodos
     {
         //Instanciacion de las clases de envio y utilidades
         envioAeat envio = new envioAeat();
-        Utiles utilidad = Program.utilidad;
-
 
         public void envioFacturas()
         {
@@ -27,18 +25,18 @@ namespace gestionesAEAT.Metodos
 
             if (envio.estadoRespuestaAEAT == "OK") //Si no ha habido error en la comunicacion
             {
-                string respuestaAEAT = utilidad.formateaXML(envio.respuestaEnvioAEAT);
+                string respuestaAEAT = Utiles.formateaXML(envio.respuestaEnvioAEAT);
                 string pathRespuestaAEAT = Path.ChangeExtension(ficheroSalida, "aeat");
                 string respuestaDiagram = formateaXML(respuestaAEAT);
-                utilidad.GrabarSalida(respuestaDiagram, ficheroSalida);
-                utilidad.GrabarSalida(respuestaAEAT, pathRespuestaAEAT);
-                utilidad.GrabarSalida("OK",ficheroResultado);
+                Utiles.GrabarSalida(respuestaDiagram, ficheroSalida);
+                Utiles.GrabarSalida(respuestaAEAT, pathRespuestaAEAT);
+                Utiles.GrabarSalida("OK",ficheroResultado);
             }
             else
             {
-                if (!string.IsNullOrEmpty(envio.respuestaEnvioAEAT)) utilidad.GrabarSalida(envio.respuestaEnvioAEAT, ficheroSalida);
-                utilidad.GrabarSalida("Problemas al conectar con el servidor de la AEAT", ficheroResultado);
-                utilidad.grabadaSalida = true;
+                if (!string.IsNullOrEmpty(envio.respuestaEnvioAEAT)) Utiles.GrabarSalida(envio.respuestaEnvioAEAT, ficheroSalida);
+                Utiles.GrabarSalida("Problemas al conectar con el servidor de la AEAT", ficheroResultado);
+                Utiles.grabadaSalida = true;
             }
         }
 

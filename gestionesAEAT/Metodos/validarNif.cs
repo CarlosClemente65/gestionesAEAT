@@ -103,7 +103,6 @@ namespace gestionesAEAT.Metodos
 
     public class validarNif
     {
-        Utiles utilidad = Program.utilidad;
         envioAeat envio = new envioAeat();
         string estadoRespuestaAEAT = string.Empty;
         string contenidoRespuesta = string.Empty;
@@ -149,7 +148,7 @@ namespace gestionesAEAT.Metodos
                 }
 
 
-                utilidad.GrabarSalida(datosSalida.ToString(), Parametros.ficheroSalida);
+                Utiles.GrabarSalida(datosSalida.ToString(), Parametros.ficheroSalida);
 
 
                 //////Esta parte genera un xml con las respuestas y lo graba al ficheroSalida
@@ -160,7 +159,7 @@ namespace gestionesAEAT.Metodos
                 ////}
 
             }
-            utilidad.GrabarSalida("OK", Parametros.ficheroResultado);
+            Utiles.GrabarSalida("OK", Parametros.ficheroResultado);
         }
 
 
@@ -214,7 +213,7 @@ namespace gestionesAEAT.Metodos
 
             foreach (var linea in lineasGuion)
             {
-                (string clave, string valor) = utilidad.divideCadena(linea, '=');
+                (string clave, string valor) = Utiles.divideCadena(linea, '=');
 
                 if (clave.Equals("NIF", StringComparison.OrdinalIgnoreCase))
                 {
@@ -307,7 +306,7 @@ namespace gestionesAEAT.Metodos
                         contenidoRespuesta = Encoding.UTF8.GetString(ms.ToArray()); //Se pasa a una variable temporal para poder pasar el quita raros.
                     }
 
-                    respuestaEnvioAEAT = utilidad.quitaRaros(contenidoRespuesta); //Solo se quitan los caracteres raros en el string, ya que en byte no procede
+                    respuestaEnvioAEAT = Utiles.quitaRaros(contenidoRespuesta); //Solo se quitan los caracteres raros en el string, ya que en byte no procede
                 }
 
             }
