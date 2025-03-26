@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using System.Xml;
 using gestionesAEAT.Metodos;
 using gestionesAEAT.Utilidades;
@@ -39,16 +40,16 @@ namespace gestionesAEAT
             Dictionary<char, char> caracteresReemplazo = new Dictionary<char, char>
             {
                 {'á', 'a'}, {'é', 'e'}, {'í', 'i'}, {'ó', 'o'}, {'ú', 'u'},
-                {'Á', 'A'}, {'É', 'E'}, {'Í', 'I'}, {'Ó', 'O'}, {'Ú', 'U'}, 
+                {'Á', 'A'}, {'É', 'E'}, {'Í', 'I'}, {'Ó', 'O'}, {'Ú', 'U'},
                 {'¥', 'Ñ'}, {'¤', 'ñ'}
                 //{'\u00AA', '.'}, {'ª', '.'}, {'\u00BA', '.'}, {'°', '.' }
             };
             //Nota: los caracteres ª y º estan con la forma unicode y en caracter para contemplar ambas opciones, pero los comento porque no esta mal que salgan (si dan pegas ya se arreglara)
 
             StringBuilder resultado = new StringBuilder(cadena.Length);
-            foreach (char c in cadena)
+            foreach(char c in cadena)
             {
-                if (caracteresReemplazo.TryGetValue(c, out char reemplazo))
+                if(caracteresReemplazo.TryGetValue(c, out char reemplazo))
                 {
                     resultado.Append(reemplazo);
                 }
@@ -66,10 +67,10 @@ namespace gestionesAEAT
             //Carga el fichero de entrada en una lista y obtiene la codificacion UTF-8 o ISO8859-1 (ascii extendido 256 bits o ansi), ya que algun guion se le pasa como parametro la codificacion
 
             //Carga del fichero
-            using (StreamReader sr = new StreamReader(ficheroEntrada, Parametros.codificacion))
+            using(StreamReader sr = new StreamReader(ficheroEntrada, Parametros.codificacion))
             {
                 string linea;
-                while ((linea = sr.ReadLine()) != null)
+                while((linea = sr.ReadLine()) != null)
                 {
                     textoGuion.Add(linea);
                 }
@@ -80,24 +81,24 @@ namespace gestionesAEAT
             int bloque = 0;
             Encoding nuevaCodificacion = null;
 
-            for (int x = 0; x < textoGuion.Count; x++)
+            for(int x = 0; x < textoGuion.Count; x++)
             {
                 cadena = textoGuion[x].ToString().Trim();
-                if (cadena != "")
+                if(cadena != "")
                 {
-                    switch (cadena)
+                    switch(cadena)
                     {
                         case "[cabecera]":
                             bloque = 2;
                             continue;
                     }
 
-                    if (bloque == 2)
+                    if(bloque == 2)
                     {
                         (string atributo, string valor) = divideCadena(cadena.ToString(), '=');
-                        if (atributo == "CODIFICACION")
+                        if(atributo == "CODIFICACION")
                         {
-                            if (valor.Length > 1)
+                            if(valor.Length > 1)
                             {
                                 try
                                 {
@@ -117,13 +118,13 @@ namespace gestionesAEAT
             }
 
             //Si se detecta que se ha cargado una nueva codificacion, se vuelve a cargar el guion
-            if (nuevaCodificacion != null && nuevaCodificacion != Encoding.UTF8)
+            if(nuevaCodificacion != null && nuevaCodificacion != Encoding.UTF8)
             {
                 textoGuion.Clear();
-                using (StreamReader sr = new StreamReader(ficheroEntrada, nuevaCodificacion))
+                using(StreamReader sr = new StreamReader(ficheroEntrada, nuevaCodificacion))
                 {
                     string linea;
-                    while ((linea = sr.ReadLine()) != null)
+                    while((linea = sr.ReadLine()) != null)
                     {
                         textoGuion.Add(linea);
                     }
@@ -135,25 +136,44 @@ namespace gestionesAEAT
         {
             //Borra ficheros anteriores antes de algunas ejecuciones
             string rutaSalida = string.Empty;
-            if (!string.IsNullOrEmpty(fichero))
+            if(!string.IsNullOrEmpty(fichero))
             {
                 rutaSalida = Path.GetDirectoryName(fichero);
             }
-            if (string.IsNullOrEmpty(rutaSalida))
+            if(string.IsNullOrEmpty(rutaSalida))
             {
                 rutaSalida = Directory.GetCurrentDirectory();
             }
             string patronFicheros = Path.GetFileNameWithoutExtension(fichero) + ".*";
             string[] elementos = Directory.GetFiles(rutaSalida, patronFicheros);//Se borran todos los ficheros de salida posibles ya que puede haber .txt, .html o .pdf
 
-            foreach (string elemento in elementos)
+            foreach(string elemento in elementos)
             {
                 //Evitamos borrar el fichero de entrada por si tienen el mismo nombre
                 bool controlEntrada = Path.GetFileName(Parametros.ficheroEntrada) == Path.GetFileName(elemento);
 
-                if (!controlEntrada)
+                if(!controlEntrada)
                 {
-                    File.Delete(elemento);
+                    bool eliminado = false;
+                    do
+                    {
+
+                        try
+                        {
+                            File.Delete(elemento);
+                            eliminado = true;
+                        }
+                        catch(IOException ex)
+                        {
+                            DialogResult resultado = MessageBox.Show($"No se pudo eliminar el archivo {elemento} porque está en uso. \n\nCierrelo para continuar", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                            //if(resultado == DialogResult.Cancel)
+                            //{
+                            //    break; // Si el usuario cancela, salimos del bucle
+                            //}
+                        }
+                    }
+                    while(!eliminado);
                 }
             }
         }
@@ -163,9 +183,9 @@ namespace gestionesAEAT
             //Procesa el guion para poder hacer el envio a la AEAT
             string textoAEAT = string.Empty;
 
-            for (int linea = 0; linea < cabecera.Count; linea++)
+            for(int linea = 0; linea < cabecera.Count; linea++)
             {
-                if (string.IsNullOrEmpty(textoAEAT))
+                if(string.IsNullOrEmpty(textoAEAT))
                 {
                     textoAEAT = cabecera[linea].ToString();
                 }
@@ -186,13 +206,13 @@ namespace gestionesAEAT
             string cadena;
             int bloque = 0; //Controla el tipo de dato a grabar en el fichero
 
-            for (int x = 0; x < textoGuion.Count; x++)
+            for(int x = 0; x < textoGuion.Count; x++)
             {
                 cadena = textoGuion[x].ToString();
-                if (cadena != "")
+                if(cadena != "")
                 {
                     //Control para saber que parte del fichero se va a procesar
-                    switch (cadena)
+                    switch(cadena)
                     {
                         case "[url]":
                             bloque = 1;
@@ -210,7 +230,7 @@ namespace gestionesAEAT
                             bloque = 4;
                             continue;
                     }
-                    switch (bloque)
+                    switch(bloque)
                     {
                         //Las lineas que van despues de cada parte se asignan a cada una de ellas
                         case 1:
@@ -242,23 +262,23 @@ namespace gestionesAEAT
             string respuestaHtml = string.Empty;
             int control = 0;
 
-            switch (tipo)
+            switch(tipo)
             {
                 case "validar":
                     var respuestaValidar = respuestaValidarModelos.respuesta;
-                    if (respuestaValidar.errores != null && respuestaValidar.errores.Count > 0)
+                    if(respuestaValidar.errores != null && respuestaValidar.errores.Count > 0)
                     {
                         erroresArray = respuestaValidar.errores;
                         control++;
                     }
 
-                    if (respuestaValidar.avisos != null && respuestaValidar.avisos.Count > 0)
+                    if(respuestaValidar.avisos != null && respuestaValidar.avisos.Count > 0)
                     {
                         avisosArray = respuestaValidar.avisos;
                         control++;
                     }
 
-                    if (respuestaValidar.advertencias != null && respuestaValidar.advertencias.Count > 0)
+                    if(respuestaValidar.advertencias != null && respuestaValidar.advertencias.Count > 0)
                     {
                         advertenciasArray = respuestaValidar.advertencias;
                         control++;
@@ -268,23 +288,23 @@ namespace gestionesAEAT
 
                 case "enviar":
                     var respuestaEnvio = respuestaEnvioModelos.respuesta;
-                    if (respuestaEnvio.correcta != null)
+                    if(respuestaEnvio.correcta != null)
                     {
                         //Si viene la respuesta correcta mirar si hay avisos o advertencias
-                        if (respuestaEnvio.correcta.avisos != null && respuestaEnvio.correcta.avisos.Count > 0)
+                        if(respuestaEnvio.correcta.avisos != null && respuestaEnvio.correcta.avisos.Count > 0)
                         {
                             avisosArray = respuestaEnvio.correcta.avisos;
                             control++;
                         }
 
-                        if (respuestaEnvio.correcta.advertencias != null && respuestaEnvio.correcta.advertencias.Count > 0)
+                        if(respuestaEnvio.correcta.advertencias != null && respuestaEnvio.correcta.advertencias.Count > 0)
                         {
                             advertenciasArray = respuestaEnvio.correcta.advertencias;
                             control++;
                         }
                     }
 
-                    if (respuestaEnvio.errores != null && respuestaEnvio.errores.Count > 0)
+                    if(respuestaEnvio.errores != null && respuestaEnvio.errores.Count > 0)
                     {
                         erroresArray = respuestaEnvio.errores;
                         control++;
@@ -294,14 +314,14 @@ namespace gestionesAEAT
             }
 
             //Si se ha encontrado algun error, aviso o advertencia, hace el html
-            if (control > 0)
+            if(control > 0)
             {
                 //Asigna las variables modelo, ejercicio y periodo segun los valores de la cabecera
-                foreach (string linea in cabecera)
+                foreach(string linea in cabecera)
                 {
                     (string atributo, string valor) = divideCadena(linea, '=');
 
-                    switch (atributo)
+                    switch(atributo)
                     {
                         case "MODELO":
                             modelo = valor;
@@ -354,7 +374,7 @@ namespace gestionesAEAT
             string borde = string.Empty; // Borde e icono
 
             //Contenido del html si hay errores
-            if (erroresArray != null && erroresArray.Count > 0)
+            if(erroresArray != null && erroresArray.Count > 0)
             {
                 fondo1 = "#FFBFBF"; //Cabecera tabla
                 fondo2 = "#FFEBEE"; // Lineas tabla
@@ -372,7 +392,7 @@ namespace gestionesAEAT
             }
 
             //Contenido del html si hay advertencias
-            if (advertenciasArray != null && advertenciasArray.Count > 0)
+            if(advertenciasArray != null && advertenciasArray.Count > 0)
             {
                 fondo1 = "#F9E79F"; // Cabecera tabla
                 fondo2 = "#FCF3CF"; // Lineas tabla
@@ -391,7 +411,7 @@ namespace gestionesAEAT
             }
 
             //Contenido del html si hay avisos
-            if (avisosArray != null && avisosArray.Count > 0)
+            if(avisosArray != null && avisosArray.Count > 0)
             {
                 //Generar tabla de avisos
                 fondo1 = "#AED6F1"; // Cabecera tabla
@@ -421,7 +441,7 @@ namespace gestionesAEAT
             StringBuilder elementos = new StringBuilder();
             List<string> listaElementos = null;
 
-            switch (clave)
+            switch(clave)
             {
                 case "errores":
                     listaElementos = erroresArray;
@@ -439,7 +459,7 @@ namespace gestionesAEAT
                     return string.Empty;
             }
 
-            foreach (var elemento in listaElementos)
+            foreach(var elemento in listaElementos)
             {
                 elementos.AppendLine($@"          <tr style='background-color: {fondo} ; border: 1px solid  {borde}'><td>{elemento}</td></tr>");
             }
@@ -450,7 +470,7 @@ namespace gestionesAEAT
         public static void SalirAplicacion(string mensaje)
         {
             //Si hay algun texto de error en el log, lo graba en un fichero
-            if (!string.IsNullOrEmpty(mensaje))
+            if(!string.IsNullOrEmpty(mensaje))
             {
                 GrabarSalida(mensaje, Parametros.ficheroResultado);
                 grabadaSalida = true;
@@ -583,8 +603,8 @@ namespace gestionesAEAT
                 OmitXmlDeclaration = false
             };
 
-            using (var stringWriter = new StringWriter())
-            using (var xmlWriter = XmlWriter.Create(stringWriter, settings))
+            using(var stringWriter = new StringWriter())
+            using(var xmlWriter = XmlWriter.Create(stringWriter, settings))
             {
                 documento.Save(xmlWriter);
                 return stringWriter.ToString();
@@ -593,7 +613,7 @@ namespace gestionesAEAT
 
         public static void GrabarSalida(string mensajeSalida, string ficheroSalida)
         {
-            if (!grabadaSalida) File.WriteAllText(ficheroSalida, mensajeSalida,Encoding.Default);
+            if(!grabadaSalida) File.WriteAllText(ficheroSalida, mensajeSalida, Encoding.Default);
         }
 
         public static string generaFicheroSalida<T>(T proceso, string ficheroPdf = "")
@@ -602,11 +622,11 @@ namespace gestionesAEAT
             StringBuilder resultadoSalida = new StringBuilder();
 
             //
-            switch (proceso)
+            switch(proceso)
             {
                 case RespuestaValidarModelos respuestaValidar:
                     //Si se ha generado el PDF lo graba en el fichero de salida
-                    if (respuestaValidar.respuesta.pdf != null && respuestaValidarModelos.respuesta.pdf.Count > 0)
+                    if(respuestaValidar.respuesta.pdf != null && respuestaValidarModelos.respuesta.pdf.Count > 0)
                     {
                         resultadoSalida.AppendLine($"pdf = {ficheroPdf}");
                     }
@@ -616,12 +636,12 @@ namespace gestionesAEAT
                     }
 
                     //Si se han generado errores los graba en el fichero de salida
-                    if (respuestaValidar.respuesta.errores != null && respuestaValidar.respuesta.errores.Count > 0)
+                    if(respuestaValidar.respuesta.errores != null && respuestaValidar.respuesta.errores.Count > 0)
                     {
                         List<string> listaErrores = new List<string>();
                         listaErrores = erroresArray;
                         int linea = 0;
-                        for (int i = 0; i < listaErrores.Count; i++)
+                        for(int i = 0; i < listaErrores.Count; i++)
                         {
                             listaErrores[i] = Regex.Replace(listaErrores[i], @"E\d{2} \- ", "");
                             resultadoSalida.AppendLine($"E{linea.ToString("D2")} = {listaErrores[i]}");
@@ -630,12 +650,12 @@ namespace gestionesAEAT
                     }
 
                     //Si se han generado avisos los graba en el fichero de salida
-                    if (respuestaValidar.respuesta.avisos != null && respuestaValidar.respuesta.avisos.Count > 0)
+                    if(respuestaValidar.respuesta.avisos != null && respuestaValidar.respuesta.avisos.Count > 0)
                     {
                         List<string> listaAvisos = new List<string>();
                         listaAvisos = avisosArray;
                         int linea = 0;
-                        foreach (var elemento in listaAvisos)
+                        foreach(var elemento in listaAvisos)
                         {
                             resultadoSalida.AppendLine($"A{linea.ToString("D2")} = {elemento}");
                             linea++;
@@ -643,12 +663,12 @@ namespace gestionesAEAT
                     }
 
                     //Si se han generado advertencias las graba en el fichero de salida
-                    if (respuestaValidar.respuesta.advertencias != null && respuestaValidar.respuesta.advertencias.Count > 0)
+                    if(respuestaValidar.respuesta.advertencias != null && respuestaValidar.respuesta.advertencias.Count > 0)
                     {
                         List<string> listaAdvertencias = new List<string>();
                         listaAdvertencias = advertenciasArray;
                         int linea = 0;
-                        foreach (var elemento in listaAdvertencias)
+                        foreach(var elemento in listaAdvertencias)
                         {
                             resultadoSalida.AppendLine($"D{linea.ToString("D2")} = {elemento}");
                             linea++;
@@ -658,12 +678,12 @@ namespace gestionesAEAT
 
                 case RespuestaPresBasicaDos respuestaPresentacionDirecta:
                     //Si se han generado errores los graba en el fichero de salida
-                    if (respuestaPresentacionDirecta.respuesta.errores != null && respuestaPresentacionDirecta.respuesta.errores.Count > 0)
+                    if(respuestaPresentacionDirecta.respuesta.errores != null && respuestaPresentacionDirecta.respuesta.errores.Count > 0)
                     {
                         List<string> listaErrores = new List<string>();
                         listaErrores = erroresArray;
                         int linea = 0;
-                        for (int i = 0; i < listaErrores.Count; i++)
+                        for(int i = 0; i < listaErrores.Count; i++)
                         {
                             listaErrores[i] = Regex.Replace(listaErrores[i], @"E\d{2} \- ", "");
                             resultadoSalida.AppendLine($"E{linea.ToString("D2")} = {listaErrores[i]}");
@@ -672,12 +692,12 @@ namespace gestionesAEAT
                     }
 
                     //Si se han generado avisos los graba en el fichero de salida
-                    if (respuestaPresentacionDirecta.respuesta.correcta.avisos != null && respuestaPresentacionDirecta.respuesta.correcta.avisos.Count > 0)
+                    if(respuestaPresentacionDirecta.respuesta.correcta.avisos != null && respuestaPresentacionDirecta.respuesta.correcta.avisos.Count > 0)
                     {
                         List<string> listaAvisos = new List<string>();
                         listaAvisos = avisosArray;
                         int linea = 0;
-                        foreach (var elemento in listaAvisos)
+                        foreach(var elemento in listaAvisos)
                         {
                             resultadoSalida.AppendLine($"A{linea.ToString("D2")} = {elemento}");
                             linea++;
@@ -685,12 +705,12 @@ namespace gestionesAEAT
                     }
 
                     //Si se han generado advertencias las graba en el fichero de salida
-                    if (respuestaPresentacionDirecta.respuesta.correcta.advertencias != null && respuestaPresentacionDirecta.respuesta.correcta.advertencias.Count > 0)
+                    if(respuestaPresentacionDirecta.respuesta.correcta.advertencias != null && respuestaPresentacionDirecta.respuesta.correcta.advertencias.Count > 0)
                     {
                         List<string> listaAdvertencias = new List<string>();
                         listaAdvertencias = advertenciasArray;
                         int linea = 0;
-                        foreach (var elemento in listaAdvertencias)
+                        foreach(var elemento in listaAdvertencias)
                         {
                             resultadoSalida.AppendLine($"D{linea.ToString("D2")} = {elemento}");
                             linea++;
@@ -710,7 +730,7 @@ namespace gestionesAEAT
             string atributo = string.Empty;
             string valor = string.Empty;
             string[] partes = cadena.Split(new[] { divisor }, 2);
-            if (partes.Length == 2)
+            if(partes.Length == 2)
             {
                 atributo = partes[0].Trim();
                 valor = partes[1].Trim();
@@ -719,13 +739,13 @@ namespace gestionesAEAT
             return (atributo, valor);
         }
 
-        public static bool ChequeoFramework (int versionNecesaria)
+        public static bool ChequeoFramework(int versionNecesaria)
         {
             int versionInstalada = 0;
-            using (RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32)
+            using(RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32)
             .OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\"))
             {
-                if (ndpKey != null && ndpKey.GetValue("Release") != null)
+                if(ndpKey != null && ndpKey.GetValue("Release") != null)
                 {
                     versionInstalada = (int)ndpKey.GetValue("Release");
                 }
