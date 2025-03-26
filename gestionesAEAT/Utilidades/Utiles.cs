@@ -165,12 +165,12 @@ namespace gestionesAEAT
                         }
                         catch(IOException ex)
                         {
-                            DialogResult resultado = MessageBox.Show($"No se pudo eliminar el archivo {elemento} porque está en uso. \n\nCierrelo para continuar", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            DialogResult resultado = MessageBox.Show($"No puede eliminar el archivo {elemento} porque está en uso. \n\nCierrelo para continuar el proceso o cancelelo", "Aviso", MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning);
 
-                            //if(resultado == DialogResult.Cancel)
-                            //{
-                            //    break; // Si el usuario cancela, salimos del bucle
-                            //}
+                            if(resultado == DialogResult.Cancel)
+                            {
+                                break; // Si el usuario cancela, salimos del bucle
+                            }
                         }
                     }
                     while(!eliminado);
