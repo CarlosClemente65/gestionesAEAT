@@ -130,6 +130,7 @@ namespace gestionesAEAT.Metodos
             for (int i = 0; i < Utiles.cabecera.Count; i++)
             {
                 cargaCabecera(Utiles.cabecera[i]);
+                if(atributo == "NIF2") nifConyuge = true;
 
                 if (paso == 1 && atributo == "NIF2")
                 {

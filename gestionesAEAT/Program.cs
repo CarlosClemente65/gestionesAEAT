@@ -134,6 +134,7 @@ namespace gestionesAEAT
                     if (ratifica.nifConyuge)
                     {
                         paso = 2;
+                        //Parametros.ficheroSalida = Path.GetFileNameWithoutExtension(Parametros.ficheroSalida) + "2.txt";
                         ratifica.envioPeticion(paso);
                     }
                     break;
