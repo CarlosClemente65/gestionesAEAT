@@ -93,7 +93,7 @@ namespace gestionesAEAT
             
             catch (Exception ex)
             {
-                MessageBox.Show("Faltan ficheros para la ejecucion de la aplicacion. Contacte con el departamento tecnico.", "Error en la ejecucion", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Se ha producido un error en el proceso. Contacte con el departamento tecnico.", "Error en la ejecucion", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 string mensaje = $"Error en el proceso {ex.Message}";
                 Utiles.GrabarSalida(mensaje, Parametros.ficheroResultado);
                 Utiles.grabadaSalida = true;

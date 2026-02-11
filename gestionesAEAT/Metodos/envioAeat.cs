@@ -21,7 +21,7 @@ namespace gestionesAEAT
             try
             {
                 bool resultado = false;
-                // Metodo simple para obtener el certificado (no chequea si es correcto para uso con canal seguro SSL)
+                // Metodo simple para obtener el certificado (no chequea si es correcto para uso con canal seguro SSL, por lo que lo deshabilito y mantengo por compatibilidad)
                 //(certificado, resultado) = Program.gestionCertificados.exportaCertificadoDigital(serieCertificado);
 
                 // Metodo que chequea si el certificado esta bien importado (chequea si es correcto para uso con canal seguro SSL y lanza excepciones si encuentra algun error)
