@@ -131,6 +131,7 @@ namespace gestionesAEAT.Utilidades
                 return linea;
             }).ToList();
 
+            
             File.WriteAllLines(ficheroOpciones, lineasFiltradas, Encoding.Default);
         }
 

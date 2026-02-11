@@ -21,7 +21,11 @@ namespace gestionesAEAT
             try
             {
                 bool resultado = false;
-                (certificado, resultado) = Program.gestionCertificados.exportaCertificadoDigital(serieCertificado);
+                // Metodo simple para obtener el certificado (no chequea si es correcto para uso con canal seguro SSL)
+                //(certificado, resultado) = Program.gestionCertificados.exportaCertificadoDigital(serieCertificado);
+
+                // Metodo que chequea si el certificado esta bien importado (chequea si es correcto para uso con canal seguro SSL y lanza excepciones si encuentra algun error)
+                certificado = Program.gestionCertificados.exportaCertificadoDigitalSeguro(serieCertificado);
 
                 if(certificado != null)
                 {
