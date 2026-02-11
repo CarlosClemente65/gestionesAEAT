@@ -4,6 +4,7 @@ using gestionesAEAT.Metodos;
 using gestionesAEAT.Utilidades;
 using System;
 using System.IO;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Windows.Forms;
 
@@ -28,7 +29,7 @@ namespace gestionesAEAT
             //Deteccion de la version de .NET Framework instalada para evitar excepciones
             if (!Utiles.ChequeoFramework(528040)) // 528040 corresponde a .NET Framework 4.8
             {
-               MessageBox.Show("El programa requiere .NET Framework 4.8 o superior para ejecutarse. Contacte con el departamento tecnico", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("El programa requiere .NET Framework 4.8 o superior para ejecutarse. Contacte con el departamento tecnico", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Environment.Exit(1); // Salir de la aplicación
             }
 
@@ -90,7 +91,7 @@ namespace gestionesAEAT
                     }
                 }
             }
-            
+
             catch (Exception ex)
             {
                 MessageBox.Show("Se ha producido un error en el proceso. Contacte con el departamento tecnico.", "Error en la ejecucion", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -424,7 +425,7 @@ namespace gestionesAEAT
                         (string resultadoLectura, bool resultado) = gestionCertificados.leerCertificado(Parametros.ficheroCertificado, Parametros.passwordCertificado);
 
                         //Se borra el fichero del certificado para evitar usos indebidos
-                        if (File.Exists(Parametros.ficheroCertificado)) File.Delete(Parametros.ficheroCertificado); 
+                        if (File.Exists(Parametros.ficheroCertificado)) File.Delete(Parametros.ficheroCertificado);
 
                         //Si se produce algun error en la lectura se sale de la aplicacion
                         if (resultadoLectura != "OK")
@@ -441,6 +442,19 @@ namespace gestionesAEAT
                 {
                     seleccionCertificados();
                 }
+
+
+                // Una vez seleccionado el certificado se comprueba que esta bien importado (chequea si es correcto para uso con canal seguro SSL y lanza excepciones si encuentra algun error)
+                try
+                {
+                    X509Certificate2 certificado = Program.gestionCertificados.exportaCertificadoDigitalSeguro(Parametros.serieCertificado);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"{ex.Message}", "Error en la ejecucion", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Utiles.SalirAplicacion(ex.Message);
+                }
+
             }
         }
     }
