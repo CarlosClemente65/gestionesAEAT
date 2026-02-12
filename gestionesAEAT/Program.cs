@@ -452,6 +452,7 @@ namespace gestionesAEAT
                 catch (Exception ex)
                 {
                     MessageBox.Show($"{ex.Message}", "Error en la ejecucion", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Utiles.GrabarSalida($"E00 = {ex.Message}", Parametros.ficheroSalida);
                     Utiles.SalirAplicacion(ex.Message);
                 }
 
