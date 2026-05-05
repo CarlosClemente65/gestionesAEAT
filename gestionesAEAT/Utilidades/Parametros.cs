@@ -28,7 +28,7 @@ namespace gestionesAEAT.Utilidades
         public static string refRenta { get; set; } = string.Empty;
         public static string datosPersonales { get; set; } = "S";
         public static string urlDescargaDf { get; set; } = string.Empty;
-        public static string urlCSV{  get; set; } = string.Empty;
+        public static string urlCSV { get; set; } = string.Empty;
         public static Encoding codificacion { get; set; } = Encoding.UTF8;
 
         public static void CargarOpciones(string _ficheroOpciones)
@@ -36,18 +36,18 @@ namespace gestionesAEAT.Utilidades
             ficheroOpciones = _ficheroOpciones;
             //Metodo para procesar el fichero de opciones
             string[] lineas = File.ReadAllLines(ficheroOpciones, Encoding.Default);
-            
-            foreach (string linea in lineas)
+
+            foreach(string linea in lineas)
             {
                 //Evita procesar lineas vacias
-                if (string.IsNullOrWhiteSpace(linea)) continue;
+                if(string.IsNullOrWhiteSpace(linea)) continue;
 
                 //Divide la linea en clave=valor
                 string clave = string.Empty;
                 string valor = string.Empty;
                 (clave, valor) = Utiles.divideCadena(linea, '=');
 
-                switch (clave)
+                switch(clave)
                 {
                     case "CLIENTE":
                         cliente = Utiles.quitaRaros(valor);
@@ -63,7 +63,7 @@ namespace gestionesAEAT.Utilidades
 
                     case "SALIDA":
                         //Se controla si se pasa el fichero de salida para evitar una excepcion al asignarlo a la variable
-                        if (!string.IsNullOrEmpty(valor))
+                        if(!string.IsNullOrEmpty(valor))
                         {
                             //Como el fichero de salida siempre tiene que estar presente, se carga la ruta de los ficheros
                             pathFicheros = Path.GetDirectoryName(valor);
@@ -82,7 +82,7 @@ namespace gestionesAEAT.Utilidades
                         break;
 
                     case "OBLIGADO":
-                        if (valor.ToUpper() == "SI") conCertificado = true;
+                        if(valor.ToUpper() == "SI") conCertificado = true;
                         break;
 
                     case "BUSQUEDA":
@@ -107,7 +107,7 @@ namespace gestionesAEAT.Utilidades
 
                     case "DPRENTA":
                         datosPersonales = valor.ToUpper();
-                        if (datosPersonales != "S" && datosPersonales != "N") datosPersonales = "S"; //Se fuerza una 'S' si viene otra cosa como parametro
+                        if(datosPersonales != "S" && datosPersonales != "N") datosPersonales = "S"; //Se fuerza una 'S' si viene otra cosa como parametro
                         break;
 
                     case "URLRENTA":
@@ -122,17 +122,25 @@ namespace gestionesAEAT.Utilidades
             }
 
             //Una vez se procesan las opciones, se regraba el guion para eliminar la contraseña del certificado
+            bool regrabar = false;
             var lineasFiltradas = lineas.Select(linea =>
             {
                 if(linea.StartsWith("PASSWORD="))
                 {
-                    return"PASSWORD=Eliminado por seguridad";
+                    (string atributo,string valor) = Utiles.divideCadena(linea, '=');
+                    if(valor != string.Empty)
+                    {
+                        regrabar = true;
+                        return "PASSWORD=Eliminado por seguridad";
+                    }
                 }
                 return linea;
             }).ToList();
 
-            
-            File.WriteAllLines(ficheroOpciones, lineasFiltradas, Encoding.Default);
+            if(regrabar)
+            {
+                File.WriteAllLines(ficheroOpciones, lineasFiltradas, Encoding.Default);
+            }
         }
 
 
@@ -142,11 +150,11 @@ namespace gestionesAEAT.Utilidades
             Parametros parametros = Configuracion.Parametros;
             PropertyInfo tipoPropiedad = typeof(Parametros).GetProperty(propiedad);
             object valorPropiedad = tipoPropiedad.GetValue(parametros);
-            if (tipoPropiedad.PropertyType == typeof(string))
+            if(tipoPropiedad.PropertyType == typeof(string))
             {
-                if (string.IsNullOrEmpty((string)valorPropiedad))
+                if(string.IsNullOrEmpty((string)valorPropiedad))
                 {
-                    switch (propiedad)
+                    switch(propiedad)
                     {
                         case "ficheroEntrada":
                             mensaje = "No se ha pasado el fichero de entrada";

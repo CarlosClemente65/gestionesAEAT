@@ -32,7 +32,7 @@ namespace gestionesAEAT.Formularios
             rellenarDGV();
             if (!string.IsNullOrEmpty(tituloVentana))
             {
-               Titulo.Text = $"Seleccion certificado - {tituloVentana}";
+               Titulo.Text = $"Seleccion de certificado - {tituloVentana}";
             }
             Load += frmSeleccion_Load;
         }
@@ -101,7 +101,7 @@ namespace gestionesAEAT.Formularios
 
         private void btnCancelar_Click(object sender, EventArgs e)
         {
-            Utiles.SalirAplicacion("El usuario a cancelado la operacion");
+            Utiles.SalirAplicacion("El usuario ha cancelado la operación");
             Environment.Exit(0);
         }
 
