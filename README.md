@@ -11,6 +11,7 @@
 - Version 1.6.2.0 - Incorporado descarga de documentos PDF mediante CSV
 - Version 1.6.3.0 - Incorporado la generacion de un borrador en declaraciones informativas
 - Version 1.6.4.0 - Incorporado la validacion de NIFs
+- Version 1.6.9.0 - Incorporado la descarga de datos fiscales con certificado digital
 <br>
 
 ### Funcionalidades:
@@ -49,7 +50,7 @@
 	* CERTIFICADO= Nombre del fichero.pfx que contiene el certificado digital.
 	* PASSWORD= Contraseña del certificado que se pasa por fichero
 	* NIFRENTA= Para la descarga de datos fiscales es necesario pasar el NIF del contribuyente
-	* REFRENTA= Codigo de 5 caracteres de la referencia de renta para la descarga de datos fiscales
+	* REFRENTA= Codigo de 5 caracteres de la referencia de renta para la descarga de datos fiscales (si no se inlcuye se hara la descarga con certificado)
 	* DPRENTA= En la descarga de datos fiscales, indica si se quieren tambien los datos personales (opciones 'S' o 'N')
 	* URLRENTA= Direccion a la que hacer la peticion de descarga de datos fiscales (cambia cada año)
 	* URLCSV= Url de descarga del documento mediante codigo CSV

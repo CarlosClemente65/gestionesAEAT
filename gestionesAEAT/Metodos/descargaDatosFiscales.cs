@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Text;
-using System.Security.Cryptography;
-using System.Net;
 using System.IO;
-using System.Xml.Serialization;
-using System.Xml;
+using System.Net;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
+using System.Xml.Serialization;
 using gestionesAEAT.Utilidades;
 
 namespace gestionesAEAT.Metodos
@@ -35,29 +36,39 @@ namespace gestionesAEAT.Metodos
     {
         string urlDescarga = string.Empty;
         string urlAutenticacion = "https://www2.agenciatributaria.gob.es/wlpl/ADHT-AUTH/AjaxRef";
-        string nifDf = string.Empty;
-        string refRenta = string.Empty;
-        string datosPersonales = string.Empty;
         string ficheroSalida = Parametros.ficheroSalida;
         string ficheroResultado = Parametros.ficheroResultado;
 
         public void descargaDF()
         {
             //Metodo para descargar los datos fiscales
-            urlDescarga = Parametros.urlDescargaDf;
-            nifDf = Parametros.nifDf;
-            refRenta = Parametros.refRenta;
-            datosPersonales = Parametros.datosPersonales;
+            //urlDescarga = Parametros.DescargarConCertificado ? Parametros.urlDescargaDfConCertificado : Parametros.urlDescargaDfConReferencia;
+
+            // Llama al metodo que corresponde segun si se ha pasado o no la referencia de renta
+            if(Parametros.DescargarConCertificado)
+            {
+                urlDescarga = Parametros.urlDescargaDfConCertificado;
+                DescargaConCertificado();
+            }
+            else
+            {
+                urlDescarga = Parametros.urlDescargaDfConReferencia;
+                DescargaConReferencia();
+            }
+        }
+
+
+        private void DescargaConReferencia()
+        {
             string respuestaAEAT = string.Empty;
             byte[] datosEnvio = null;
-
             try
             {
                 //Se debe encriptar la referencia de la renta para pasarla a la AEAT
-                string refEncriptada = encriptaRefRenta(refRenta);
+                string refEncriptada = encriptaRefRenta(Parametros.refRenta);
                 StringBuilder datos = new StringBuilder();
 
-                datos.Append($"nif={nifDf}");
+                datos.Append($"nif={Parametros.nifDf}");
                 datos.Append($"&refRenta={refEncriptada}");
                 datos.Append($"&idioma=I");
 
@@ -66,6 +77,8 @@ namespace gestionesAEAT.Metodos
                 respuestaAEAT = envioSolicitud(datosEnvio);
 
                 string mensajeError = string.Empty;
+
+                // Procesar la respuesta de la AEAT
                 if(!string.IsNullOrEmpty(respuestaAEAT))
                 {
                     tipoContenido tipoRespuesta = detectarTipoRespuestaAEAT(respuestaAEAT);
@@ -119,6 +132,117 @@ namespace gestionesAEAT.Metodos
                 }
 
                 if(string.IsNullOrEmpty(mensajeError) && !string.IsNullOrEmpty(respuestaAEAT)) Utiles.GrabarSalida(respuestaAEAT, ficheroSalida);
+            }
+
+            catch(Exception ex)
+            {
+                Utiles.GrabarSalida($"Error al descargar datos fiscales. {ex.Message}", ficheroResultado);
+                Utiles.grabadaSalida = true;
+            }
+        }
+
+        private void DescargaConCertificado()
+        {
+            string respuestaAEAT = string.Empty;
+            string mensajeError = string.Empty;
+            X509Certificate2 certificado = null; // Necesario para la autenticacion en la web de descarga de la AEAT
+
+            bool resultado = false;
+            (certificado, resultado) = Program.gestionCertificados.exportaCertificadoDigital(Parametros.serieCertificado);
+
+            // Configuración de la URL para la descarga
+            string urlPeticion = $"{Parametros.urlDescargaDfConCertificado}?nif={Parametros.nifDf}&pdp={Parametros.datosPersonales}";
+
+            try
+            {
+                if(certificado != null)
+                {
+                    // Protocolo de seguridad requerido
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+                    HttpWebRequest solicitud = (HttpWebRequest)WebRequest.Create(urlPeticion);
+                    solicitud.Method = "GET";
+                    solicitud.UserAgent = "Mozilla/5.0"; // Evita bloqueos de seguridad básicos
+                    solicitud.KeepAlive = true;
+
+                    // Se añade el certificado a la peticion
+                    solicitud.ClientCertificates.Add(certificado);
+
+                    using(HttpWebResponse respuesta = (HttpWebResponse)solicitud.GetResponse())
+                    {
+                        // La AEAT suele usar Encoding.Default (ANSI) para los ficheros de datos
+                        using(StreamReader reader = new StreamReader(respuesta.GetResponseStream(), Encoding.Default))
+                        {
+                            respuestaAEAT = reader.ReadToEnd();
+                        }
+                    }
+
+                    // 2. Procesar la respuesta recibida
+                    if(!string.IsNullOrEmpty(respuestaAEAT))
+                    {
+                        // Aquí reutilizas tu lógica de detección de tipo (XML, HTML, TXT)
+                        tipoContenido tipoRespuesta = detectarTipoRespuestaAEAT(respuestaAEAT);
+
+                        switch(tipoRespuesta)
+                        {
+                            case tipoContenido.XML:
+                                try
+                                {
+                                    refrenta respuestaXML = DeserializarXml<refrenta>(respuestaAEAT);
+                                    if(respuestaXML.Status != 0)
+                                    {
+                                        mensajeError = $"Error en la descarga. Descripcion del error: {respuestaXML.Error.Descipcion}";
+                                    }
+                                }
+
+                                catch(Exception ex)
+                                {
+                                    mensajeError = ($"Error en la descarga. Descripcion del error: {ex.Message}");
+                                }
+
+                                break;
+
+                            case tipoContenido.HTML:
+                                //Si es un html se graba el fichero para ver los errores
+                                ficheroSalida = Path.ChangeExtension(ficheroSalida, "html");
+
+                                break;
+
+                            case tipoContenido.TXT:
+                                //Si es un fichero de texto no hay que modificar nada
+
+                                break;
+
+                            case tipoContenido.desconocido:
+                                mensajeError = $"Error en la descarga. Tipo de respuesta de la AEAT desconocida.";
+
+                                break;
+
+                            default:
+
+                                break;
+                        }
+
+                        //Si se ha producido un error se graba la salida y no se procesan mas veces la salida (grabarSalida = true)
+                        if(!string.IsNullOrEmpty(mensajeError))
+                        {
+                            Utiles.GrabarSalida(mensajeError, ficheroResultado);
+                            Utiles.grabadaSalida = true;
+                        }
+
+                        if(string.IsNullOrEmpty(mensajeError) && !string.IsNullOrEmpty(respuestaAEAT)) Utiles.GrabarSalida(respuestaAEAT, ficheroSalida);
+                    }
+                }
+            }
+            catch(WebException ex)
+            {
+                // Manejo de errores específicos de red o HTTP (ej. 403 No autorizado)[cite: 1]
+                mensajeError = $"Error en la conexión con certificado: {ex.Message}";
+                if(ex.Response != null)
+                {
+                    using(var reader = new StreamReader(ex.Response.GetResponseStream()))
+                        respuestaAEAT = reader.ReadToEnd(); // Aquí puede venir el detalle del error en XML
+                }
             }
 
             catch(Exception ex)
@@ -185,7 +309,7 @@ namespace gestionesAEAT.Metodos
                 {
                     if(contenidoRespuesta.IndexOf("<status>0</status>") != -1)
                     {
-                        urlDescarga = $"{urlDescarga}?nif={nifDf}&pdp={datosPersonales}";
+                        urlDescarga = $"{Parametros.urlDescargaDfConCertificado}?nif={Parametros.nifDf}&pdp={Parametros.datosPersonales}";
                         HttpWebRequest solicitudHttp1 = (HttpWebRequest)WebRequest.Create(urlDescarga);
                         solicitudHttp1.CookieContainer = cookies;
                         solicitudHttp1.KeepAlive = true;

@@ -27,7 +27,16 @@ namespace gestionesAEAT.Utilidades
         public static string nifDf { get; set; } = string.Empty;
         public static string refRenta { get; set; } = string.Empty;
         public static string datosPersonales { get; set; } = "S";
-        public static string urlDescargaDf { get; set; } = string.Empty;
+        public static string urlDescargaDfConReferencia { get; set; } = string.Empty;
+        public static string urlDescargaDfConCertificado { get; set; } = string.Empty;
+
+        public static bool DescargarConCertificado
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(urlDescargaDfConCertificado);
+            }
+        }
         public static string urlCSV { get; set; } = string.Empty;
         public static Encoding codificacion { get; set; } = Encoding.UTF8;
 
@@ -111,7 +120,7 @@ namespace gestionesAEAT.Utilidades
                         break;
 
                     case "URLRENTA":
-                        urlDescargaDf = valor;
+                        urlDescargaDfConReferencia = valor;
                         break;
 
                     case "URLCSV":
