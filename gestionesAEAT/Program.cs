@@ -182,7 +182,7 @@ namespace gestionesAEAT
             switch (tipo)
             {
                 case "1":
-                    frmSeleccion.tituloVentana = "Envio modelos AEAT";
+                    frmSeleccion.tituloVentana = "Envío de modelos a la AEAT";
                     if (Parametros.conCertificado == false) Parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if (!string.IsNullOrEmpty(mensajeControl))
@@ -200,7 +200,7 @@ namespace gestionesAEAT
                     break;
 
                 case "2":
-                    frmSeleccion.tituloVentana = "Validacion de modelos";
+                    frmSeleccion.tituloVentana = "Validación de modelos";
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if (!string.IsNullOrEmpty(mensajeControl))
                     {
@@ -217,7 +217,7 @@ namespace gestionesAEAT
                     break;
 
                 case "3":
-                    frmSeleccion.tituloVentana = "Consulta modelos presentados AEAT";
+                    frmSeleccion.tituloVentana = "Consulta de modelos presentados en la AEAT";
                     if (Parametros.conCertificado == false) Parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if (!string.IsNullOrEmpty(mensajeControl))
@@ -235,7 +235,7 @@ namespace gestionesAEAT
                     break;
 
                 case "4":
-                    frmSeleccion.tituloVentana = "Ratificar domicilio renta";
+                    frmSeleccion.tituloVentana = "Ratificación domicilio renta";
                     if (Parametros.conCertificado == false) Parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if (!string.IsNullOrEmpty(mensajeControl))
@@ -253,7 +253,7 @@ namespace gestionesAEAT
                     break;
 
                 case "5":
-                    frmSeleccion.tituloVentana = "Descarga datos fiscales renta";
+                    frmSeleccion.tituloVentana = "Descarga datos fiscales de renta";
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
                     if (!string.IsNullOrEmpty(mensajeControl))
                     {
@@ -282,7 +282,7 @@ namespace gestionesAEAT
                     break;
 
                 case "6":
-                    frmSeleccion.tituloVentana = "Envio facturas al SII";
+                    frmSeleccion.tituloVentana = "Envío de facturas al SII";
                     if (Parametros.conCertificado == false) Parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if (!string.IsNullOrEmpty(mensajeControl))
@@ -313,7 +313,7 @@ namespace gestionesAEAT
                     break;
 
                 case "7":
-                    frmSeleccion.tituloVentana = "Presentacion declaraciones informativas";
+                    frmSeleccion.tituloVentana = "Presentación de declaraciones informativas";
                     if (Parametros.conCertificado == false) Parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if (!string.IsNullOrEmpty(mensajeControl))
@@ -330,7 +330,7 @@ namespace gestionesAEAT
                     break;
 
                 case "8":
-                    frmSeleccion.tituloVentana = "Pago modelos mediante NRC con cargo en cuenta";
+                    frmSeleccion.tituloVentana = "Pago de modelos mediante NRC con cargo en cuenta";
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if (!string.IsNullOrEmpty(mensajeControl))
                     {
@@ -355,7 +355,7 @@ namespace gestionesAEAT
                     break;
 
                 case "10":
-                    frmSeleccion.tituloVentana = "Validacion NIF";
+                    frmSeleccion.tituloVentana = "Validación de NIF";
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if (!string.IsNullOrEmpty(mensajeControl))
                     {
