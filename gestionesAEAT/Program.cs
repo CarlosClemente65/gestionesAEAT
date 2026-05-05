@@ -27,7 +27,7 @@ namespace gestionesAEAT
         static void Main(string[] argumentos)
         {
             //Deteccion de la version de .NET Framework instalada para evitar excepciones
-            if (!Utiles.ChequeoFramework(528040)) // 528040 corresponde a .NET Framework 4.8
+            if(!Utiles.ChequeoFramework(528040)) // 528040 corresponde a .NET Framework 4.8
             {
                 MessageBox.Show("El programa requiere .NET Framework 4.8 o superior para ejecutarse. Contacte con el departamento tecnico", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Environment.Exit(1); // Salir de la aplicación
@@ -35,9 +35,9 @@ namespace gestionesAEAT
 
             try
             {
-                if (argumentos.Length < 2)
+                if(argumentos.Length < 2)
                 {
-                    if (argumentos.Length > 0 && (argumentos[0].ToUpper() == "-H" || argumentos[0] == "?"))
+                    if(argumentos.Length > 0 && (argumentos[0].ToUpper() == "-H" || argumentos[0] == "?"))
                     {
                         Utiles.MostrarAyuda();
                         Utiles.SalirAplicacion(log);
@@ -52,7 +52,7 @@ namespace gestionesAEAT
                 else
                 {
                     dsclave = argumentos[0];
-                    if (dsclave != "ds123456")
+                    if(dsclave != "ds123456")
                     {
                         log += "Clave de ejecucion incorrecta";
                         Utiles.SalirAplicacion(log);
@@ -61,7 +61,7 @@ namespace gestionesAEAT
                     Parametros.Configuracion.Inicializar();
                     Parametros.ficheroOpciones = argumentos[1];
 
-                    if (!File.Exists(Parametros.ficheroOpciones))
+                    if(!File.Exists(Parametros.ficheroOpciones))
                     {
                         log += "No existe el fichero de opciones";
                         Utiles.SalirAplicacion(log);
@@ -73,7 +73,7 @@ namespace gestionesAEAT
                         //Controla si las opciones pasadas son correctas.
                         string controlTipo = Parametros.tipo;
                         log += ControlOpciones(controlTipo);
-                        if (!string.IsNullOrEmpty(log)) Utiles.SalirAplicacion(log);
+                        if(!string.IsNullOrEmpty(log)) Utiles.SalirAplicacion(log);
 
                         try
                         {
@@ -83,7 +83,7 @@ namespace gestionesAEAT
                             EjecutaProceso();
                         }
 
-                        catch (ArgumentException ex)
+                        catch(ArgumentException ex)
                         {
                             log += $"Se ha producido un error al procesar la peticion. {ex.Message}";
                             Utiles.SalirAplicacion(log);
@@ -92,7 +92,7 @@ namespace gestionesAEAT
                 }
             }
 
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 MessageBox.Show("Se ha producido un error en el proceso. Contacte con el departamento tecnico.", "Error en la ejecucion", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 string mensaje = $"Error en el proceso {ex.Message}";
@@ -103,7 +103,7 @@ namespace gestionesAEAT
 
         private static void EjecutaProceso()
         {
-            switch (Parametros.tipo)
+            switch(Parametros.tipo)
             {
                 case "1":
                     //Envio de modelos. Necesita certificado 
@@ -132,7 +132,7 @@ namespace gestionesAEAT
                     ratifica.envioPeticion(paso);
 
                     //Si se ha pasado el nif del conyuge se procesa de nuevo
-                    if (ratifica.nifConyuge)
+                    if(ratifica.nifConyuge)
                     {
                         paso = 2;
                         //Parametros.ficheroSalida = Path.GetFileNameWithoutExtension(Parametros.ficheroSalida) + "2.txt";
@@ -179,19 +179,19 @@ namespace gestionesAEAT
         {
             string mensajeControl = string.Empty;
             StringBuilder mensaje = new StringBuilder();
-            switch (tipo)
+            switch(tipo)
             {
                 case "1":
                     frmSeleccion.tituloVentana = "Envío de modelos a la AEAT";
-                    if (Parametros.conCertificado == false) Parametros.conCertificado = true;
+                    if(Parametros.conCertificado == false) Parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
-                    if (!string.IsNullOrEmpty(mensajeControl))
+                    if(!string.IsNullOrEmpty(mensajeControl))
                     {
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
                     }
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
-                    if (!string.IsNullOrEmpty(mensajeControl))
+                    if(!string.IsNullOrEmpty(mensajeControl))
                     {
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
@@ -202,13 +202,13 @@ namespace gestionesAEAT
                 case "2":
                     frmSeleccion.tituloVentana = "Validación de modelos";
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
-                    if (!string.IsNullOrEmpty(mensajeControl))
+                    if(!string.IsNullOrEmpty(mensajeControl))
                     {
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
                     }
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
-                    if (!string.IsNullOrEmpty(mensajeControl))
+                    if(!string.IsNullOrEmpty(mensajeControl))
                     {
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
@@ -218,15 +218,15 @@ namespace gestionesAEAT
 
                 case "3":
                     frmSeleccion.tituloVentana = "Consulta de modelos presentados en la AEAT";
-                    if (Parametros.conCertificado == false) Parametros.conCertificado = true;
+                    if(Parametros.conCertificado == false) Parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
-                    if (!string.IsNullOrEmpty(mensajeControl))
+                    if(!string.IsNullOrEmpty(mensajeControl))
                     {
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
                     }
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
-                    if (!string.IsNullOrEmpty(mensajeControl))
+                    if(!string.IsNullOrEmpty(mensajeControl))
                     {
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
@@ -236,15 +236,15 @@ namespace gestionesAEAT
 
                 case "4":
                     frmSeleccion.tituloVentana = "Ratificación domicilio renta";
-                    if (Parametros.conCertificado == false) Parametros.conCertificado = true;
+                    if(Parametros.conCertificado == false) Parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
-                    if (!string.IsNullOrEmpty(mensajeControl))
+                    if(!string.IsNullOrEmpty(mensajeControl))
                     {
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
                     }
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
-                    if (!string.IsNullOrEmpty(mensajeControl))
+                    if(!string.IsNullOrEmpty(mensajeControl))
                     {
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
@@ -255,56 +255,84 @@ namespace gestionesAEAT
                 case "5":
                     frmSeleccion.tituloVentana = "Descarga datos fiscales de renta";
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
-                    if (!string.IsNullOrEmpty(mensajeControl))
+                    if(!string.IsNullOrEmpty(mensajeControl))
                     {
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
                     }
                     mensajeControl = Parametros.ControlDatosParametros("nifDf");
-                    if (!string.IsNullOrEmpty(mensajeControl))
+                    if(!string.IsNullOrEmpty(mensajeControl))
                     {
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
                     }
-                    mensajeControl = Parametros.ControlDatosParametros("refRenta");
-                    if (!string.IsNullOrEmpty(mensajeControl))
+
+                    // Si no se ha pasado la referencia, se utiliza la opcion para la descarga con certificado digital
+                    if(string.IsNullOrEmpty(Parametros.refRenta))
                     {
-                        mensaje.AppendLine(mensajeControl);
-                        mensajeControl = string.Empty;
+                        Parametros.urlDescargaDfConCertificado = Parametros.urlDescargaDfConReferencia.Replace("www9.", "www1.");
                     }
-                    mensajeControl = Parametros.ControlDatosParametros("urlDescargaDf");
-                    if (!string.IsNullOrEmpty(mensajeControl))
+
+                    // Control de parametros de la url de descarga
+                    if(Parametros.DescargarConCertificado)
                     {
-                        mensaje.AppendLine(mensajeControl);
-                        mensajeControl = string.Empty;
+                        // Se fuerza a utilizar un certificado (se abre el formulario de seleccion)
+                        Parametros.conCertificado = true;
+
+                        // En el caso de la descarga con certificado, se valida que la url de descarga se haya generado correctamente (necesita la url de descarga con referencia)
+                        mensajeControl = Parametros.ControlDatosParametros("urlDescargaDfConCertificado");
+                        if(!string.IsNullOrEmpty(mensajeControl))
+                        {
+                            mensaje.AppendLine(mensajeControl);
+                            mensajeControl = string.Empty;
+                        }
+
+                    }
+                    else
+                    {
+                        // En el caso de descarga con referencia de renta, se controla que la url de descarga se haya pasado correctamente, y que tambien este la referencia de renta
+                        mensajeControl = Parametros.ControlDatosParametros("urlDescargaDfConReferencia");
+                        if(!string.IsNullOrEmpty(mensajeControl))
+                        {
+                            mensaje.AppendLine(mensajeControl);
+                            mensajeControl = string.Empty;
+                        }
+
+                        // Control para la referencia de renta
+                        mensajeControl = Parametros.ControlDatosParametros("refRenta");
+                        if(!string.IsNullOrEmpty(mensajeControl))
+                        {
+                            mensaje.AppendLine(mensajeControl);
+                            mensajeControl = string.Empty;
+                        }
                     }
 
                     break;
 
                 case "6":
                     frmSeleccion.tituloVentana = "Envío de facturas al SII";
-                    if (Parametros.conCertificado == false) Parametros.conCertificado = true;
+                    if(Parametros.conCertificado == false) Parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
-                    if (!string.IsNullOrEmpty(mensajeControl))
+                    if(!string.IsNullOrEmpty(mensajeControl))
                     {
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
                     }
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
-                    if (!string.IsNullOrEmpty(mensajeControl))
+                    if(!string.IsNullOrEmpty(mensajeControl))
                     {
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
                     }
                     mensajeControl = Parametros.ControlDatosParametros("UrlSii");
-                    if (!string.IsNullOrEmpty(mensajeControl))
+                    if(!string.IsNullOrEmpty(mensajeControl))
                     {
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
                     }
 
                     mensajeControl = Parametros.ControlDatosParametros("respuesta");
-                    if (!string.IsNullOrEmpty(mensajeControl))
+                    if(!string.IsNullOrEmpty(mensajeControl))
                     {
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
@@ -314,15 +342,15 @@ namespace gestionesAEAT
 
                 case "7":
                     frmSeleccion.tituloVentana = "Presentación de declaraciones informativas";
-                    if (Parametros.conCertificado == false) Parametros.conCertificado = true;
+                    if(Parametros.conCertificado == false) Parametros.conCertificado = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
-                    if (!string.IsNullOrEmpty(mensajeControl))
+                    if(!string.IsNullOrEmpty(mensajeControl))
                     {
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
                     }
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
-                    if (!string.IsNullOrEmpty(mensajeControl))
+                    if(!string.IsNullOrEmpty(mensajeControl))
                     {
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
@@ -332,13 +360,13 @@ namespace gestionesAEAT
                 case "8":
                     frmSeleccion.tituloVentana = "Pago de modelos mediante NRC con cargo en cuenta";
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
-                    if (!string.IsNullOrEmpty(mensajeControl))
+                    if(!string.IsNullOrEmpty(mensajeControl))
                     {
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
                     }
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
-                    if (!string.IsNullOrEmpty(mensajeControl))
+                    if(!string.IsNullOrEmpty(mensajeControl))
                     {
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
@@ -347,7 +375,7 @@ namespace gestionesAEAT
 
                 case "9":
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
-                    if (!string.IsNullOrEmpty(mensajeControl))
+                    if(!string.IsNullOrEmpty(mensajeControl))
                     {
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
@@ -357,13 +385,13 @@ namespace gestionesAEAT
                 case "10":
                     frmSeleccion.tituloVentana = "Validación de NIF";
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
-                    if (!string.IsNullOrEmpty(mensajeControl))
+                    if(!string.IsNullOrEmpty(mensajeControl))
                     {
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
                     }
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
-                    if (!string.IsNullOrEmpty(mensajeControl))
+                    if(!string.IsNullOrEmpty(mensajeControl))
                     {
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
@@ -398,25 +426,25 @@ namespace gestionesAEAT
             Program.gestionCertificados.cargarCertificadosAlmacen();
             string mensaje = string.Empty;
             //Metodo para controlar si no se ha seleccionado un certificado y solicitarlo por pantalla
-            if (Parametros.conCertificado)
+            if(Parametros.conCertificado)
             {
                 //Si se ha pasado un texto de busqueda, localiza el numero de serie del certificado por ese texto.
-                if (!string.IsNullOrEmpty(Parametros.textoBusqueda))
+                if(!string.IsNullOrEmpty(Parametros.textoBusqueda))
                 {
                     Parametros.serieCertificado = gestionCertificados.buscarCertificado(Parametros.textoBusqueda);
                 }
                 else
                 {
                     //Si se ha pasado un fichero con el certificado
-                    if (!string.IsNullOrEmpty(Parametros.ficheroCertificado))
+                    if(!string.IsNullOrEmpty(Parametros.ficheroCertificado))
                     {
                         //Controla si existe el fichero y se ha pasado la contraseña
-                        if (!File.Exists(Parametros.ficheroCertificado))
+                        if(!File.Exists(Parametros.ficheroCertificado))
                         {
                             mensaje = $"El fichero del certificado {Parametros.ficheroCertificado} no existe";
                             Utiles.SalirAplicacion(mensaje);
                         }
-                        if (string.IsNullOrEmpty(Parametros.passwordCertificado))
+                        if(string.IsNullOrEmpty(Parametros.passwordCertificado))
                         {
                             mensaje = "No se ha pasado la contraseña del certificado";
                             Utiles.SalirAplicacion(mensaje);
@@ -425,10 +453,10 @@ namespace gestionesAEAT
                         (string resultadoLectura, bool resultado) = gestionCertificados.leerCertificado(Parametros.ficheroCertificado, Parametros.passwordCertificado);
 
                         //Se borra el fichero del certificado para evitar usos indebidos
-                        if (File.Exists(Parametros.ficheroCertificado)) File.Delete(Parametros.ficheroCertificado);
+                        if(File.Exists(Parametros.ficheroCertificado)) File.Delete(Parametros.ficheroCertificado);
 
                         //Si se produce algun error en la lectura se sale de la aplicacion
-                        if (resultadoLectura != "OK")
+                        if(resultadoLectura != "OK")
                         {
                             mensaje = $"Error al leer el certificado. {resultadoLectura}";
                             Utiles.SalirAplicacion(mensaje);
@@ -438,7 +466,7 @@ namespace gestionesAEAT
                 }
 
                 //Si no se ha podido leer el certificado se solicita por pantalla
-                if (string.IsNullOrEmpty(Parametros.serieCertificado))
+                if(string.IsNullOrEmpty(Parametros.serieCertificado))
                 {
                     seleccionCertificados();
                 }
@@ -449,7 +477,7 @@ namespace gestionesAEAT
                 {
                     X509Certificate2 certificado = Program.gestionCertificados.exportaCertificadoDigitalSeguro(Parametros.serieCertificado);
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
                     MessageBox.Show($"{ex.Message}", "Error en la ejecucion", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     Utiles.GrabarSalida($"E00 = {ex.Message}", Parametros.ficheroSalida);
