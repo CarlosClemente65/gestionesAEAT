@@ -30,13 +30,7 @@ namespace gestionesAEAT.Utilidades
         public static string urlDescargaDfConReferencia { get; set; } = string.Empty;
         public static string urlDescargaDfConCertificado { get; set; } = string.Empty;
 
-        public static bool DescargarConCertificado
-        {
-            get
-            {
-                return !string.IsNullOrEmpty(urlDescargaDfConCertificado);
-            }
-        }
+        public static bool DescargarConCertificado { get; set;  } = false;
         public static string urlCSV { get; set; } = string.Empty;
         public static Encoding codificacion { get; set; } = Encoding.UTF8;
 
@@ -189,7 +183,11 @@ namespace gestionesAEAT.Utilidades
                             mensaje = "No se ha pasado la referencia de la renta";
                             break;
 
-                        case "urlDescargaDf":
+                        case "urlDescargaDfConReferencia":
+                            mensaje = "No se ha pasado la url de descarga de datos fiscales";
+                            break;
+
+                        case "urlDescargaDfConCertificado":
                             mensaje = "No se ha pasado la url de descarga de datos fiscales";
                             break;
 

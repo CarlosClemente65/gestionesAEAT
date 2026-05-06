@@ -254,12 +254,16 @@ namespace gestionesAEAT
 
                 case "5":
                     frmSeleccion.tituloVentana = "Descarga datos fiscales de renta";
+
+                    // Se valida que se haya pasado el fichero de salida
                     mensajeControl = Parametros.ControlDatosParametros("ficheroSalida");
                     if(!string.IsNullOrEmpty(mensajeControl))
                     {
                         mensaje.AppendLine(mensajeControl);
                         mensajeControl = string.Empty;
                     }
+
+                    // Se valida que se haya pasado el NIF
                     mensajeControl = Parametros.ControlDatosParametros("nifDf");
                     if(!string.IsNullOrEmpty(mensajeControl))
                     {
@@ -267,26 +271,22 @@ namespace gestionesAEAT
                         mensajeControl = string.Empty;
                     }
 
-                    // Si no se ha pasado la referencia, se utiliza la opcion para la descarga con certificado digital
+                    // Si no se ha pasado el numero de referencia, la descarga sera con certificado digital
                     if(string.IsNullOrEmpty(Parametros.refRenta))
                     {
-                        Parametros.urlDescargaDfConCertificado = Parametros.urlDescargaDfConReferencia.Replace("www9.", "www1.");
-                    }
-
-                    // Control de parametros de la url de descarga
-                    if(Parametros.DescargarConCertificado)
-                    {
-                        // Se fuerza a utilizar un certificado (se abre el formulario de seleccion)
+                        Parametros.urlDescargaDfConCertificado = Parametros.urlDescargaDfConReferencia;
+                        Parametros.DescargarConCertificado = true;
+                    
+                        // Se fuerza a utilizar un certificado (se abre el formulario de seleccion si no se pasa el certificado en el guion)
                         Parametros.conCertificado = true;
 
-                        // En el caso de la descarga con certificado, se valida que la url de descarga se haya generado correctamente (necesita la url de descarga con referencia)
+                        // Se valida que la url de descarga se haya generado correctamente (necesita la url de descarga con referencia)
                         mensajeControl = Parametros.ControlDatosParametros("urlDescargaDfConCertificado");
                         if(!string.IsNullOrEmpty(mensajeControl))
                         {
                             mensaje.AppendLine(mensajeControl);
                             mensajeControl = string.Empty;
                         }
-
                     }
                     else
                     {
@@ -298,7 +298,7 @@ namespace gestionesAEAT
                             mensajeControl = string.Empty;
                         }
 
-                        // Control para la referencia de renta
+                        // Control para la referencia de renta (en teoria no entrara nunca en esta parte porque el control de la referencia de renta se hace en el bloque de descarga con certificado, pero se deja por si acaso)
                         mensajeControl = Parametros.ControlDatosParametros("refRenta");
                         if(!string.IsNullOrEmpty(mensajeControl))
                         {

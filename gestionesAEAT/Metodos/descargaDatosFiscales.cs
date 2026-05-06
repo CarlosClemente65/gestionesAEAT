@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -42,7 +43,6 @@ namespace gestionesAEAT.Metodos
         public void descargaDF()
         {
             //Metodo para descargar los datos fiscales
-            //urlDescarga = Parametros.DescargarConCertificado ? Parametros.urlDescargaDfConCertificado : Parametros.urlDescargaDfConReferencia;
 
             // Llama al metodo que corresponde segun si se ha pasado o no la referencia de renta
             if(Parametros.DescargarConCertificado)
@@ -180,7 +180,7 @@ namespace gestionesAEAT.Metodos
                     // 2. Procesar la respuesta recibida
                     if(!string.IsNullOrEmpty(respuestaAEAT))
                     {
-                        // Aquí reutilizas tu lógica de detección de tipo (XML, HTML, TXT)
+                        
                         tipoContenido tipoRespuesta = detectarTipoRespuestaAEAT(respuestaAEAT);
 
                         switch(tipoRespuesta)
@@ -210,7 +210,11 @@ namespace gestionesAEAT.Metodos
 
                             case tipoContenido.TXT:
                                 //Si es un fichero de texto no hay que modificar nada
-
+                                if(respuestaAEAT.IndexOf("Error", StringComparison.OrdinalIgnoreCase) >= 0)
+                                {
+                                    // Si en la respuesta de Hacienda aparece la palabra "Error" se graba como error aunque sea un txt
+                                    mensajeError = $"Error en la descarga. Descripcion del error: {respuestaAEAT}";
+                                }
                                 break;
 
                             case tipoContenido.desconocido:
