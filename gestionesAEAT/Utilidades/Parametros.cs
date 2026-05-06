@@ -19,7 +19,7 @@ namespace gestionesAEAT.Utilidades
         public static string ficheroResultado { get; set; } = "errores.sal";
         public static string UrlSii { get; set; } = string.Empty;
         public static string[] respuesta { get; set; } = new string[0];
-        public static bool conCertificado { get; set; } = false;
+        public static bool CertificadoNecesario { get; set; } = false;
         public static string textoBusqueda { get; set; } = string.Empty;
         public static string serieCertificado { get; set; } = string.Empty;
         public static string ficheroCertificado { get; set; } = string.Empty;
@@ -27,10 +27,10 @@ namespace gestionesAEAT.Utilidades
         public static string nifDf { get; set; } = string.Empty;
         public static string refRenta { get; set; } = string.Empty;
         public static string datosPersonales { get; set; } = "S";
-        public static string urlDescargaDfConReferencia { get; set; } = string.Empty;
-        public static string urlDescargaDfConCertificado { get; set; } = string.Empty;
+        public static string urlDescargaDf { get; set; } = string.Empty;
+        //public static string urlDescargaDfConCertificado { get; set; } = string.Empty;
 
-        public static bool DescargarConCertificado { get; set;  } = false;
+        public static bool DescargarDfConCertificado { get; set;  } = false;
         public static string urlCSV { get; set; } = string.Empty;
         public static Encoding codificacion { get; set; } = Encoding.UTF8;
 
@@ -85,7 +85,7 @@ namespace gestionesAEAT.Utilidades
                         break;
 
                     case "OBLIGADO":
-                        if(valor.ToUpper() == "SI") conCertificado = true;
+                        if(valor.ToUpper() == "SI") CertificadoNecesario = true;
                         break;
 
                     case "BUSQUEDA":
@@ -114,7 +114,7 @@ namespace gestionesAEAT.Utilidades
                         break;
 
                     case "URLRENTA":
-                        urlDescargaDfConReferencia = valor;
+                        urlDescargaDf = valor;
                         break;
 
                     case "URLCSV":
@@ -183,11 +183,7 @@ namespace gestionesAEAT.Utilidades
                             mensaje = "No se ha pasado la referencia de la renta";
                             break;
 
-                        case "urlDescargaDfConReferencia":
-                            mensaje = "No se ha pasado la url de descarga de datos fiscales";
-                            break;
-
-                        case "urlDescargaDfConCertificado":
+                        case "urlDescargaDf":
                             mensaje = "No se ha pasado la url de descarga de datos fiscales";
                             break;
 

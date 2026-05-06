@@ -141,8 +141,7 @@ namespace gestionesAEAT
                     break;
 
                 case "5":
-                    //Descarga datos fiscales renta. No necesita certificado
-                    //Se puede hacer con certificado, pero esta preparado para hacerlo con la referencia de renta.
+                    //Descarga datos fiscales renta. Se puede hacer con certificado o con referencia de renta.
                     descargaDatosFiscales descargaDF = new descargaDatosFiscales();
                     descargaDF.descargaDF();
                     break;
@@ -183,7 +182,7 @@ namespace gestionesAEAT
             {
                 case "1":
                     frmSeleccion.tituloVentana = "Envío de modelos a la AEAT";
-                    if(Parametros.conCertificado == false) Parametros.conCertificado = true;
+                    if(Parametros.CertificadoNecesario == false) Parametros.CertificadoNecesario = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if(!string.IsNullOrEmpty(mensajeControl))
                     {
@@ -218,7 +217,7 @@ namespace gestionesAEAT
 
                 case "3":
                     frmSeleccion.tituloVentana = "Consulta de modelos presentados en la AEAT";
-                    if(Parametros.conCertificado == false) Parametros.conCertificado = true;
+                    if(Parametros.CertificadoNecesario == false) Parametros.CertificadoNecesario = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if(!string.IsNullOrEmpty(mensajeControl))
                     {
@@ -236,7 +235,7 @@ namespace gestionesAEAT
 
                 case "4":
                     frmSeleccion.tituloVentana = "Ratificación domicilio renta";
-                    if(Parametros.conCertificado == false) Parametros.conCertificado = true;
+                    if(Parametros.CertificadoNecesario == false) Parametros.CertificadoNecesario = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if(!string.IsNullOrEmpty(mensajeControl))
                     {
@@ -274,31 +273,14 @@ namespace gestionesAEAT
                     // Si no se ha pasado el numero de referencia, la descarga sera con certificado digital
                     if(string.IsNullOrEmpty(Parametros.refRenta))
                     {
-                        Parametros.urlDescargaDfConCertificado = Parametros.urlDescargaDfConReferencia;
-                        Parametros.DescargarConCertificado = true;
-                    
-                        // Se fuerza a utilizar un certificado (se abre el formulario de seleccion si no se pasa el certificado en el guion)
-                        Parametros.conCertificado = true;
+                        Parametros.DescargarDfConCertificado = true;
 
-                        // Se valida que la url de descarga se haya generado correctamente (necesita la url de descarga con referencia)
-                        mensajeControl = Parametros.ControlDatosParametros("urlDescargaDfConCertificado");
-                        if(!string.IsNullOrEmpty(mensajeControl))
-                        {
-                            mensaje.AppendLine(mensajeControl);
-                            mensajeControl = string.Empty;
-                        }
+                        // Se fuerza a utilizar un certificado
+                        Parametros.CertificadoNecesario = true;
                     }
                     else
                     {
-                        // En el caso de descarga con referencia de renta, se controla que la url de descarga se haya pasado correctamente, y que tambien este la referencia de renta
-                        mensajeControl = Parametros.ControlDatosParametros("urlDescargaDfConReferencia");
-                        if(!string.IsNullOrEmpty(mensajeControl))
-                        {
-                            mensaje.AppendLine(mensajeControl);
-                            mensajeControl = string.Empty;
-                        }
-
-                        // Control para la referencia de renta (en teoria no entrara nunca en esta parte porque el control de la referencia de renta se hace en el bloque de descarga con certificado, pero se deja por si acaso)
+                        // Control para la referencia de renta (en teoria no entrara nunca en esta parte porque el control de la referencia de renta se hace en el bloque anterior, pero se deja por si acaso)
                         mensajeControl = Parametros.ControlDatosParametros("refRenta");
                         if(!string.IsNullOrEmpty(mensajeControl))
                         {
@@ -307,11 +289,19 @@ namespace gestionesAEAT
                         }
                     }
 
+                    // Control de que se ha pasado la url de descarga 
+                    mensajeControl = Parametros.ControlDatosParametros("urlDescargaDf");
+                    if(!string.IsNullOrEmpty(mensajeControl))
+                    {
+                        mensaje.AppendLine(mensajeControl);
+                        mensajeControl = string.Empty;
+                    }
+
                     break;
 
                 case "6":
                     frmSeleccion.tituloVentana = "Envío de facturas al SII";
-                    if(Parametros.conCertificado == false) Parametros.conCertificado = true;
+                    if(Parametros.CertificadoNecesario == false) Parametros.CertificadoNecesario = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if(!string.IsNullOrEmpty(mensajeControl))
                     {
@@ -342,7 +332,7 @@ namespace gestionesAEAT
 
                 case "7":
                     frmSeleccion.tituloVentana = "Presentación de declaraciones informativas";
-                    if(Parametros.conCertificado == false) Parametros.conCertificado = true;
+                    if(Parametros.CertificadoNecesario == false) Parametros.CertificadoNecesario = true;
                     mensajeControl = Parametros.ControlDatosParametros("ficheroEntrada");
                     if(!string.IsNullOrEmpty(mensajeControl))
                     {
@@ -426,7 +416,7 @@ namespace gestionesAEAT
             Program.gestionCertificados.cargarCertificadosAlmacen();
             string mensaje = string.Empty;
             //Metodo para controlar si no se ha seleccionado un certificado y solicitarlo por pantalla
-            if(Parametros.conCertificado)
+            if(Parametros.CertificadoNecesario)
             {
                 //Si se ha pasado un texto de busqueda, localiza el numero de serie del certificado por ese texto.
                 if(!string.IsNullOrEmpty(Parametros.textoBusqueda))
