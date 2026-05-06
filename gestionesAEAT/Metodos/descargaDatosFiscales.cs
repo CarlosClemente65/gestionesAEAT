@@ -44,15 +44,14 @@ namespace gestionesAEAT.Metodos
         {
             //Metodo para descargar los datos fiscales
 
+            urlDescarga = Parametros.urlDescargaDf;
             // Llama al metodo que corresponde segun si se ha pasado o no la referencia de renta
-            if(Parametros.DescargarConCertificado)
+            if(Parametros.DescargarDfConCertificado)
             {
-                urlDescarga = Parametros.urlDescargaDfConCertificado;
                 DescargaConCertificado();
             }
             else
             {
-                urlDescarga = Parametros.urlDescargaDfConReferencia;
                 DescargaConReferencia();
             }
         }
@@ -61,6 +60,7 @@ namespace gestionesAEAT.Metodos
         private void DescargaConReferencia()
         {
             string respuestaAEAT = string.Empty;
+            string mensajeError = string.Empty;
             byte[] datosEnvio = null;
             try
             {
@@ -74,19 +74,20 @@ namespace gestionesAEAT.Metodos
 
                 datosEnvio = Encoding.Default.GetBytes(datos.ToString()); //Codificacion en ansi
 
+                // Se hace el envio de la solicitud a la AEAT y se obtiene la respuesta
                 respuestaAEAT = envioSolicitud(datosEnvio);
-
-                string mensajeError = string.Empty;
 
                 // Procesar la respuesta de la AEAT
                 if(!string.IsNullOrEmpty(respuestaAEAT))
                 {
+                    // Detectar el tipo de contenido de la respuesta de la AEAT (txt, html, xml) para procesarla correctamente
                     tipoContenido tipoRespuesta = detectarTipoRespuestaAEAT(respuestaAEAT);
                     switch(tipoRespuesta)
                     {
                         case tipoContenido.XML:
                             try
                             {
+                                // Si es un XML se deserializa para comprobar si hay errores en la descarga
                                 refrenta respuestaXML = DeserializarXml<refrenta>(respuestaAEAT);
                                 if(respuestaXML.Status != 0)
                                 {
@@ -96,20 +97,24 @@ namespace gestionesAEAT.Metodos
 
                             catch(Exception ex)
                             {
-                                mensajeError = ($"Error en la descarga. Descripcion del error: {ex.Message}");
+                                mensajeError = $"Error en la descarga. Descripcion del error: {ex.Message}";
                             }
 
                             break;
 
                         case tipoContenido.HTML:
-                            //Si es un html se graba el fichero para ver los errores
+                            // Si es un html se graba el fichero para ver los errores
                             ficheroSalida = Path.ChangeExtension(ficheroSalida, "html");
 
                             break;
 
                         case tipoContenido.TXT:
-                            //Si es un fichero de texto no hay que modificar nada
-
+                            // Si es un fichero de texto no hay que modificar nada, pero puede llegar un mensaje de error que hay que detectar para poder grabarlo en la salida
+                            if(respuestaAEAT.IndexOf("Error", StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                // Si en la respuesta de Hacienda aparece la palabra "Error" se graba como error aunque sea un txt
+                                mensajeError = $"Error en la descarga. Descripcion del error: {respuestaAEAT}";
+                            }
                             break;
 
                         case tipoContenido.desconocido:
@@ -147,11 +152,12 @@ namespace gestionesAEAT.Metodos
             string mensajeError = string.Empty;
             X509Certificate2 certificado = null; // Necesario para la autenticacion en la web de descarga de la AEAT
 
+            // Obtener el certificado digital que se utilizara para la autenticacion.
             bool resultado = false;
             (certificado, resultado) = Program.gestionCertificados.exportaCertificadoDigital(Parametros.serieCertificado);
 
             // Configuración de la URL para la descarga
-            string urlPeticion = $"{Parametros.urlDescargaDfConCertificado}?nif={Parametros.nifDf}&pdp={Parametros.datosPersonales}";
+            string urlPeticion = $"{Parametros.urlDescargaDf}?nif={Parametros.nifDf}&pdp={Parametros.datosPersonales}";
 
             try
             {
@@ -160,6 +166,7 @@ namespace gestionesAEAT.Metodos
                     // Protocolo de seguridad requerido
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
+                    // Realizar la petición a la AEAT con el certificado para descargar los datos fiscales
                     HttpWebRequest solicitud = (HttpWebRequest)WebRequest.Create(urlPeticion);
                     solicitud.Method = "GET";
                     solicitud.UserAgent = "Mozilla/5.0"; // Evita bloqueos de seguridad básicos
@@ -168,23 +175,25 @@ namespace gestionesAEAT.Metodos
                     // Se añade el certificado a la peticion
                     solicitud.ClientCertificates.Add(certificado);
 
+                    // Obtener la respuesta de la AEAT a la solicitud de descarga de los datos fiscales
                     using(HttpWebResponse respuesta = (HttpWebResponse)solicitud.GetResponse())
                     {
-                        // La AEAT suele usar Encoding.Default (ANSI) para los ficheros de datos
+                        // Leer el contenido de la respuesta de la AEAT
                         using(StreamReader reader = new StreamReader(respuesta.GetResponseStream(), Encoding.Default))
                         {
                             respuestaAEAT = reader.ReadToEnd();
                         }
                     }
 
-                    // 2. Procesar la respuesta recibida
+                    // Procesar la respuesta recibida
                     if(!string.IsNullOrEmpty(respuestaAEAT))
                     {
-                        
+                        // Detectar el tipo de contenido de la respuesta de la AEAT (txt, html, xml) para procesarla correctamente
                         tipoContenido tipoRespuesta = detectarTipoRespuestaAEAT(respuestaAEAT);
 
                         switch(tipoRespuesta)
                         {
+                            // Si es un XML se deserializa para comprobar si hay errores en la descarga
                             case tipoContenido.XML:
                                 try
                                 {
@@ -197,19 +206,19 @@ namespace gestionesAEAT.Metodos
 
                                 catch(Exception ex)
                                 {
-                                    mensajeError = ($"Error en la descarga. Descripcion del error: {ex.Message}");
+                                    mensajeError = $"Error en la descarga. Descripcion del error: {ex.Message}";
                                 }
 
                                 break;
 
                             case tipoContenido.HTML:
-                                //Si es un html se graba el fichero para ver los errores
+                                // Si es un html se graba el fichero para ver los errores
                                 ficheroSalida = Path.ChangeExtension(ficheroSalida, "html");
 
                                 break;
 
                             case tipoContenido.TXT:
-                                //Si es un fichero de texto no hay que modificar nada
+                                // Si es un fichero de texto no hay que modificar nada pero puede llegar un mensaje de error que hay que detectar para poder grabarlo en la salida
                                 if(respuestaAEAT.IndexOf("Error", StringComparison.OrdinalIgnoreCase) >= 0)
                                 {
                                     // Si en la respuesta de Hacienda aparece la palabra "Error" se graba como error aunque sea un txt
@@ -281,12 +290,15 @@ namespace gestionesAEAT.Metodos
             string contenidoRespuesta = string.Empty;
             try
             {
-                //Protocolo de seguridad
+                // Para la descarga con referencia se debe  hacer una peticion a la url de autenticacion para obtener las cookies de sesion necesarias para luego hacer la peticion de descarga de los datos fiscales.
+
+                // Configuracion del protocolo de seguridad
                 System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-                CookieContainer cookies = new CookieContainer(); //Para que todas las llamadas se hagan sobre la misma sesion
+                // Crear un contenedor de cookies para mantener la sesión entre las peticiones
+                CookieContainer cookies = new CookieContainer();
 
-                //Crear datos para la solicitud HTTP
+                // Crear datos para la solicitud HTTP a la url de autenticacion de la AEAT
                 HttpWebRequest solicitudHttp = (HttpWebRequest)WebRequest.Create(urlAutenticacion);
 
                 //Configurar la solicitud
@@ -296,11 +308,12 @@ namespace gestionesAEAT.Metodos
                 solicitudHttp.CookieContainer = cookies;
                 solicitudHttp.KeepAlive = true;
 
-                //Grabacion de los datos a enviar al servidor
+                // Enviar los datos de la referencia de renta en la solicitud POST
                 Stream requestStream = solicitudHttp.GetRequestStream();
                 requestStream.Write(datosEnvio, 0, datosEnvio.Length);
                 requestStream.Close();
 
+                // Obtener la respuesta de la AEAT a la solicitud de autenticacion
                 HttpWebResponse respuesta = (HttpWebResponse)solicitudHttp.GetResponse();
                 Stream datosRespuesta = respuesta.GetResponseStream();
                 StreamReader reader = new StreamReader(datosRespuesta, Encoding.UTF8, false, 512);
@@ -311,20 +324,25 @@ namespace gestionesAEAT.Metodos
 
                 if(estadoRespuestaAEAT == "OK")
                 {
+                    // Si la autenticacion ha sido correcta se hace la peticion de descarga de los datos fiscales a la url de descarga, utilizando las cookies de sesion obtenidas en la autenticacion
                     if(contenidoRespuesta.IndexOf("<status>0</status>") != -1)
                     {
-                        urlDescarga = $"{Parametros.urlDescargaDfConCertificado}?nif={Parametros.nifDf}&pdp={Parametros.datosPersonales}";
+                        // Se genera la url de descarga con la url y se le añaden los parametros del nif y datos personales
+                        urlDescarga = $"{Parametros.urlDescargaDf}?nif={Parametros.nifDf}&pdp={Parametros.datosPersonales}";
+
+                        // Peticion de descarga de los datos fiscales a la url de descarga, utilizando las cookies de sesion obtenidas en la autenticacion
                         HttpWebRequest solicitudHttp1 = (HttpWebRequest)WebRequest.Create(urlDescarga);
                         solicitudHttp1.CookieContainer = cookies;
                         solicitudHttp1.KeepAlive = true;
                         solicitudHttp1.Method = "GET";
 
-                        HttpWebResponse respuesta1 = (HttpWebResponse)solicitudHttp1.GetResponse();
-                        Stream datosRespuesta1 = respuesta1.GetResponseStream();
-                        StreamReader reader1 = new StreamReader(datosRespuesta1, Encoding.Default, false, 512);
+                        // Obtener la respuesta de la AEAT a la solicitud de descarga de los datos fiscales
+                        HttpWebResponse respuestaDescarga = (HttpWebResponse)solicitudHttp1.GetResponse();
+                        Stream datosRespuestaDescarga = respuestaDescarga.GetResponseStream();
+                        StreamReader contenidoRespuestaDescarga = new StreamReader(datosRespuestaDescarga, Encoding.Default, false, 512);
 
-                        string estadoRespuestaAEAT1 = respuesta1.StatusDescription;
-                        if(estadoRespuestaAEAT1 == "OK") contenidoRespuesta = reader1.ReadToEnd();
+                        // Si el estado de la respuesta es OK se lee el contenido de la respuesta que son los datos fiscales y se graban en la variable conenidoRespuesta que es el valor que se devuelve
+                        if(respuestaDescarga.StatusDescription == "OK") contenidoRespuesta = contenidoRespuestaDescarga.ReadToEnd();
                     }
                     File.WriteAllText(ficheroResultado, "OK");
                 }
