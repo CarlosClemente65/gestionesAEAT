@@ -126,7 +126,6 @@ namespace gestionesAEAT.Metodos
 
                             break;
                     }
-                    File.WriteAllText(ficheroResultado, "OK");
                 }
 
                 //Si se ha producido un error se graba la salida y no se procesan mas veces la salida (grabarSalida = true)
@@ -136,7 +135,13 @@ namespace gestionesAEAT.Metodos
                     Utiles.grabadaSalida = true;
                 }
 
-                if(string.IsNullOrEmpty(mensajeError) && !string.IsNullOrEmpty(respuestaAEAT)) Utiles.GrabarSalida(respuestaAEAT, ficheroSalida);
+                // Si no hay errores y se ha recibido una respuesta se graba la respuesta en el fichero de salida
+                if(string.IsNullOrEmpty(mensajeError) && !string.IsNullOrEmpty(respuestaAEAT))
+                {
+                    // Se graba el ficheroResultado para indicar que el proceso ha terminado
+                    File.WriteAllText(ficheroResultado, "OK");
+                    Utiles.GrabarSalida(respuestaAEAT, ficheroSalida);
+                }
             }
 
             catch(Exception ex)
@@ -243,7 +248,13 @@ namespace gestionesAEAT.Metodos
                             Utiles.grabadaSalida = true;
                         }
 
-                        if(string.IsNullOrEmpty(mensajeError) && !string.IsNullOrEmpty(respuestaAEAT)) Utiles.GrabarSalida(respuestaAEAT, ficheroSalida);
+                        // Si no hay errores y se ha recibido una respuesta se graba la respuesta en el fichero de salida
+                        if(string.IsNullOrEmpty(mensajeError) && !string.IsNullOrEmpty(respuestaAEAT))
+                        {
+                            // Se graba el ficheroResultado para indicar que el proceso ha terminado
+                            File.WriteAllText(ficheroResultado, "OK");
+                            Utiles.GrabarSalida(respuestaAEAT, ficheroSalida);
+                        }
                     }
                 }
             }
