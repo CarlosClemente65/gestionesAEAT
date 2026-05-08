@@ -105,6 +105,10 @@ namespace gestionesAEAT.Metodos
                         case tipoContenido.HTML:
                             // Si es un html se graba el fichero para ver los errores
                             ficheroSalida = Path.ChangeExtension(ficheroSalida, "html");
+                            Utiles.GrabarSalida(respuestaAEAT, ficheroSalida);
+
+                            // Se graba un mensaje de error en el fichero de resultado
+                            mensajeError = ($"Se ha producido un error en el proceso. Revise el fichero de respuesta");
 
                             break;
 
@@ -219,6 +223,10 @@ namespace gestionesAEAT.Metodos
                             case tipoContenido.HTML:
                                 // Si es un html se graba el fichero para ver los errores
                                 ficheroSalida = Path.ChangeExtension(ficheroSalida, "html");
+                                Utiles.GrabarSalida(respuestaAEAT, ficheroSalida);
+
+                                // Se graba un mensaje de error en el fichero de resultado
+                                mensajeError = ($"Se ha producido un error en el proceso. Revise el fichero de respuesta");
 
                                 break;
 
