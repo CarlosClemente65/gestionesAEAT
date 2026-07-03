@@ -1,0 +1,1 @@
+E00 = SCED.ERROR.005 - Rechazada por duplicidad. Titular figura como titular de otra declaracion.

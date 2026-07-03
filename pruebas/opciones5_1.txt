@@ -1,0 +1,8 @@
+TIPO=5
+SALIDA=respuesta_descarga.txt
+NIFRENTA=05165277Y
+REFRENTA=
+DPRENTA=S
+URLRENTA=https://www1.agenciatributaria.gob.es/wlpl/DFPA-D182/SvDesDF25Pei
+*CERTIFICADO=mio.pfx
+*PASSWORD=Carlos65

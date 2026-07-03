@@ -1,0 +1,8 @@
+[url]
+https://www1.agenciatributaria.gob.es/wlpl/TOAG-JDIT/IsRatificadoExJson
+[cabecera]
+EJERCICIO=2024
+NIF=27295045W
+NIF2=52262062J
+[respuesta]
+domicilioRatificado

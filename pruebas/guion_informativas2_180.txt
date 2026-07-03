@@ -1,0 +1,18 @@
+[url]
+https://prewww1.aeat.es/wlpl/OVPT-NTGV/EnviarDatos
+[cabecera]
+IDENVIO = 18020230A202411140000282801
+NUMBLOQUE = 1
+CODIFICACION = UTF-8
+[body]
+2180202305126963X05196375P         CLEMENTE RODRIGUEZ CARLOS               021 00000001000001900000000000190000004                    CALLECALLE                                             NUM00001                                                                                        ALBACETE                      000000202002                                                                                                                                                                             
+[respuesta]
+IDENVIO
+ESTADO
+SIGBLOQUE
+CODIGO
+MENSAJE
+TOTALT2OK
+TOTALT2KO
+BLOQUET2OK
+BLOQUET2KO

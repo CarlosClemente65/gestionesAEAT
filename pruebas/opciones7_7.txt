@@ -1,0 +1,6 @@
+CLIENTE=00065
+TIPO=7
+ENTRADA=C:\Programacion\c#\gestionesAEAT\pruebas\guion_informativas7_190.txt
+SALIDA=C:\Programacion\c#\gestionesAEAT\pruebas\salida_informativas7_190.txt
+OBLIGADO=SI
+BUSQUEDA=05196375P

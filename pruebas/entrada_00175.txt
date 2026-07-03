@@ -1,0 +1,12 @@
+[url]
+https://prewww1.aeat.es/wlpl/SCEJ-MANT/ConsultaExt
+[cabecera]
+NIF=04870613H
+ANR=RODRIGUEZ SANCHEZ REMEDIOS
+MOD=115
+EJF=2022
+PER=
+FED=
+FEH=
+HOH=
+HOH=

@@ -1,0 +1,3 @@
+IDENVIO = 19020230A202411140000282803
+CODIGO = 0
+MENSAJE = Operación realizada correctamente

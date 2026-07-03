@@ -1,0 +1,9 @@
+[url]
+https://prewww1.aeat.es/wlpl/OVPT-NTGV/VistaPrevia
+[cabecera]
+IDENVIO = 19020230A202411140000282803
+[body]
+[respuesta]
+IDENVIO
+CODIGO
+MENSAJE

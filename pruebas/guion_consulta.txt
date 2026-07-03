@@ -1,0 +1,12 @@
+[url]
+https://www1.agenciatributaria.gob.es/wlpl/SCEJ-MANT/ConsultaExt
+[cabecera]
+NIF=G02114650
+ANR=CASA ARAGON ALBACETE
+MOD=115
+EJF=2023
+PER=
+FED=
+FEH=
+HOD=
+HOH=

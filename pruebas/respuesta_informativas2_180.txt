@@ -1,0 +1,2 @@
+CODIGO = 2013
+MENSAJE = El bloque que se pretende transmitir pertenece a un envío finalizado, presentado o erróneo

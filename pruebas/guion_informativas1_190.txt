@@ -1,0 +1,22 @@
+[url]
+https://prewww1.aeat.es/wlpl/OVPT-NTGV/InicializarEnvio
+[cabecera]
+MODELO = 190
+EJERCICIO = 2023
+PERIODO = 0A
+NDC = 04870613H
+IDIOMA = ES
+NUMBLOQUES = 1
+CODIFICACION = UTF-8
+[body]
+1190202304870613HRODRIGUEZ SANCHEZ REMEDIOS              T967111114RODRIGUEZ SANCHEZ REMEDIOS              1904049303804  0000000000000000000001 000000001200000000000000015000cleyna.ab@gmail.com                                                                                                                                                                                                                                                                                                                  
+[respuesta]
+IDENVIO
+ESTADO
+SIGBLOQUE
+CODIGO
+MENSAJE
+
+
+
+

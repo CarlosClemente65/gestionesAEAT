@@ -1,0 +1,5 @@
+TIPO=10
+ENTRADA=guion_validar_nif.txt
+SALIDA=respuesta_validar_nif.txt
+OBLIGADO=SI
+BUSQUEDA=

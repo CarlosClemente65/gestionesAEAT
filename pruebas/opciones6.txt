@@ -1,0 +1,10 @@
+CLIENTE=00065
+TIPO=6
+ENTRADA=guion_sii_emitidas2.xml
+SALIDA=respuesta_sii_emitidas2.res
+OBLIGADO=SI
+URLSII=https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fe/SiiFactFEV1SOAP
+BUSQUEDA=2B24373EFD77A9F3677FA18F07E7E6B5
+CERTIFICADO=
+PASSWORD=Eliminado por seguridad
+RESPUESTA=[siiR:CSV,sii:TimestampPresentacion,sii:NIF,sii:IDOtro,sii:ID,sii:NumSerieFacturaEmisor,sii:FechaExpedicionFacturaEmisor,siiR:EstadoRegistro,siiR:CodigoErrorRegistro,siiR:DescripcionErrorRegistro,faultstring]

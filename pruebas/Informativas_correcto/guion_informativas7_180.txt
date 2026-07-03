@@ -1,0 +1,10 @@
+[url]
+https://prewww1.aeat.es/wlpl/OVPT-NTGV/RecuperarAvisos
+[cabecera]
+IDENVIO = 18020230A202411140000282774
+CODIFICACION=UTF-8
+[body]
+[respuesta]
+IDENVIO
+CODIGO
+MENSAJE

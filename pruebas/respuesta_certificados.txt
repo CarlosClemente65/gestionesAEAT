@@ -1,0 +1,38 @@
+[
+  {
+    "nifCertificado": "B93144913",
+    "titularCertificado": "ADADE MALAGA SL",
+    "fechaEmision": "24/10/2022",
+    "fechaValidez": "24/10/2024",
+    "nifRepresentante": "47827841P",
+    "nombreRepresentante": "CALDUCH SKOPALIK ANNA CRISTINA",
+    "serieCertificado": "343A75EC1AC1E46A63562E416005AA8E"
+  },
+  {
+    "nifCertificado": "G02114650",
+    "titularCertificado": "CASA DE ARAGON EN ALBACETE",
+    "fechaEmision": "19/01/2023",
+    "fechaValidez": "19/01/2025",
+    "nifRepresentante": "17699412S",
+    "nombreRepresentante": "LAMBEA BAILO JESUS",
+    "serieCertificado": "46FEBE1A9F24813F63C9315FC040451E"
+  },
+  {
+    "nifCertificado": "05196375P",
+    "titularCertificado": "CLEMENTE RODRIGUEZ CARLOS ENRIQUE",
+    "fechaEmision": "28/02/2021",
+    "fechaValidez": "28/02/2025",
+    "nifRepresentante": "",
+    "nombreRepresentante": "",
+    "serieCertificado": "726E0DB7A17EFA04603B7F010BA43FA6"
+  },
+  {
+    "nifCertificado": "B02219319",
+    "titularCertificado": "SPITZER ENTERPRISES SOCIEDAD LIMITADA",
+    "fechaEmision": "23/09/2022",
+    "fechaValidez": "23/09/2024",
+    "nifRepresentante": "00699168Z",
+    "nombreRepresentante": "SPITZER YSBERT ALFONSO",
+    "serieCertificado": "2F39AB8761F18C2A632D997112B4C652"
+  }
+]

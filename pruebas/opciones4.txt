@@ -1,0 +1,8 @@
+CLIENTE=00001
+TIPO=4
+ENTRADA=guion_ratificar.txt
+SALIDA=respuesta_ratificar.txt
+OBLIGADO=SI
+BUSQUEDA=
+CERTIFICADO=
+PASSWORD=

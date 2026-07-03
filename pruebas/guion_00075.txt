@@ -1,0 +1,10 @@
+CLIENTE=00075 - RAYCASI, S.L.
+TIPO=3
+ENTRADA=C:\Programacion\c#\gestionesAEAT\pruebas\entrada_00075.txt
+SALIDA=C:\Programacion\c#\gestionesAEAT\pruebas\salida_00075.txt
+OBLIGADO=SI
+BUSQUEDA=726E0DB7A17EFA04603B7F010BA43FA6
+CERTIFICADO=
+
+PASSWORD=
+

@@ -1,0 +1,7 @@
+TIPO=2
+ENTRADA=C:\Programacion\c#\gestionesAEAT\pruebas\00008_entrada.txt
+SALIDA=C:\Programacion\c#\gestionesAEAT\pruebas\00008_salida.txt
+OBLIGADO=NO
+BUSQUEDA=
+CERTIFICADO=
+PASSWORD=

@@ -1,0 +1,4 @@
+CLIENTE=00065
+TIPO=9
+URLCSV=https://prewww2.aeat.es/wlpl/inwinvoc/es.aeat.dit.adu.eeca.catalogo.vis.VisualizaSc?COMPLETA=SI&ORIGEN=E&NIF=&CSV=SDMCFEZXM8QKF9ZU
+SALIDA=respuesta_csv.pdf

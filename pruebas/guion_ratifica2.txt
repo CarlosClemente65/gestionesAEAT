@@ -1,0 +1,8 @@
+CLIENTE=80202 - PEREZ PALOMO, ANTONIO                   
+TIPO=4
+ENTRADA=C:\Programacion\c#\gestionesAEAT\pruebas\ratifica_2.txt
+SALIDA=C:\Programacion\c#\gestionesAEAT\pruebas\resp.txt
+OBLIGADO=SI
+BUSQUEDA=
+CERTIFICADO=
+PASSWORD=Eliminado por seguridad

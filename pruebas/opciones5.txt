@@ -1,0 +1,6 @@
+TIPO=5
+SALIDA=respuesta_descarga.txt
+NIFRENTA=05165277Y
+REFRENTA=SYK4TD
+DPRENTA=S
+URLRENTA=https://www9.agenciatributaria.gob.es/wlpl/DFPA-D182/SvDesDF25Pei
